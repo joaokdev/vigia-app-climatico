@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loading Screens</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Ambient background layers -->
+  <div class="ambient ambient--one" aria-hidden="true"></div>
+  <div class="ambient ambient--two" aria-hidden="true"></div>
+  <div class="grid-overlay" aria-hidden="true"></div>
+
+  <main class="showcase">
+    <section class="loaders" aria-label="Loading screen showcase">
+
+      <!-- 1. Gym Bro loader -->
+      <article class="loader-row" data-loader="gymbro" data-duration="4800" style="--delay: 0.1s">
+        <pre class="code-snippet" aria-hidden="true"><code><span class="tok-sel">.gym-bro.loading .barbell</span> {
+  <span class="tok-prop">animation</span>: <span class="tok-val">repLift .9s 5</span>;
+}
+
+<span class="tok-sel">.progress-fill</span> {
+  <span class="tok-prop">transform-origin</span>: <span class="tok-val">left</span>;
+}</code></pre>
+
+        <div class="loader-card">
+          <div class="loader-stage">
+            <div class="gymbro-loader">
+              <div class="gymbro-loader__meta">
+                <span class="gymbro-loader__label">ready</span>
+                <span class="gymbro-loader__percent">0%</span>
+              </div>
+              <div class="gymbro-loader__scene" aria-hidden="true">
+                <div class="gymbro-loader__bro">
+                  <span class="gymbro-loader__head">
+                    <span class="gymbro-loader__headband"></span>
+                  </span>
+                  <span class="gymbro-loader__torso"></span>
+                  <span class="gymbro-loader__arm gymbro-loader__arm--l"></span>
+                  <span class="gymbro-loader__arm gymbro-loader__arm--r"></span>
+                  <span class="gymbro-loader__leg gymbro-loader__leg--l"></span>
+                  <span class="gymbro-loader__leg gymbro-loader__leg--r"></span>
+                </div>
+                <div class="gymbro-loader__barbell">
+                  <span class="gymbro-loader__bar"></span>
+                  <span class="gymbro-loader__plate gymbro-loader__plate--l"></span>
+                  <span class="gymbro-loader__plate gymbro-loader__plate--r"></span>
+                </div>
+                <span class="gymbro-loader__sweat">
+                  <span class="gymbro-loader__drop gymbro-loader__drop--l1"></span>
+                  <span class="gymbro-loader__drop gymbro-loader__drop--l2"></span>
+                  <span class="gymbro-loader__drop gymbro-loader__drop--r1"></span>
+                  <span class="gymbro-loader__drop gymbro-loader__drop--r2"></span>
+                </span>
+              </div>
+              <div class="gymbro-loader__track">
+                <div class="gymbro-loader__fill"></div>
+              </div>
+            </div>
+          </div>
+          <div class="loader-controls">
+            <button type="button" class="load-btn load-btn--gymbro" data-action="load">
+              <span class="load-btn__shine" aria-hidden="true"></span>
+              <span class="load-btn__text">Lift Load</span>
+            </button>
+            <span class="loader-status" data-default="ready" data-done="gains complete">ready</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- 2. Burger stack loader -->
+      <article class="loader-row" data-loader="burger" data-duration="5500" style="--delay: 0.2s">
+        <pre class="code-snippet" aria-hidden="true"><code><span class="tok-sel">.ingredient</span> {
+  <span class="tok-prop">animation</span>: <span class="tok-val">dropIn .45s</span>;
+}
+
+<span class="tok-sel">.burger.loading .cheese</span> {
+  <span class="tok-prop">animation-delay</span>: <span class="tok-val">.6s</span>;
+}</code></pre>
+
+        <div class="loader-card">
+          <div class="loader-stage">
+            <div class="burger-loader">
+              <div class="burger-loader__meta">
+                <span class="burger-loader__label">stacking...</span>
+                <span class="burger-loader__percent">0%</span>
+              </div>
+              <div class="burger-loader__stack">
+                <span class="ingredient bun-bottom" aria-hidden="true"></span>
+                <span class="ingredient patty" aria-hidden="true"></span>
+                <span class="ingredient cheese" aria-hidden="true"></span>
+                <span class="ingredient lettuce" aria-hidden="true"></span>
+                <span class="ingredient bun-top" aria-hidden="true"></span>
+              </div>
+            </div>
+          </div>
+          <div class="loader-controls">
+            <button type="button" class="load-btn load-btn--burger" data-action="load">
+              <span class="load-btn__shine" aria-hidden="true"></span>
+              <span class="load-btn__text">Stack Load</span>
+            </button>
+            <span class="loader-status" data-default="hungry" data-done="served">hungry</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- 3. Coffee cup filling loader -->
+      <article class="loader-row" data-loader="coffee" data-duration="4200" style="--delay: 0.3s">
+        <pre class="code-snippet" aria-hidden="true"><code><span class="tok-sel">.coffee-fill</span> {
+  <span class="tok-prop">height</span>: <span class="tok-val">0%</span>;
+  <span class="tok-prop">animation</span>: <span class="tok-val">fillCup 2.4s</span>;
+}
+
+<span class="tok-sel">.steam</span> {
+  <span class="tok-prop">animation</span>: <span class="tok-val">steam 1.2s</span>;
+}</code></pre>
+
+        <div class="loader-card">
+          <div class="loader-stage">
+            <div class="coffee-loader">
+              <div class="coffee-loader__meta">
+                <span class="coffee-loader__label">idle</span>
+                <span class="coffee-loader__percent">0%</span>
+              </div>
+              <div class="coffee-loader__brew">
+                <div class="coffee-loader__steam" aria-hidden="true">
+                  <span class="steam steam--1"></span>
+                  <span class="steam steam--2"></span>
+                  <span class="steam steam--3"></span>
+                </div>
+                <div class="coffee-loader__cup">
+                  <div class="coffee-loader__liquid">
+                    <span class="coffee-loader__percent coffee-loader__percent--in">0%</span>
+                  </div>
+                  <span class="coffee-loader__handle" aria-hidden="true"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="loader-controls">
+            <button type="button" class="load-btn load-btn--coffee" data-action="load">
+              <span class="load-btn__shine" aria-hidden="true"></span>
+              <span class="load-btn__text">Brew Load</span>
+            </button>
+            <span class="loader-status" data-default="idle" data-done="brewed">idle</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- 4. Frog jumping dots loader -->
+      <article class="loader-row" data-loader="frog" data-duration="5200" style="--delay: 0.4s">
+        <pre class="code-snippet" aria-hidden="true"><code><span class="tok-sel">.frog</span> {
+  <span class="tok-prop">animation</span>: <span class="tok-val">hop 2.5s</span>;
+}
+
+<span class="tok-sel">.dot.active</span> {
+  <span class="tok-prop">box-shadow</span>: <span class="tok-val">0 0 18px lime</span>;
+}</code></pre>
+
+        <div class="loader-card">
+          <div class="loader-stage">
+            <div class="frog-loader">
+              <div class="frog-loader__meta">
+                <span class="frog-loader__label">hop hop...</span>
+                <span class="frog-loader__percent">0%</span>
+              </div>
+              <div class="frog-loader__track" aria-hidden="true">
+                <div class="frog-loader__dots">
+                  <span class="dot"></span>
+                  <span class="dot"></span>
+                  <span class="dot"></span>
+                  <span class="dot"></span>
+                  <span class="dot"></span>
+                </div>
+                <div class="frog-loader__frog">
+                  <span class="frog-loader__eye frog-loader__eye--l"></span>
+                  <span class="frog-loader__eye frog-loader__eye--r"></span>
+                  <span class="frog-loader__mouth"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="loader-controls">
+            <button type="button" class="load-btn load-btn--frog" data-action="load">
+              <span class="load-btn__shine" aria-hidden="true"></span>
+              <span class="load-btn__text">Hop Load</span>
+            </button>
+            <span class="loader-status" data-default="waiting" data-done="done">waiting</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- 5. Candy unwrap loader -->
+      <article class="loader-row" data-loader="candy" data-duration="6000" style="--delay: 0.5s">
+        <pre class="code-snippet" aria-hidden="true"><code><span class="tok-sel">.candy.loading .wrapper-left</span> {
+  <span class="tok-prop">transform</span>: <span class="tok-val">rotate(-18deg)</span>;
+}
+
+<span class="tok-sel">.candy-code</span> {
+  <span class="tok-prop">opacity</span>: <span class="tok-val">1</span>;
+}</code></pre>
+
+        <div class="loader-card">
+          <div class="loader-stage">
+            <div class="candy-loader">
+              <div class="candy-loader__meta">
+                <span class="candy-loader__label">unwrap me</span>
+                <span class="candy-loader__percent">0%</span>
+              </div>
+              <div class="candy-loader__visual">
+                <div class="candy-loader__package" aria-hidden="true">
+                  <span class="candy-loader__twist candy-loader__twist--left"></span>
+                  <span class="candy-loader__wing candy-loader__wing--left"></span>
+                  <span class="candy-loader__ball"></span>
+                  <span class="candy-loader__wing candy-loader__wing--right"></span>
+                  <span class="candy-loader__twist candy-loader__twist--right"></span>
+                </div>
+                <div class="candy-loader__reveal" aria-hidden="true">
+                  <span class="candy-loader__gem"></span>
+                  <span class="candy-loader__code">&lt;/&gt;</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="loader-controls">
+            <button type="button" class="load-btn load-btn--candy" data-action="load">
+              <span class="load-btn__shine" aria-hidden="true"></span>
+              <span class="load-btn__text">Unwrap Load</span>
+            </button>
+            <span class="loader-status" data-default="wrapped" data-done="sweet code loaded">wrapped</span>
+          </div>
+        </div>
+      </article>
+
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

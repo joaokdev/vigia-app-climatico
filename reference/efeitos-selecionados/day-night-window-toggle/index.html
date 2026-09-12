@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#ede8df" id="themeColor">
+  <meta name="color-scheme" content="light dark">
+  <title>Day Night Window Toggle</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Ambient page backdrop -->
+  <div class="page-backdrop" aria-hidden="true">
+    <div class="page-backdrop__wash"></div>
+    <div class="page-backdrop__wash page-backdrop__wash--night"></div>
+    <div class="page-backdrop__glow page-backdrop__glow--warm"></div>
+    <div class="page-backdrop__glow page-backdrop__glow--cool"></div>
+    <div class="page-backdrop__grain"></div>
+  </div>
+
+  <main class="showcase">
+    <section class="appearance-widget" aria-labelledby="appearanceTitle">
+      <div class="appearance-widget__glow" aria-hidden="true"></div>
+
+      <header class="appearance-widget__header">
+        <div>
+          <p class="appearance-widget__eyebrow">Code Candy</p>
+          <h1 class="appearance-widget__title" id="appearanceTitle">Appearance</h1>
+        </div>
+      </header>
+
+      <div class="appearance-widget__scene">
+        <!-- The window is the toggle — click / tap / Space / Enter to switch -->
+        <button
+          class="window-toggle"
+          id="windowToggle"
+          type="button"
+          aria-pressed="false"
+          aria-label="Light mode. Tap window to switch to dark mode."
+        >
+          <span class="window-toggle__shadow" aria-hidden="true"></span>
+
+          <span class="window-toggle__frame">
+            <span class="window-toggle__view">
+              <span class="sky" aria-hidden="true">
+                <span class="sky__ambient sky__ambient--day"></span>
+                <span class="sky__ambient sky__ambient--night"></span>
+                <span class="sky__horizon"></span>
+              </span>
+
+              <!-- Sun -->
+              <span class="celestial celestial--sun" aria-hidden="true">
+                <span class="celestial__core"></span>
+                <span class="celestial__halo"></span>
+                <span class="celestial__rays"></span>
+              </span>
+
+              <!-- Moon -->
+              <span class="celestial celestial--moon" aria-hidden="true">
+                <span class="celestial__core"></span>
+                <span class="celestial__halo"></span>
+                <span class="celestial__crater celestial__crater--1"></span>
+                <span class="celestial__crater celestial__crater--2"></span>
+                <span class="celestial__crater celestial__crater--3"></span>
+              </span>
+
+              <!-- Clouds -->
+              <span class="clouds" aria-hidden="true">
+                <span class="cloud cloud--1"></span>
+                <span class="cloud cloud--2"></span>
+                <span class="cloud cloud--3"></span>
+                <span class="cloud cloud--4"></span>
+                <span class="cloud cloud--5"></span>
+                <span class="cloud cloud--6"></span>
+                <span class="cloud cloud--7"></span>
+              </span>
+
+              <!-- Birds (day-only, populated by script.js) -->
+              <span class="birds" id="birdsLayer" aria-hidden="true"></span>
+
+              <!-- Stars (populated by script.js) -->
+              <span class="stars" id="starsLayer" aria-hidden="true"></span>
+
+              <!-- Shooting stars (night-only, populated by script.js) -->
+              <span class="shooting-stars" id="shootingStarsLayer" aria-hidden="true"></span>
+
+              <!-- Interior vignette — looking out from a room -->
+              <span class="window-toggle__interior-vignette" aria-hidden="true"></span>
+
+              <!-- Glass layers -->
+              <span class="window-toggle__glass" aria-hidden="true"></span>
+              <span class="window-toggle__reflection" aria-hidden="true"></span>
+              <span class="window-toggle__sheen" aria-hidden="true"></span>
+              <span class="window-toggle__condensation" aria-hidden="true"></span>
+            </span>
+
+            <span class="window-toggle__sill" aria-hidden="true"></span>
+          </span>
+        </button>
+      </div>
+
+      <footer class="appearance-widget__footer">
+        <div class="mode-status" aria-live="polite">
+          <span class="mode-status__icon" id="modeIcon" aria-hidden="true">&#x2600;&#xFE0E;</span>
+          <span class="mode-status__text" id="modeText">Light mode</span>
+        </div>
+        <p class="mode-status__hint" id="modeHint">Tap to switch</p>
+      </footer>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

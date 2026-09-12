@@ -1,0 +1,496 @@
+/* =============================================
+   Hover Buttons — Part 5 — Global Styles
+   ============================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg-deep: #07070f;
+  --bg-panel: rgba(255, 255, 255, 0.03);
+  --text: #f4f4f8;
+  --text-muted: rgba(244, 244, 248, 0.55);
+  --accent: #7c5cff;
+  --accent-hot: #ff4fd8;
+  --accent-cyan: #3ef0ff;
+  --accent-lime: #b8ff3e;
+  --radius: 14px;
+  --btn-width: 220px;
+  --btn-height: 56px;
+  --snippet-width: 196px;
+  --snippet-height: 56px;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  font-family: "DM Sans", system-ui, sans-serif;
+  color: var(--text);
+  background: var(--bg-deep);
+  overflow-x: hidden;
+}
+
+/* --- Ambient background --- */
+.ambient {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ambient--one {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(124, 92, 255, 0.22), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 90% 80%, rgba(255, 79, 216, 0.12), transparent 55%),
+    radial-gradient(ellipse 50% 35% at 10% 70%, rgba(62, 240, 255, 0.1), transparent 50%);
+}
+
+.ambient--two {
+  background: radial-gradient(circle at 50% 50%, transparent 40%, rgba(0, 0, 0, 0.45) 100%);
+}
+
+.grid-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.35;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black, transparent);
+}
+
+/* --- Layout (TikTok vertical composition) --- */
+.showcase {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 520px);
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: clamp(2.5rem, 8vh, 5rem) 1.5rem clamp(2rem, 6vh, 4rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(2rem, 5vh, 3.5rem);
+}
+
+/* Page load fade-in */
+.button-card {
+  opacity: 0;
+  transform: translateY(24px);
+  animation: fadeUp 0.9s var(--ease-out) forwards;
+  animation-delay: var(--delay, 0s);
+}
+
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- Button cards --- */
+.buttons {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.75rem, 4vh, 2.5rem);
+}
+
+.button-card {
+  width: 100%;
+  max-width: calc(var(--snippet-width) + var(--btn-width) + 1rem);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.button-card:hover {
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* --- Code snippets --- */
+.code-snippet {
+  flex: 0 0 var(--snippet-width);
+  width: var(--snippet-width);
+  height: var(--snippet-height);
+  margin: 0;
+  padding: 0.45rem 0.6rem;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: #14141c;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.code-snippet code {
+  display: block;
+  width: 100%;
+  font-family: "Fira Code", ui-monospace, monospace;
+  font-size: 0.625rem;
+  line-height: 1.42;
+  font-weight: 400;
+  white-space: pre;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.tok-sel {
+  color: #7dd3fc;
+}
+
+.tok-prop {
+  color: #f1f5f9;
+}
+
+.tok-val {
+  color: #fde68a;
+}
+
+.button-card .btn {
+  flex: 0 0 var(--btn-width);
+}
+
+/* --- Shared button base --- */
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--btn-width);
+  height: var(--btn-height);
+  padding: 0 1.5rem;
+  font-family: "Syne", sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  isolation: isolate;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.35s var(--ease-out);
+}
+
+.btn__text {
+  position: relative;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 4px;
+}
+
+/* =============================================
+   1. WATER RIPPLE
+   A 2D wave simulation; the cursor drags a wake across
+   the surface and rain-drop rings spread outward.
+   ============================================= */
+.btn-ripple {
+  overflow: hidden;
+  background: transparent;
+  border: none;
+}
+
+.btn-ripple__base {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(160deg, #12457a 0%, #0b2f57 60%, #082342 100%);
+  border: 2px solid rgba(90, 180, 255, 0.35);
+  box-shadow: inset 0 0 26px rgba(0, 20, 50, 0.6);
+  z-index: 0;
+}
+
+.btn-ripple__canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 1;
+  pointer-events: none;
+  display: block;
+}
+
+.btn-ripple.is-active {
+  transform: scale(1.015);
+}
+
+.btn-ripple.is-active .btn-ripple__base {
+  border-color: rgba(130, 205, 255, 0.6);
+}
+
+.btn-ripple.is-active .btn__text {
+  text-shadow: 0 0 14px rgba(160, 220, 255, 0.7);
+}
+
+/* =============================================
+   2. SCRATCH CARD
+   Silver foil scrubs away under the cursor to reveal the
+   prize; foil heals itself once the cursor leaves.
+   ============================================= */
+.btn-scratch {
+  overflow: hidden;
+  background: transparent;
+  border: none;
+}
+
+.btn-scratch__under {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: inherit;
+  background: linear-gradient(145deg, #7c5cff, #ff4fd8);
+  color: #fff;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.14);
+  z-index: 0;
+}
+
+.btn-scratch__canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 1;
+  pointer-events: none;
+  display: block;
+  border-radius: var(--radius);
+}
+
+.btn-scratch.is-active {
+  transform: scale(1.015);
+}
+
+.btn-scratch.is-revealed .btn-scratch__under {
+  box-shadow:
+    inset 0 0 0 2px rgba(255, 255, 255, 0.3),
+    0 0 28px rgba(255, 79, 216, 0.35);
+}
+
+/* =============================================
+   3. GRASS
+   A field of blades sways in the breeze; the cursor
+   brushes through and parts them like a hand.
+   ============================================= */
+.btn-grass {
+  overflow: hidden;
+  background: linear-gradient(180deg, #14251a 0%, #0b1710 100%);
+  border: 2px solid rgba(110, 220, 130, 0.26);
+  box-shadow: inset 0 0 26px rgba(0, 0, 0, 0.5);
+}
+
+.btn-grass__canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 0;
+  pointer-events: none;
+  display: block;
+}
+
+.btn-grass .btn__text {
+  z-index: 2;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
+}
+
+.btn-grass.is-active {
+  transform: scale(1.015);
+  border-color: rgba(140, 240, 160, 0.5);
+}
+
+.btn-grass.is-active .btn__text {
+  text-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.8),
+    0 0 14px rgba(140, 240, 160, 0.45);
+}
+
+/* =============================================
+   4. THERMAL
+   Heat blooms wherever the cursor touches, glowing
+   through infrared palette colours before cooling off.
+   ============================================= */
+.btn-heat {
+  overflow: hidden;
+  background: linear-gradient(180deg, #14141c 0%, #0a0a10 100%);
+  border: 2px solid rgba(255, 140, 80, 0.24);
+  box-shadow: inset 0 0 26px rgba(0, 0, 0, 0.55);
+}
+
+.btn-heat__canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 0;
+  pointer-events: none;
+  display: block;
+}
+
+.btn-heat .btn__text {
+  z-index: 2;
+  mix-blend-mode: screen;
+}
+
+.btn-heat.is-active {
+  transform: scale(1.015);
+  border-color: rgba(255, 170, 100, 0.55);
+  box-shadow:
+    inset 0 0 30px rgba(255, 90, 30, 0.12),
+    0 0 22px rgba(255, 120, 50, 0.14);
+}
+
+.btn-heat.is-active .btn__text {
+  text-shadow: 0 0 14px rgba(255, 190, 120, 0.65);
+}
+
+/* =============================================
+   5. PAPER LANTERN
+   Folded paper panels; a warm inner light blooms at the
+   cursor position (JS feeds --lx / --ly) and breathes.
+   ============================================= */
+.btn-lantern {
+  overflow: hidden;
+  background: transparent;
+  border: none;
+  --lx: 50%;
+  --ly: 50%;
+  --lit: 0;
+}
+
+.btn-lantern__paper {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.16) 0 2px,
+      rgba(255, 255, 255, 0.05) 2px 6px,
+      transparent 6px 22px
+    ),
+    linear-gradient(180deg, #3a2f28 0%, #2b221c 100%);
+  border: 2px solid rgba(214, 170, 120, 0.3);
+  box-shadow: inset 0 0 22px rgba(0, 0, 0, 0.5);
+  z-index: 0;
+  transition: border-color 0.4s var(--ease-out);
+}
+
+.btn-lantern__light {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle 90px at var(--lx) var(--ly),
+    rgba(255, 190, 110, 0.85),
+    rgba(255, 140, 60, 0.35) 45%,
+    transparent 75%
+  );
+  opacity: var(--lit);
+  mix-blend-mode: screen;
+  transition: opacity 0.5s var(--ease-out);
+  z-index: 1;
+  animation: lanternBreathe 2.6s ease-in-out infinite;
+}
+
+@keyframes lanternBreathe {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.18); }
+}
+
+.btn-lantern.is-active {
+  transform: scale(1.015);
+  --lit: 1;
+}
+
+.btn-lantern.is-active .btn-lantern__paper {
+  border-color: rgba(255, 200, 140, 0.65);
+}
+
+.btn-lantern.is-active .btn__text {
+  text-shadow: 0 0 14px rgba(255, 200, 130, 0.7);
+}
+
+/* =============================================
+   6. DNA TWIST
+   Two glowing strands spiral across the button; hover
+   speeds the twist and brightens the base pairs.
+   ============================================= */
+.btn-dna {
+  overflow: hidden;
+  background: linear-gradient(180deg, #101624 0%, #0a0e18 100%);
+  border: 2px solid rgba(110, 200, 255, 0.24);
+  box-shadow: inset 0 0 26px rgba(0, 0, 0, 0.5);
+}
+
+.btn-dna__canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 0;
+  pointer-events: none;
+  display: block;
+}
+
+.btn-dna .btn__text {
+  z-index: 2;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+}
+
+.btn-dna.is-active {
+  transform: scale(1.015);
+  border-color: rgba(140, 220, 255, 0.55);
+}
+
+.btn-dna.is-active .btn__text {
+  text-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.85),
+    0 0 14px rgba(140, 220, 255, 0.55);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

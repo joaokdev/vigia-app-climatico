@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0d1117">
+  <meta name="description" content="Premium OTP verification card — digit slots, circuit collapse, and success state.">
+  <title>OTP Verification</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app-shell">
+    <!-- Verification card — idle → processing → success -->
+    <section
+      class="verification-card"
+      id="verification-card"
+      data-state="idle"
+      aria-labelledby="card-title"
+      aria-describedby="card-subtitle"
+    >
+      <!-- Energy rim accent during processing (CSS-driven) -->
+      <div class="card-energy-rim" aria-hidden="true"></div>
+
+      <div class="verification-copy">
+        <h1 class="card-title" id="card-title" tabindex="-1">Verify your number</h1>
+        <p class="card-subtitle" id="card-subtitle">
+          Enter the 4-digit code we sent to
+          <span class="phone-number" aria-hidden="true">+44 7700 •• 0142</span>
+          <span class="sr-only">your phone number ending in 0142</span>
+        </p>
+      </div>
+
+      <div class="stage-stack">
+        <!-- OTP form — one hidden input drives four visual slots -->
+        <form class="verification-form" id="otp-form" novalidate>
+          <label class="sr-only" for="otp-input">4-digit verification code</label>
+          <input
+            class="otp-input"
+            id="otp-input"
+            name="otp"
+            type="text"
+            inputmode="numeric"
+            autocomplete="one-time-code"
+            pattern="[0-9]*"
+            maxlength="4"
+            enterkeyhint="done"
+            spellcheck="false"
+            aria-describedby="card-subtitle demo-note otp-feedback"
+          >
+
+          <div class="otp-scene" id="otp-scene">
+            <!-- Circuit plane — slots, wires, and collapse core share one 3D space -->
+            <div class="circuit-plane" id="circuit-plane" aria-hidden="true">
+              <div class="wire wire--0"><span></span></div>
+              <div class="wire wire--1"><span></span></div>
+              <div class="wire wire--2"><span></span></div>
+              <div class="wire wire--3"><span></span></div>
+
+              <div class="collapse-core" id="collapse-core"></div>
+
+              <div class="otp-node otp-node--0" data-index="0">
+                <svg class="node-trace" viewBox="0 0 100 100" aria-hidden="true">
+                  <rect class="node-trace-path" x="2" y="2" width="96" height="96" rx="18" ry="18" pathLength="100"></rect>
+                </svg>
+                <div class="node-face">
+                  <span class="node-sheen"></span>
+                  <span class="digit"></span>
+                  <span class="custom-caret"></span>
+                </div>
+              </div>
+              <div class="otp-node otp-node--1" data-index="1">
+                <svg class="node-trace" viewBox="0 0 100 100" aria-hidden="true">
+                  <rect class="node-trace-path" x="2" y="2" width="96" height="96" rx="18" ry="18" pathLength="100"></rect>
+                </svg>
+                <div class="node-face">
+                  <span class="node-sheen"></span>
+                  <span class="digit"></span>
+                  <span class="custom-caret"></span>
+                </div>
+              </div>
+              <div class="otp-node otp-node--2" data-index="2">
+                <svg class="node-trace" viewBox="0 0 100 100" aria-hidden="true">
+                  <rect class="node-trace-path" x="2" y="2" width="96" height="96" rx="18" ry="18" pathLength="100"></rect>
+                </svg>
+                <div class="node-face">
+                  <span class="node-sheen"></span>
+                  <span class="digit"></span>
+                  <span class="custom-caret"></span>
+                </div>
+              </div>
+              <div class="otp-node otp-node--3" data-index="3">
+                <svg class="node-trace" viewBox="0 0 100 100" aria-hidden="true">
+                  <rect class="node-trace-path" x="2" y="2" width="96" height="96" rx="18" ry="18" pathLength="100"></rect>
+                </svg>
+                <div class="node-face">
+                  <span class="node-sheen"></span>
+                  <span class="digit"></span>
+                  <span class="custom-caret"></span>
+                </div>
+              </div>
+            </div>
+
+            <p class="demo-note" id="demo-note">
+              Demo code: <span class="demo-code">8402</span>
+            </p>
+
+            <p class="otp-feedback" id="otp-feedback">
+              Didn’t receive it?
+              <button class="resend-button" id="resend-button" type="button" disabled>
+                Resend in <span id="resend-time">0:24</span>
+              </button>
+            </p>
+          </div>
+        </form>
+
+        <!-- Success view — revealed after correct code -->
+        <div class="success-view" id="success-view" aria-hidden="true" hidden>
+          <div class="success-art" aria-hidden="true">
+            <div class="success-square">
+              <svg class="success-trace" viewBox="0 0 100 100" aria-hidden="true">
+                <rect class="success-trace-path" x="2" y="2" width="96" height="96" rx="22" ry="22" pathLength="100"></rect>
+              </svg>
+              <span class="checkmark">
+                <i class="check-stroke check-stroke--short"></i>
+                <i class="check-stroke check-stroke--long"></i>
+              </span>
+            </div>
+          </div>
+
+          <div class="trust-badge">
+            <span class="badge-check" aria-hidden="true">✓</span>
+            <span>Verified and secure</span>
+          </div>
+
+          <button class="continue-button" id="continue-button" type="button">
+            <span>Continue</span>
+            <i aria-hidden="true">→</i>
+          </button>
+        </div>
+      </div>
+
+      <p class="sr-only" id="status-live" aria-live="polite" aria-atomic="true"></p>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

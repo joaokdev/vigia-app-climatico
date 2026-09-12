@@ -1,0 +1,1293 @@
+/* =============================================
+   Day Night Window Toggle — Global Styles
+   Tweak colours, timings, and sizes in :root
+   ============================================= */
+
+:root {
+  /* Layout — glass view is ~square (height = width + frame insets) */
+  --widget-width: clamp(310px, 88vw, 420px);
+  --window-width: clamp(240px, 62vw, 320px);
+  --window-height: calc(var(--window-width) + 12px);
+  --frame-radius: 30px;
+  --view-radius: 20px;
+  --frame-pad: 15px;
+  --sill-height: 12px;
+
+  /* Timing — scene transition lives in the 0.8s–1.4s range */
+  --transition-scene: 1.15s;
+  --transition-fast: 0.35s;
+  --ease-premium: cubic-bezier(0.45, 0.05, 0.15, 1);
+  --ease-soft: cubic-bezier(0.33, 1, 0.68, 1);
+  --ease-spring: cubic-bezier(0.34, 1.25, 0.64, 1);
+
+  /* Day sky */
+  --day-sky-top: #7ec8f8;
+  --day-sky-mid: #a8d8ff;
+  --day-sky-bottom: #d4ecff;
+  --day-ambient: rgba(255, 220, 150, 0.35);
+  --day-glow: rgba(255, 196, 110, 0.55);
+
+  /* Night sky */
+  --night-sky-top: #0a0e2a;
+  --night-sky-mid: #141b45;
+  --night-sky-bottom: #2a1f52;
+  --night-ambient: rgba(120, 140, 255, 0.22);
+  --night-glow: rgba(180, 200, 255, 0.35);
+
+  /* Page — day (default) */
+  --page-bg-top: #ede8df;
+  --page-bg-bottom: #d4cbc0;
+  --page-text: rgba(42, 36, 30, 0.72);
+  --page-label: rgba(42, 36, 30, 0.38);
+
+  /* Frame & room */
+  --frame-dark: #1a1410;
+  --frame-mid: #2e241c;
+  --frame-light: #4a3a2e;
+  --sill-color: #211a14;
+
+  /* Card & UI text */
+  --card-bg: rgba(255, 250, 239, 0.72);
+  --card-bg-deep: rgba(255, 246, 226, 0.38);
+  --card-border: rgba(255, 255, 255, 0.58);
+  --card-shadow: rgba(70, 42, 18, 0.22);
+  --ui-strong: rgba(38, 31, 25, 0.88);
+  --ui-muted: rgba(54, 43, 32, 0.5);
+  --ui-faint: rgba(64, 48, 34, 0.32);
+  --status-bg: rgba(255, 255, 255, 0.44);
+  --status-border: rgba(255, 255, 255, 0.56);
+
+  /* Glass */
+  --glass-highlight: rgba(255, 255, 255, 0.18);
+  --glass-edge: rgba(255, 255, 255, 0.08);
+}
+
+/* =============================================
+   Global reset & page
+   ============================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  min-height: 100%;
+  min-height: 100dvh;
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  background: linear-gradient(
+    165deg,
+    var(--page-bg-top) 0%,
+    var(--page-bg-bottom) 55%,
+    var(--page-bg-bottom) 100%
+  );
+  color: var(--page-text);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  transition:
+    background var(--transition-scene) var(--ease-premium),
+    color var(--transition-scene) var(--ease-soft);
+}
+
+body.is-night {
+  --page-bg-top: #07070f;
+  --page-bg-bottom: #0f0f1e;
+  --page-text: rgba(255, 255, 255, 0.72);
+  --page-label: rgba(255, 255, 255, 0.28);
+  --card-bg: rgba(20, 24, 48, 0.74);
+  --card-bg-deep: rgba(12, 15, 34, 0.54);
+  --card-border: rgba(190, 205, 255, 0.14);
+  --card-shadow: rgba(0, 0, 0, 0.34);
+  --ui-strong: rgba(245, 247, 255, 0.9);
+  --ui-muted: rgba(220, 228, 255, 0.52);
+  --ui-faint: rgba(210, 222, 255, 0.22);
+  --status-bg: rgba(210, 222, 255, 0.08);
+  --status-border: rgba(210, 222, 255, 0.12);
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* =============================================
+   Ambient backdrop
+   ============================================= */
+
+.page-backdrop {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.page-backdrop__wash {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 30%, rgba(255, 210, 140, 0.28) 0%, transparent 65%),
+    radial-gradient(ellipse 70% 50% at 80% 80%, rgba(255, 180, 100, 0.12) 0%, transparent 60%);
+  opacity: 1;
+  transition: opacity var(--transition-scene) var(--ease-soft);
+}
+
+body.is-night .page-backdrop__wash {
+  opacity: 0;
+}
+
+.page-backdrop__wash--night {
+  background:
+    radial-gradient(ellipse 90% 70% at 50% 20%, rgba(60, 70, 180, 0.22) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 20% 85%, rgba(80, 40, 140, 0.18) 0%, transparent 55%);
+  opacity: 0;
+}
+
+body.is-night .page-backdrop__wash--night {
+  opacity: 1;
+}
+
+.page-backdrop__glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  transition: opacity var(--transition-scene) var(--ease-soft),
+              transform var(--transition-scene) var(--ease-soft);
+}
+
+.page-backdrop__glow--warm {
+  width: 55vmin;
+  height: 55vmin;
+  background: radial-gradient(circle, #ff9a4d 0%, transparent 70%);
+  top: 15%;
+  left: 20%;
+  opacity: 0.42;
+  animation: driftWarm 18s ease-in-out infinite alternate;
+}
+
+.page-backdrop__glow--cool {
+  width: 50vmin;
+  height: 50vmin;
+  background: radial-gradient(circle, #4a5bff 0%, transparent 70%);
+  bottom: 10%;
+  right: 15%;
+  opacity: 0.08;
+  animation: driftCool 22s ease-in-out infinite alternate;
+}
+
+body.is-night .page-backdrop__glow--warm {
+  opacity: 0.06;
+  transform: scale(0.85);
+}
+
+body.is-night .page-backdrop__glow--cool {
+  opacity: 0.38;
+  transform: scale(1.1);
+}
+
+.page-backdrop__grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.055;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+  transition: opacity var(--transition-scene) var(--ease-soft),
+              mix-blend-mode var(--transition-scene) var(--ease-soft);
+}
+
+body.is-night .page-backdrop__grain {
+  opacity: 0.04;
+  mix-blend-mode: normal;
+}
+
+@keyframes driftWarm {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(40px, 30px) scale(1.08); }
+}
+
+@keyframes driftCool {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(-35px, -25px) scale(1.06); }
+}
+
+/* =============================================
+   Showcase layout
+   ============================================= */
+
+.showcase {
+  position: relative;
+  z-index: 1;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.25rem;
+}
+
+.appearance-widget {
+  position: relative;
+  isolation: isolate;
+  width: var(--widget-width);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  overflow: hidden;
+  border: 1px solid var(--card-border);
+  border-radius: 34px;
+  background:
+    linear-gradient(180deg, var(--card-bg) 0%, var(--card-bg-deep) 100%);
+  box-shadow:
+    0 28px 80px var(--card-shadow),
+    0 10px 30px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.48);
+  backdrop-filter: blur(24px) saturate(1.15);
+  transition:
+    background var(--transition-scene) var(--ease-premium),
+    border-color var(--transition-scene) var(--ease-soft),
+    box-shadow var(--transition-scene) var(--ease-soft);
+}
+
+.appearance-widget::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: 33px;
+  background:
+    radial-gradient(circle at 24% 0%, rgba(255, 255, 255, 0.5), transparent 34%),
+    radial-gradient(circle at 86% 12%, rgba(255, 212, 126, 0.18), transparent 30%);
+  opacity: 1;
+  transition: opacity var(--transition-scene) var(--ease-soft);
+}
+
+body.is-night .appearance-widget::before {
+  opacity: 0.58;
+  background:
+    radial-gradient(circle at 24% 0%, rgba(170, 190, 255, 0.16), transparent 36%),
+    radial-gradient(circle at 86% 14%, rgba(84, 110, 255, 0.18), transparent 32%);
+}
+
+.appearance-widget__glow {
+  position: absolute;
+  inset: 18% 8% auto;
+  z-index: 0;
+  height: 46%;
+  pointer-events: none;
+  border-radius: 999px;
+  background: radial-gradient(ellipse at center, rgba(255, 202, 118, 0.2), transparent 70%);
+  filter: blur(34px);
+  opacity: 0.7;
+  transition:
+    background var(--transition-scene) var(--ease-soft),
+    opacity var(--transition-scene) var(--ease-soft);
+}
+
+body.is-night .appearance-widget__glow {
+  background: radial-gradient(ellipse at center, rgba(120, 150, 255, 0.2), transparent 70%);
+  opacity: 0.82;
+}
+
+.appearance-widget__header {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.3rem 0.25rem 0;
+}
+
+.appearance-widget__eyebrow {
+  margin: 0 0 0.22rem;
+  color: var(--ui-muted);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  line-height: 1;
+  text-transform: uppercase;
+  transition: color var(--transition-scene) var(--ease-soft);
+}
+
+.appearance-widget__title {
+  margin: 0;
+  color: var(--ui-strong);
+  font-size: 1.08rem;
+  font-weight: 760;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  transition: color var(--transition-scene) var(--ease-soft);
+}
+
+.appearance-widget__scene {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  padding: 0.2rem 0.15rem 0.95rem;
+}
+
+.appearance-widget__scene::after {
+  content: "";
+  position: absolute;
+  left: 0.25rem;
+  right: 0.25rem;
+  bottom: 0;
+  height: 1px;
+  background:
+    linear-gradient(90deg, transparent, var(--ui-faint), transparent);
+}
+
+.appearance-widget__footer {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0 0.2rem 0.12rem;
+  color: var(--ui-muted);
+  transition: color var(--transition-scene) var(--ease-soft);
+}
+
+.mode-status {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  gap: 0.48rem;
+  color: var(--ui-strong);
+  font-size: 0.8rem;
+  font-weight: 720;
+  letter-spacing: -0.01em;
+  transition: color var(--transition-scene) var(--ease-soft);
+}
+
+.mode-status__icon {
+  display: inline-grid;
+  place-items: center;
+  width: 1.55rem;
+  height: 1.55rem;
+  flex: 0 0 auto;
+  border: 1px solid var(--status-border);
+  border-radius: 50%;
+  background: var(--status-bg);
+  color: #d48b23;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.36),
+    0 0 18px rgba(255, 190, 86, 0.2);
+  font-size: 0.9rem;
+  line-height: 1;
+  transition:
+    background var(--transition-scene) var(--ease-soft),
+    border-color var(--transition-scene) var(--ease-soft),
+    box-shadow var(--transition-scene) var(--ease-soft),
+    color var(--transition-scene) var(--ease-soft);
+}
+
+body.is-night .mode-status__icon {
+  color: #cfd8ff;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 0 18px rgba(135, 160, 255, 0.22);
+}
+
+.mode-status__text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mode-status__hint {
+  margin: 0;
+  color: var(--ui-muted);
+  font-size: 0.72rem;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  transition: color var(--transition-scene) var(--ease-soft);
+}
+
+/* =============================================
+   Window toggle — outer shell (the primary control)
+   ============================================= */
+
+.window-toggle {
+  position: relative;
+  width: var(--window-width);
+  padding: 0;
+  outline: none;
+  cursor: pointer;
+  transform: translateY(0) scale(1);
+  transition:
+    transform 0.55s var(--ease-spring),
+    filter 0.55s var(--ease-soft);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.window-toggle__shadow {
+  position: absolute;
+  inset: 12% 8% -6% 8%;
+  background: radial-gradient(ellipse at 50% 80%, rgba(0, 0, 0, 0.65) 0%, transparent 72%);
+  filter: blur(18px);
+  transform: translateY(8px);
+  transition:
+    opacity var(--transition-scene) var(--ease-soft),
+    transform 0.55s var(--ease-spring);
+  pointer-events: none;
+}
+
+/* Hover: lift, glow, brightness */
+.window-toggle:hover {
+  transform: translateY(-6px) scale(1.015);
+  filter: brightness(1.05);
+}
+
+.window-toggle:hover .window-toggle__frame {
+  box-shadow:
+    0 34px 90px rgba(0, 0, 0, 0.52),
+    0 8px 24px rgba(0, 0, 0, 0.34),
+    0 0 48px rgba(255, 190, 100, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 -2px 6px rgba(0, 0, 0, 0.35);
+}
+
+body.is-night .window-toggle:hover .window-toggle__frame {
+  box-shadow:
+    0 34px 95px rgba(20, 30, 80, 0.48),
+    0 8px 24px rgba(0, 0, 0, 0.42),
+    0 0 52px rgba(100, 130, 255, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    inset 0 -2px 6px rgba(0, 0, 0, 0.45);
+}
+
+.window-toggle:hover .window-toggle__shadow {
+  transform: translateY(16px);
+  opacity: 0.85;
+}
+
+/* Press: soft squash feedback */
+.window-toggle:active {
+  transform: translateY(-1px) scale(0.985);
+  transition-duration: 0.12s;
+}
+
+.window-toggle:focus-visible .window-toggle__frame {
+  box-shadow:
+    0 0 0 3px rgba(255, 255, 255, 0.16),
+    0 30px 80px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* =============================================
+   Window frame
+   ============================================= */
+
+.window-toggle__frame {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: var(--window-height);
+  padding: var(--frame-pad);
+  padding-bottom: calc(var(--frame-pad) + var(--sill-height));
+  border-radius: var(--frame-radius);
+  background:
+    linear-gradient(145deg, var(--frame-light) 0%, var(--frame-mid) 35%, var(--frame-dark) 100%);
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.55),
+    0 8px 24px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 -2px 6px rgba(0, 0, 0, 0.35);
+  transition: box-shadow var(--transition-scene) var(--ease-soft);
+}
+
+.window-toggle.is-night .window-toggle__frame {
+  box-shadow:
+    0 30px 90px rgba(20, 30, 80, 0.45),
+    0 8px 24px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    inset 0 -2px 6px rgba(0, 0, 0, 0.45);
+}
+
+/* =============================================
+   Window view (the glass pane scene)
+   ============================================= */
+
+.window-toggle__view {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--view-radius);
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--day-sky-bottom);
+}
+
+/* Interior vignette — feeling of looking out from a room */
+.window-toggle__interior-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 -34px 56px rgba(20, 10, 5, 0.34),
+    inset 22px 0 40px rgba(20, 10, 5, 0.14),
+    inset -22px 0 40px rgba(20, 10, 5, 0.14),
+    inset 0 22px 32px rgba(255, 180, 100, 0.05);
+  transition: box-shadow var(--transition-scene) var(--ease-soft);
+}
+
+.window-toggle.is-night .window-toggle__interior-vignette {
+  box-shadow:
+    inset 0 -34px 64px rgba(5, 8, 25, 0.5),
+    inset 22px 0 48px rgba(5, 8, 25, 0.3),
+    inset -22px 0 48px rgba(5, 8, 25, 0.3),
+    inset 0 22px 32px rgba(100, 120, 255, 0.04);
+}
+
+/* Sky gradient */
+.sky {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    var(--day-sky-top) 0%,
+    var(--day-sky-mid) 42%,
+    var(--day-sky-bottom) 100%
+  );
+  transition: background var(--transition-scene) var(--ease-premium);
+}
+
+.window-toggle.is-night .sky {
+  background: linear-gradient(
+    180deg,
+    var(--night-sky-top) 0%,
+    var(--night-sky-mid) 48%,
+    var(--night-sky-bottom) 100%
+  );
+}
+
+.sky__horizon {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 14%;
+  height: 35%;
+  background: linear-gradient(
+    to top,
+    rgba(255, 210, 160, 0.18) 0%,
+    transparent 100%
+  );
+  opacity: 1;
+  transition: opacity var(--transition-scene) var(--ease-soft);
+}
+
+.window-toggle.is-night .sky__horizon {
+  opacity: 0;
+}
+
+.sky__ambient {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-scene) var(--ease-soft);
+}
+
+.sky__ambient--day {
+  background:
+    radial-gradient(circle at 72% 22%, var(--day-glow) 0%, transparent 42%),
+    radial-gradient(circle at 30% 80%, rgba(255, 255, 255, 0.15) 0%, transparent 50%);
+  opacity: 1;
+}
+
+.sky__ambient--night {
+  background:
+    radial-gradient(circle at 68% 18%, var(--night-glow) 0%, transparent 38%),
+    radial-gradient(ellipse at 50% 100%, rgba(60, 40, 120, 0.35) 0%, transparent 55%);
+  opacity: 0;
+}
+
+.window-toggle.is-night .sky__ambient--day {
+  opacity: 0;
+}
+
+.window-toggle.is-night .sky__ambient--night {
+  opacity: 1;
+}
+
+/* =============================================
+   Sun & Moon
+   ============================================= */
+
+.celestial {
+  position: absolute;
+  z-index: 2;
+  transition:
+    transform var(--transition-scene) var(--ease-premium),
+    opacity var(--transition-scene) var(--ease-soft);
+}
+
+/* Sun */
+.celestial--sun {
+  top: 14%;
+  right: 16%;
+  width: 72px;
+  height: 72px;
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+.window-toggle.is-night .celestial--sun {
+  transform: translate(-48px, calc(var(--window-width) * 0.48)) scale(0.72);
+  opacity: 0;
+}
+
+.celestial--sun .celestial__core {
+  position: absolute;
+  inset: 18%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff8e8 0%, #ffd56a 45%, #ffaa33 100%);
+  box-shadow:
+    0 0 30px rgba(255, 190, 80, 0.8),
+    0 0 60px rgba(255, 160, 50, 0.45);
+}
+
+.celestial--sun .celestial__halo {
+  position: absolute;
+  inset: -20%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 210, 100, 0.35) 0%, transparent 70%);
+  animation: sunPulse 4s ease-in-out infinite;
+}
+
+.celestial--sun .celestial__rays {
+  position: absolute;
+  inset: -35%;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(255, 220, 140, 0.12) 20deg,
+    transparent 40deg,
+    rgba(255, 220, 140, 0.1) 70deg,
+    transparent 90deg,
+    rgba(255, 220, 140, 0.12) 130deg,
+    transparent 150deg,
+    rgba(255, 220, 140, 0.08) 200deg,
+    transparent 230deg,
+    rgba(255, 220, 140, 0.1) 280deg,
+    transparent 320deg
+  );
+  animation: sunSpin 40s linear infinite;
+}
+
+@keyframes sunPulse {
+  0%, 100% { transform: scale(1); opacity: 0.85; }
+  50%      { transform: scale(1.08); opacity: 1; }
+}
+
+@keyframes sunSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* Moon */
+.celestial--moon {
+  top: 12%;
+  right: 18%;
+  width: 58px;
+  height: 58px;
+  transform: translateY(-80px) scale(0.6);
+  opacity: 0;
+}
+
+.window-toggle.is-night .celestial--moon {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+.celestial--moon .celestial__core {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 32%, #f4f6ff 0%, #d8dff5 55%, #b8c2e8 100%);
+  box-shadow:
+    0 0 24px rgba(200, 215, 255, 0.55),
+    0 0 48px rgba(140, 160, 255, 0.25),
+    inset -6px -4px 12px rgba(100, 110, 160, 0.2);
+}
+
+.celestial--moon .celestial__halo {
+  position: absolute;
+  inset: -45%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(180, 200, 255, 0.22) 0%, transparent 68%);
+  animation: moonGlow 5s ease-in-out infinite alternate;
+}
+
+@keyframes moonGlow {
+  from { opacity: 0.7; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1.05); }
+}
+
+.celestial__crater {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(120, 130, 170, 0.18);
+  box-shadow: inset 1px 1px 3px rgba(80, 90, 130, 0.25);
+}
+
+.celestial__crater--1 { width: 12px; height: 12px; top: 28%; left: 22%; }
+.celestial__crater--2 { width: 8px;  height: 8px;  top: 52%; left: 48%; }
+.celestial__crater--3 { width: 10px; height: 10px; top: 38%; left: 62%; }
+
+/* =============================================
+   Clouds
+   ============================================= */
+
+.clouds {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  transition: opacity var(--transition-scene) var(--ease-soft);
+}
+
+.window-toggle.is-night .clouds {
+  opacity: 0.1;
+}
+
+.cloud {
+  position: absolute;
+  filter: blur(0.3px);
+  opacity: var(--cloud-opacity, 0.92);
+  border-radius: 40px;
+  background: rgba(255, 255, 255, 0.85);
+  transition: opacity 0.5s var(--ease-soft);
+  animation:
+    cloudDrift var(--cloud-speed, 50s) linear infinite,
+    cloudFloat var(--cloud-float, 8s) ease-in-out infinite alternate;
+}
+
+.cloud::before,
+.cloud::after {
+  content: "";
+  position: absolute;
+  background: rgba(255, 255, 255, 0.88);
+  border-radius: 50%;
+  box-shadow: 0 4px 16px rgba(255, 255, 255, 0.25);
+}
+
+.cloud--1 {
+  width: 110px;
+  height: 36px;
+  top: 17%;
+  left: -30%;
+  --cloud-speed: 58s;
+  --cloud-float: 7s;
+  animation-delay: -12s, -2s;
+}
+
+.cloud--1::before { width: 44px; height: 44px; top: -18px; left: 12px; }
+.cloud--1::after  { width: 56px; height: 56px; top: -26px; left: 38px; }
+
+.cloud--2 {
+  width: 90px;
+  height: 30px;
+  top: 34%;
+  left: -28%;
+  --cloud-opacity: 0.75;
+  --cloud-speed: 62s;
+  --cloud-float: 10s;
+  animation-delay: -31s, -5s;
+}
+
+.cloud--2::before { width: 36px; height: 36px; top: -14px; left: 8px; }
+.cloud--2::after  { width: 48px; height: 48px; top: -22px; left: 30px; }
+
+.cloud--3 {
+  width: 130px;
+  height: 40px;
+  top: 58%;
+  left: -34%;
+  --cloud-opacity: 0.7;
+  filter: blur(0.8px);
+  --cloud-speed: 70s;
+  --cloud-float: 12s;
+  animation-delay: -47s, -7s;
+}
+
+.cloud--3::before { width: 50px; height: 50px; top: -20px; left: 16px; }
+.cloud--3::after  { width: 62px; height: 62px; top: -28px; left: 48px; }
+
+.cloud--4 {
+  width: 70px;
+  height: 24px;
+  top: 25%;
+  left: -26%;
+  --cloud-opacity: 0.55;
+  filter: blur(0.6px);
+  --cloud-speed: 66s;
+  --cloud-float: 6s;
+  animation-delay: -55s, -1s;
+}
+
+.cloud--4::before { width: 28px; height: 28px; top: -10px; left: 6px; }
+.cloud--4::after  { width: 38px; height: 38px; top: -16px; left: 24px; }
+
+.cloud--5 {
+  width: 96px;
+  height: 32px;
+  top: 45%;
+  left: -30%;
+  --cloud-opacity: 0.78;
+  --cloud-speed: 64s;
+  --cloud-float: 9s;
+  animation-delay: -20s, -4s;
+}
+
+.cloud--5::before { width: 38px; height: 38px; top: -16px; left: 10px; }
+.cloud--5::after  { width: 50px; height: 50px; top: -24px; left: 34px; }
+
+.cloud--6 {
+  width: 58px;
+  height: 20px;
+  top: 10%;
+  left: -24%;
+  --cloud-opacity: 0.42;
+  filter: blur(1px);
+  --cloud-speed: 74s;
+  --cloud-float: 14s;
+  animation-delay: -40s, -8s;
+}
+
+.cloud--6::before { width: 24px; height: 24px; top: -9px; left: 5px; }
+.cloud--6::after  { width: 32px; height: 32px; top: -14px; left: 19px; }
+
+.cloud--7 {
+  width: 150px;
+  height: 42px;
+  top: 70%;
+  left: -42%;
+  --cloud-opacity: 0.44;
+  filter: blur(1.4px);
+  --cloud-speed: 82s;
+  --cloud-float: 16s;
+  animation-delay: -69s, -10s;
+}
+
+.cloud--7::before { width: 58px; height: 58px; top: -22px; left: 18px; }
+.cloud--7::after  { width: 76px; height: 76px; top: -34px; left: 56px; }
+
+.cloud.is-dormant {
+  opacity: 0;
+}
+
+@keyframes cloudDrift {
+  from { translate: -22% 0; }
+  to   { translate: calc(var(--window-width) + 210px) 0; }
+}
+
+@keyframes cloudFloat {
+  from { transform: translateY(-3px); }
+  to   { transform: translateY(5px); }
+}
+
+/* =============================================
+   Birds — occasional day-only flock
+   ============================================= */
+
+.birds {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 1;
+  transition: opacity var(--transition-scene) var(--ease-soft);
+}
+
+.window-toggle.is-night .birds {
+  opacity: 0;
+}
+
+.bird-flock {
+  position: absolute;
+  top: var(--flock-top, 28%);
+  left: -32%;
+  width: 118px;
+  height: 72px;
+  opacity: 0;
+  transform: translateX(0) translateY(0) scale(var(--flock-scale, 1));
+  animation: flockFly var(--flock-duration, 13s) linear forwards;
+}
+
+.bird-flock--reverse {
+  left: auto;
+  right: -32%;
+  animation-name: flockFlyReverse;
+}
+
+.bird {
+  position: absolute;
+  left: var(--bird-x, 0px);
+  top: var(--bird-y, 0px);
+  width: 16px;
+  height: 9px;
+  opacity: var(--bird-opacity, 0.72);
+  transform: scale(var(--bird-scale, 1));
+}
+
+.bird::before,
+.bird::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  width: 9px;
+  height: 5px;
+  border-top: 2px solid rgba(35, 42, 48, 0.62);
+  border-radius: 50% 50% 0 0;
+  transform-origin: 100% 50%;
+  animation: wingFlap var(--wing-speed, 0.62s) ease-in-out infinite alternate;
+  animation-delay: var(--wing-delay, 0s);
+}
+
+.bird::before {
+  left: 0;
+  transform: rotate(18deg);
+}
+
+.bird::after {
+  right: 0;
+  transform: scaleX(-1) rotate(18deg);
+}
+
+@keyframes flockFly {
+  0% {
+    opacity: 0;
+    transform: translateX(0) translateY(8px) scale(var(--flock-scale, 1));
+  }
+  12%,
+  84% {
+    opacity: var(--flock-opacity, 0.72);
+  }
+  100% {
+    opacity: 0;
+    transform:
+      translateX(var(--flock-end, calc(var(--window-width) + 240px)))
+      translateY(var(--flock-drift, -18px))
+      scale(var(--flock-scale, 1));
+  }
+}
+
+@keyframes flockFlyReverse {
+  0% {
+    opacity: 0;
+    transform: translateX(0) translateY(8px) scaleX(-1) scale(var(--flock-scale, 1));
+  }
+  12%,
+  84% {
+    opacity: var(--flock-opacity, 0.72);
+  }
+  100% {
+    opacity: 0;
+    transform:
+      translateX(var(--flock-end, -640px))
+      translateY(var(--flock-drift, -18px))
+      scaleX(-1)
+      scale(var(--flock-scale, 1));
+  }
+}
+
+@keyframes wingFlap {
+  from {
+    top: 4px;
+    border-top-width: 2px;
+  }
+  to {
+    top: 2px;
+    border-top-width: 1px;
+  }
+}
+
+/* =============================================
+   Stars
+   ============================================= */
+
+.stars {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity calc(var(--transition-scene) * 0.85) var(--ease-soft);
+}
+
+.window-toggle.is-night .stars {
+  opacity: 1;
+  transition-delay: 0.25s;
+}
+
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: #fff;
+  transform: scale(0);
+  transition: transform 0.6s var(--ease-soft);
+}
+
+.window-toggle.is-night .star {
+  transform: scale(1);
+}
+
+.star--twinkle {
+  animation: twinkle var(--twinkle-duration, 3s) ease-in-out infinite;
+  animation-delay: var(--twinkle-delay, 0s);
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: var(--star-opacity, 0.6); transform: scale(1); }
+  50%      { opacity: 0.15; transform: scale(0.65); }
+}
+
+/* =============================================
+   Shooting stars — occasional night-only streaks
+   ============================================= */
+
+.shooting-stars {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity calc(var(--transition-scene) * 0.85) var(--ease-soft);
+}
+
+.window-toggle.is-night .shooting-stars {
+  opacity: 1;
+  transition-delay: 0.3s;
+}
+
+.shooting-star {
+  position: absolute;
+  top: var(--shooting-star-top, 58%);
+  left: var(--shooting-star-left, 18%);
+  width: var(--shooting-star-length, 86px);
+  height: 2px;
+  border-radius: 999px;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(205, 220, 255, 0.34) 34%,
+      rgba(255, 255, 255, 0.98) 100%
+    );
+  box-shadow:
+    0 0 8px rgba(205, 220, 255, 0.45),
+    0 0 18px rgba(150, 175, 255, 0.22);
+  opacity: 0;
+  transform:
+    rotate(var(--shooting-star-angle, -28deg))
+    translate3d(0, 0, 0)
+    scaleX(var(--shooting-star-scale, 1));
+  transform-origin: 100% 50%;
+  animation: shootingStar var(--shooting-star-duration, 1.2s) ease-out forwards;
+}
+
+.shooting-star::after {
+  content: "";
+  position: absolute;
+  right: -1px;
+  top: 50%;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow:
+    0 0 8px rgba(255, 255, 255, 0.9),
+    0 0 18px rgba(180, 200, 255, 0.65);
+  transform: translateY(-50%);
+}
+
+@keyframes shootingStar {
+  0% {
+    opacity: 0;
+    transform:
+      rotate(var(--shooting-star-angle, -28deg))
+      translate3d(0, 0, 0)
+      scaleX(0.55);
+  }
+  12% {
+    opacity: var(--shooting-star-opacity, 0.85);
+  }
+  100% {
+    opacity: 0;
+    transform:
+      rotate(var(--shooting-star-angle, -28deg))
+      translate3d(var(--shooting-star-travel-x, 190px), var(--shooting-star-travel-y, -92px), 0)
+      scaleX(var(--shooting-star-scale, 1));
+  }
+}
+
+/* =============================================
+   Glass, reflection & hover sheen
+   ============================================= */
+
+.window-toggle__glass {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.14) 0%,
+      rgba(255, 255, 255, 0.02) 28%,
+      transparent 50%,
+      rgba(255, 255, 255, 0.04) 100%
+    );
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    inset 1px 0 0 var(--glass-edge);
+  transition: background var(--transition-scene) var(--ease-soft);
+}
+
+.window-toggle.is-night .window-toggle__glass {
+  background:
+    linear-gradient(
+      160deg,
+      rgba(180, 200, 255, 0.04) 0%,
+      transparent 35%
+    );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    inset 1px 0 0 rgba(255, 255, 255, 0.03);
+}
+
+/* Static diagonal reflection band */
+.window-toggle__reflection {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0.03) 18%,
+      transparent 42%
+    );
+  opacity: 0.55;
+  transition:
+    opacity var(--transition-scene) var(--ease-soft),
+    transform 0.6s var(--ease-soft);
+}
+
+.window-toggle.is-night .window-toggle__reflection {
+  opacity: 0.18;
+}
+
+/* Reflection nudges on hover — light shifts as you "move" toward the glass */
+.window-toggle:hover .window-toggle__reflection {
+  transform: translate(2%, 1%);
+}
+
+/* Moving sheen — sweeps across the glass on hover for a tactile cue */
+.window-toggle__sheen {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -60%;
+  width: 45%;
+  z-index: 7;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.16) 45%,
+    rgba(255, 255, 255, 0.28) 50%,
+    rgba(255, 255, 255, 0.16) 55%,
+    transparent 100%
+  );
+  transform: skewX(-12deg);
+  opacity: 0;
+  transition: opacity 0.4s var(--ease-soft);
+}
+
+.window-toggle:hover .window-toggle__sheen {
+  opacity: 1;
+  animation: sheenSweep 1.6s var(--ease-soft) infinite;
+}
+
+@keyframes sheenSweep {
+  0%   { left: -60%; }
+  60%  { left: 120%; }
+  100% { left: 120%; }
+}
+
+.window-toggle__condensation {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0.35;
+  background:
+    radial-gradient(circle at 18% 78%, rgba(255, 255, 255, 0.08) 0%, transparent 8%),
+    radial-gradient(circle at 82% 65%, rgba(255, 255, 255, 0.06) 0%, transparent 6%),
+    radial-gradient(circle at 45% 88%, rgba(255, 255, 255, 0.05) 0%, transparent 5%);
+  transition: opacity var(--transition-scene) var(--ease-soft);
+}
+
+.window-toggle.is-night .window-toggle__condensation {
+  opacity: 0.55;
+}
+
+/* =============================================
+   Slim window sill ledge
+   ============================================= */
+
+.window-toggle__sill {
+  position: absolute;
+  left: var(--frame-pad);
+  right: var(--frame-pad);
+  bottom: var(--frame-pad);
+  height: var(--sill-height);
+  border-radius: 0 0 8px 8px;
+  background: linear-gradient(180deg, var(--sill-color) 0%, #14100c 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* =============================================
+   Reduced motion
+   ============================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .window-toggle:hover .window-toggle__sheen {
+    animation: none;
+  }
+}

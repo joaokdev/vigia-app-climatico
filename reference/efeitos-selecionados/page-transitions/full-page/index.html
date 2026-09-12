@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page Transitions — Full Page</title>
+  <link rel="preconnect" href="https://images.unsplash.com">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="preview preview--full" id="preview">
+    <div class="preview__stage" id="stage">
+      <div class="portal-camera-wrap">
+        <div class="portal-camera-rig">
+          <div class="cube" id="cube">
+
+            <!-- Home page -->
+            <div class="page page--home is-active" data-page="home" id="pageHome">
+              <div class="page__inner">
+                <header class="site-header">
+                  <span class="site-logo">
+                    <svg class="site-logo__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                      <circle cx="12" cy="12" r="9"/>
+                      <path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/>
+                    </svg>
+                    Wanderly
+                  </span>
+                  <nav class="site-nav" aria-label="Site navigation">
+                    <button type="button" class="site-nav__btn is-active" data-nav="home">Home</button>
+                    <button type="button" class="site-nav__btn" data-nav="gallery">Gallery</button>
+                  </nav>
+                </header>
+
+                <div class="page__scroll page__body">
+                  <section class="home-hero">
+                    <img
+                      class="home-hero__img"
+                      src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&q=80"
+                      alt=""
+                      loading="eager"
+                      fetchpriority="high"
+                      decoding="async"
+                    >
+                    <div class="home-hero__overlay"></div>
+                    <div class="home-hero__content">
+                      <span class="home-hero__tag">Summer 2026 collection</span>
+                      <h2 class="home-hero__title">Find your next escape</h2>
+                      <p class="home-hero__sub">Curated trips, hidden beaches, and cities worth the jet lag.</p>
+                      <div class="search-bar" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                          <circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/>
+                        </svg>
+                        <span>Where to next?</span>
+                      </div>
+                    </div>
+                  </section>
+
+                  <section class="dest-section">
+                    <div class="dest-section__head">
+                      <h3 class="dest-section__title">Trending now</h3>
+                      <span class="dest-section__link">View all</span>
+                    </div>
+                    <div class="dest-row">
+                      <article class="dest-card">
+                        <img src="https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?w=600&q=80" alt="" loading="lazy">
+                        <div class="dest-card__info">
+                          <span class="dest-card__name">Santorini</span>
+                          <span class="dest-card__meta">Greece · from $890</span>
+                        </div>
+                      </article>
+                      <article class="dest-card">
+                        <img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=600&q=80" alt="" loading="lazy">
+                        <div class="dest-card__info">
+                          <span class="dest-card__name">Tokyo</span>
+                          <span class="dest-card__meta">Japan · from $1,120</span>
+                        </div>
+                      </article>
+                      <article class="dest-card">
+                        <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600&q=80" alt="" loading="lazy">
+                        <div class="dest-card__info">
+                          <span class="dest-card__name">Bali</span>
+                          <span class="dest-card__meta">Indonesia · from $640</span>
+                        </div>
+                      </article>
+                    </div>
+                  </section>
+                </div>
+              </div>
+            </div>
+
+            <!-- Gallery page -->
+            <div class="page page--gallery" data-page="gallery" id="pageGallery">
+              <div class="page__inner">
+                <header class="site-header site-header--gallery">
+                  <span class="site-logo">
+                    <svg class="site-logo__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                      <circle cx="12" cy="12" r="9"/>
+                      <path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/>
+                    </svg>
+                    Wanderly
+                  </span>
+                  <nav class="site-nav" aria-label="Site navigation">
+                    <button type="button" class="site-nav__btn" data-nav="home">Home</button>
+                    <button type="button" class="site-nav__btn is-active" data-nav="gallery">Gallery</button>
+                  </nav>
+                </header>
+
+                <div class="page__scroll page__body">
+                  <div class="gallery-head">
+                    <h2 class="gallery-head__title">Travel Gallery</h2>
+                    <p class="gallery-head__sub">Moments from 48 countries · shot on the road</p>
+                  </div>
+
+                  <div class="gallery-grid">
+                    <figure class="gallery-tile">
+                      <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800&h=540&fit=crop&q=80" alt="" loading="lazy">
+                      <figcaption>Paris, France</figcaption>
+                    </figure>
+                    <figure class="gallery-tile">
+                      <img src="https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=800&h=540&fit=crop&q=80" alt="" loading="lazy">
+                      <figcaption>Maldives</figcaption>
+                    </figure>
+                    <figure class="gallery-tile">
+                      <img src="https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=800&h=540&fit=crop&q=80" alt="" loading="lazy">
+                      <figcaption>Reykjavik</figcaption>
+                    </figure>
+                    <figure class="gallery-tile">
+                      <img src="https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=800&h=540&fit=crop&q=80" alt="" loading="lazy">
+                      <figcaption>Marrakech</figcaption>
+                    </figure>
+                    <figure class="gallery-tile">
+                      <img src="https://images.unsplash.com/photo-1485871981521-5b1fd3805eee?w=800&h=540&fit=crop&q=80" alt="" loading="lazy">
+                      <figcaption>New York</figcaption>
+                    </figure>
+                    <figure class="gallery-tile">
+                      <img src="https://images.unsplash.com/photo-1534445867742-43195f401b6c?w=800&h=540&fit=crop&q=80" alt="" loading="lazy">
+                      <figcaption>Amalfi Coast</figcaption>
+                    </figure>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+            <div class="fx fx--portal" aria-hidden="true">
+              <div class="portal">
+                <div class="portal__glow" aria-hidden="true"></div>
+                <div class="portal__fx">
+                  <div class="portal__ring">
+                    <div class="portal__ring-core"></div>
+                    <div class="portal__ring-outer"></div>
+                    <div class="portal__ring-inner"></div>
+                    <div class="portal__streaks" aria-hidden="true"></div>
+                    <div class="portal__sparks" id="portalSparks"></div>
+                  </div>
+                  <div class="portal__embers" id="portalEmbers" aria-hidden="true"></div>
+                </div>
+              </div>
+            </div>
+        </div>
+        </div>
+      </div>
+
+      <!-- Transition FX layers -->
+      <div class="fx fx--glob" aria-hidden="true">
+        <div class="fx-glob__blob"></div>
+      </div>
+      <div class="fx fx--glitch" aria-hidden="true">
+        <div class="fx-glitch__scanlines"></div>
+        <div class="fx-glitch__bars"></div>
+      </div>
+      <div class="fx fx--flood" aria-hidden="true">
+        <canvas class="flood__canvas" id="floodCanvas"></canvas>
+      </div>
+    </div>
+
+  <div class="tx-btns tx-btns--floating" id="txBtns" role="group" aria-label="Transition styles">
+    <button type="button" class="tx-btn is-selected" data-transition="circle-portal">Mystic Portal</button>
+    <button type="button" class="tx-btn" data-transition="glob-wipe">Glob Wipe</button>
+    <button type="button" class="tx-btn" data-transition="cube-3d">3D Cube</button>
+    <button type="button" class="tx-btn" data-transition="glitch-swap">Glitch Swap</button>
+    <button type="button" class="tx-btn" data-transition="flood">Flood</button>
+    <button type="button" class="tx-btn" data-transition="flip">Flip</button>
+  </div>
+
+  <script src="../script.js"></script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hover Buttons — Part 5</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;1,9..40,400&family=Fira+Code:wght@400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Ambient background layers -->
+  <div class="ambient ambient--one" aria-hidden="true"></div>
+  <div class="ambient ambient--two" aria-hidden="true"></div>
+  <div class="grid-overlay" aria-hidden="true"></div>
+
+  <main class="showcase">
+    <section class="buttons" aria-label="Button showcase">
+
+      <!-- 1. Water Ripple -->
+      <article class="button-card" data-effect="ripple" style="--delay: 0.1s">
+        <pre class="code-snippet" aria-hidden="true"><code><span class="tok-sel">.btn-ripple:hover</span> {
+  <span class="tok-prop">surface</span>: <span class="tok-val">wave(x, y)</span>;
+}</code></pre>
+        <button type="button" class="btn btn-ripple">
+          <span class="btn-ripple__base" aria-hidden="true"></span>
+          <canvas class="btn-ripple__canvas" aria-hidden="true"></canvas>
+          <span class="btn__text">Ripple</span>
+        </button>
+      </article>
+
+      <!-- 2. Scratch Card -->
+      <article class="button-card" data-effect="scratch" style="--delay: 0.2s">
+        <pre class="code-snippet" aria-hidden="true"><code><span class="tok-sel">.btn-scratch:hover</span> {
+  <span class="tok-prop">foil</span>: <span class="tok-val">erase(x, y)</span>;
+}</code></pre>
+        <button type="button" class="btn btn-scratch">
+          <span class="btn-scratch__under">Win!</span>
+          <canvas class="btn-scratch__canvas" aria-hidden="true"></canvas>
+        </button>
+      </article>
+
+      <!-- 3. Grass -->
+      <article class="button-card" data-effect="grass" style="--delay: 0.3s">
+        <pre class="code-snippet" aria-hidden="true"><code><span class="tok-sel">.btn-grass:hover</span> {
+  <span class="tok-prop">blades</span>: <span class="tok-val">part(x)</span>;
+}</code></pre>
+        <button type="button" class="btn btn-grass">
+          <canvas class="btn-grass__canvas" aria-hidden="true"></canvas>
+          <span class="btn__text">Grass</span>
+        </button>
+      </article>
+
+      <!-- 4. Thermal -->
+      <article class="button-card" data-effect="heat" style="--delay: 0.4s">
+        <pre class="code-snippet" aria-hidden="true"><code><span class="tok-sel">.btn-heat:hover</span> {
+  <span class="tok-prop">filter</span>: <span class="tok-val">thermal()</span>;
+}</code></pre>
+        <button type="button" class="btn btn-heat">
+          <canvas class="btn-heat__canvas" aria-hidden="true"></canvas>
+          <span class="btn__text">Heat</span>
+        </button>
+      </article>
+
+      <!-- 5. Paper Lantern -->
+      <article class="button-card" data-effect="lantern" style="--delay: 0.5s">
+        <pre class="code-snippet" aria-hidden="true"><code><span class="tok-sel">.btn-lantern:hover</span> {
+  <span class="tok-prop">light</span>: <span class="tok-val">glow(x, y)</span>;
+}</code></pre>
+        <button type="button" class="btn btn-lantern">
+          <span class="btn-lantern__paper" aria-hidden="true"></span>
+          <span class="btn-lantern__light" aria-hidden="true"></span>
+          <span class="btn__text">Lantern</span>
+        </button>
+      </article>
+
+      <!-- 6. DNA Twist -->
+      <article class="button-card" data-effect="dna" style="--delay: 0.6s">
+        <pre class="code-snippet" aria-hidden="true"><code><span class="tok-sel">.btn-dna:hover</span> {
+  <span class="tok-prop">strands</span>: <span class="tok-val">twist()</span>;
+}</code></pre>
+        <button type="button" class="btn btn-dna">
+          <canvas class="btn-dna__canvas" aria-hidden="true"></canvas>
+          <span class="btn__text">Helix</span>
+        </button>
+      </article>
+
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

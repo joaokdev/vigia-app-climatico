@@ -1,0 +1,221 @@
+@import "tailwindcss";
+
+/* ============================================================
+   VIGIA — DESIGN TOKENS
+   Fonte única de verdade para cor, tipografia, espaçamento,
+   motion e elevação. Tokens são semânticos (não "azul-500",
+   mas "accent", "danger", "surface-elevated" etc.) para que
+   tanto humanos quanto agentes possam raciocinar sobre eles.
+   ============================================================ */
+
+:root {
+  /* ---------- Tipografia ----------
+     Escolha deliberada: pilha de fontes de sistema (não Google
+     Fonts) para evitar dependência de rede em build/runtime,
+     eliminar FOUT e manter neutralidade de licenciamento.
+     Par tipográfico:
+     - Display/UI: grotesk de sistema, geométrico, técnico.
+     - Dados/Mono: monoespaçada tabular, para números que
+       precisam alinhar e comunicar precisão instrumental. */
+  --font-display: ui-sans-serif, "Segoe UI", "Inter", system-ui, -apple-system,
+    "Helvetica Neue", Arial, sans-serif;
+  --font-body: ui-sans-serif, "Segoe UI", system-ui, -apple-system,
+    "Helvetica Neue", Arial, sans-serif;
+  --font-data: ui-monospace, "SFMono-Regular", "Cascadia Code", "Roboto Mono",
+    Consolas, monospace;
+
+  --space-0: 0;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-full: 999px;
+
+  --border-hairline: 1px;
+
+  --ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-emphasized: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 120ms;
+  --duration-base: 220ms;
+  --duration-slow: 420ms;
+
+  --z-base: 0;
+  --z-map-controls: 10;
+  --z-header: 40;
+  --z-drawer: 50;
+  --z-modal: 60;
+  --z-toast: 70;
+
+  /* Semântica de dados científicos — NÃO muda com o tema. */
+  --data-rain-1: #bfe3ff;
+  --data-rain-2: #6ab6f2;
+  --data-rain-3: #2f7fd6;
+  --data-rain-4: #1552a3;
+  --data-temp-cold: #4fa8d8;
+  --data-temp-mild: #6ec6a0;
+  --data-temp-warm: #e0b64a;
+  --data-temp-hot: #d9552c;
+  --data-risk-low: #4a9d6f;
+  --data-risk-moderate: #d6a726;
+  --data-risk-high: #d9702c;
+  --data-risk-severe: #c03636;
+}
+
+:root,
+[data-theme="light"] {
+  --color-background: #f4f6f5;
+  --color-surface: #ffffff;
+  --color-surface-elevated: #ffffff;
+  --color-surface-sunken: #e9ede9;
+
+  --color-text: #10171a;
+  --color-text-muted: #4d5c60;
+  --color-text-subtle: #5a6a6d;
+  --color-on-accent: #f4faf6;
+
+  --color-border: #d7dfda;
+  --color-border-strong: #b7c3bd;
+
+  --color-interactive: #0e4d3f;
+  --color-interactive-hover: #0b3e33;
+  --color-accent: #1c7a5e;
+  --color-accent-soft: #e2f3ea;
+
+  --color-success: #1c7a5e;
+  --color-warning: #7d5308;
+  --color-danger: #b3372b;
+  --color-info: #235a9c;
+
+  --color-success-soft: #e2f3ea;
+  --color-warning-soft: #fbf0d9;
+  --color-danger-soft: #fbe6e2;
+  --color-info-soft: #e4eefb;
+
+  --color-overlay: rgba(16, 23, 26, 0.45);
+  --color-map-base: #dbe6df;
+  --color-map-grid: rgba(16, 23, 26, 0.08);
+  --color-focus-ring: #1c7a5e;
+
+  --shadow-elevation-1: 0 1px 2px rgba(16, 23, 26, 0.06);
+  --shadow-elevation-2: 0 4px 14px rgba(16, 23, 26, 0.08);
+  --shadow-elevation-3: 0 12px 32px rgba(16, 23, 26, 0.12);
+
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --color-background: #0a1210;
+  --color-surface: #0f1a17;
+  --color-surface-elevated: #142420;
+  --color-surface-sunken: #060b09;
+
+  --color-text: #eaf2ee;
+  --color-text-muted: #a9bab3;
+  --color-text-subtle: #728077;
+  --color-on-accent: #06110d;
+
+  --color-border: #223530;
+  --color-border-strong: #33493f;
+
+  --color-interactive: #4fd8a8;
+  --color-interactive-hover: #6ee2ba;
+  --color-accent: #4fd8a8;
+  --color-accent-soft: #122b23;
+
+  --color-success: #4fd8a8;
+  --color-warning: #e3b64f;
+  --color-danger: #e5695a;
+  --color-info: #6fa8e8;
+
+  --color-success-soft: #122b23;
+  --color-warning-soft: #2c2412;
+  --color-danger-soft: #2c1613;
+  --color-info-soft: #12212f;
+
+  --color-overlay: rgba(3, 7, 6, 0.6);
+  --color-map-base: #0c1c18;
+  --color-map-grid: rgba(234, 242, 238, 0.07);
+  --color-focus-ring: #4fd8a8;
+
+  --shadow-elevation-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-elevation-2: 0 6px 20px rgba(0, 0, 0, 0.45);
+  --shadow-elevation-3: 0 20px 48px rgba(0, 0, 0, 0.55);
+
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-background: var(--color-background);
+  --color-surface: var(--color-surface);
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-data);
+}
+
+* {
+  border-color: var(--color-border);
+}
+
+html {
+  color-scheme: light dark;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-feature-settings: "tnum" 1, "cv11" 1;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.font-data {
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.vigia-container {
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: var(--space-5);
+}
+
+@media (max-width: 640px) {
+  .vigia-container {
+    padding-inline: var(--space-4);
+  }
+}
+
+* {
+  scrollbar-color: var(--color-border-strong) transparent;
+  scrollbar-width: thin;
+}
