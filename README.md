@@ -145,6 +145,45 @@ respeitado globalmente.
   persistido.
 - `/conta` não é protegida por sessão (não existe sessão na FASE 1).
 
+### Efeitos de terceiro integrados (pacote `efeitos.zip`, revisão 2)
+
+Depois da primeira entrega, o proprietário forneceu um segundo pacote maior
+de efeitos com a instrução explícita de **usá-los sem alterar cor,
+comportamento ou o resultado visual final** — só reposicionamento/redimensionamento
+é permitido. Cada efeito foi analisado individualmente; os que combinavam
+com o domínio do VIGIA (clima/água/segurança) foram portados de forma fiel,
+os que não combinavam foram descartados com justificativa.
+
+**Portados e integrados:**
+
+| Efeito | Onde | Fidelidade |
+|---|---|---|
+| Day/Night Window Toggle | `/conta/preferencias` | CSS/JS portado quase 1:1; conectado ao ThemeProvider real em vez de um localStorage próprio |
+| OTP Verification | `/verificar-otp` | script.js original carregado como asset estático sem alteração de lógica; só texto traduzido para PT-BR e código de demo trocado |
+| Password Strength Vault | `/cadastro` | 6 arquivos JS + SVG do cofre copiados verbatim; só strings traduzidas (incluindo reescrita correta em português de "5 mil anos"/"3 milhões de anos" no cálculo de tempo-para-quebrar) |
+| Page Transitions ("Glob Wipe") | Todas as rotas | Única variante portável para rotas reais (as outras 5 — portal, cubo 3D, glitch, flood, flip — são acopladas à mini-janela de preview fake do pacote); cores/keyframe originais preservados |
+| Frost (hover-buttons-part-4) | Botão "Abrir mapa regional" (home) | Simulação de pixel em canvas portada quase literalmente |
+| Water Ripple (hover-buttons-part-5 — o pacote citado no Master Prompt) | Botão "Ver histórico (7 dias)" no card de rio | Mesma arquitetura do Frost; escolhido por ser literalmente uma simulação de ondulação de água |
+| Social Media Buttons | Rodapé | SVGs de marca e tooltip preservados; links desativados (`href="#"` + preventDefault) porque o VIGIA ainda não tem contas reais — navegar para elas seria fingir uma presença que não existe |
+
+**Avaliados e descartados** (não usados, com justificativa):
+- `add-to-cart`, `delivery-button`, `modern-checkout-ui` — vocabulário de e-commerce, sem relação com o produto
+- `campfire-under-the-stars`, `expanding-hover-social-grid` — não combinam com o tom do produto
+- `cool-loading-screens` — os 5 personagens (halterofilista, hambúrguer, café, sapo, bala) não combinam com o tom sério de uma ferramenta de risco/enchente; o Master Prompt já antecipa essa tensão e pede para "reduzir/adaptar" em vez de usar literalmente — a tela de carregamento em `components/ui/LoadingScreen.tsx` é essa adaptação (um pluviômetro se enchendo), desenhada do zero com a identidade do VIGIA, não um port do pacote
+
+**Ferramenta criada para isso:** `scripts/scope_css.py` e `scripts/strip_rules.py` — namespacing automático de seletores CSS e renomeação de `@keyframes` para evitar colisão entre os vários efeitos, preservando cor/timing/geometria originais. Durante o uso, um bug real foi encontrado e corrigido: a divisão por vírgula não respeitava parênteses (`:is(a, b)` quebrava ao virar dois seletores inválidos).
+
+### Enriquecimento de conteúdo (Nível 2 da hierarquia de informação)
+
+Resposta à observação de que o app estava "pobre em informação": o
+`RiverStatus` agora inclui, além do Nível 1 (o que está acontecendo agora),
+uma frase de contexto Nível 2 ("por que isso importa") variando por nível
+de atenção, e um histórico de 7 dias sob demanda (Nível 3), com um novo
+campo `history7d` no contrato `RiverSnapshot`. Isso ainda é um começo — o
+mesmo tratamento (contexto + detalhe sob demanda) pode ser estendido a
+clima/vento/estações se o proprietário confirmar que é essa a direção
+desejada antes de replicar em todo o app.
+
 ## Próximo passo
 
 Aguardando autorização explícita do proprietário ("Pode iniciar a FASE 2.")

@@ -4,13 +4,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { AuthShell } from "@/components/auth/AuthShell";
-import { Input, PasswordField } from "@/components/ui/Input";
-import { PasswordStrength } from "@/components/ui/PasswordStrength";
+import { Input } from "@/components/ui/Input";
+import { PasswordStrengthVault } from "@/components/effects/password-strength/PasswordStrengthVault";
 import { Button } from "@/components/ui/Button";
 
 export default function CadastroPage() {
   const router = useRouter();
-  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   function handleSubmit(e: React.FormEvent) {
@@ -40,15 +39,7 @@ export default function CadastroPage() {
         <Input label="Nome" name="name" autoComplete="name" required />
         <Input label="E-mail" type="email" name="email" autoComplete="email" required />
         <div>
-          <PasswordField
-            label="Senha"
-            name="password"
-            autoComplete="new-password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <PasswordStrength password={password} />
+          <PasswordStrengthVault />
         </div>
         <Button type="submit" fullWidth loading={loading}>
           Continuar

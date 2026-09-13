@@ -15,6 +15,9 @@ const eslintConfig = defineConfig([
     // Arquivos-fonte originais dos efeitos de referência, preservados
     // apenas como material de consulta — não fazem parte do app.
     "reference/**",
+    // Scripts de efeitos de terceiros, carregados como assets estáticos
+    // e intencionalmente preservados sem modificação/lint.
+    "public/effects/**",
   ]),
 ]);
 

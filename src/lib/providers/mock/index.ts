@@ -27,6 +27,7 @@ import type {
   RiverSnapshot,
   StationInfo,
   TimeseriesPoint,
+  Trend,
   WeatherSnapshot,
 } from "../types";
 import type { RegionSlug } from "../../data/regions";
@@ -100,7 +101,7 @@ const WEATHER_PROFILES: Record<
   },
 };
 
-const RIVER_PROFILES: Partial<Record<RegionSlug, Omit<RiverSnapshot, "provenance">>> = {
+const RIVER_PROFILES: Partial<Record<RegionSlug, Omit<RiverSnapshot, "provenance" | "history7d">>> = {
   "uniao-da-vitoria": {
     riverName: "Rio Iguaçu",
     levelM: 6.82,
@@ -125,6 +126,24 @@ function buildSparkline(seed: number): TimeseriesPoint[] {
     points.push({
       t: isoMinutesAgo(i * 30),
       v: Math.round((seed + noise) * 10) / 10,
+    });
+  }
+  return points;
+}
+
+/** Histórico diário de nível de rio dos últimos 7 dias — dado de
+ * demonstração, consultado sob demanda (Nível 3 da hierarquia de
+ * informação), nunca exibido por padrão junto ao snapshot atual. */
+function buildRiverHistory(currentLevel: number, trend: Trend): TimeseriesPoint[] {
+  const points: TimeseriesPoint[] = [];
+  const direction = trend === "subindo" ? 1 : trend === "descendo" ? -1 : 0;
+  for (let daysAgo = 6; daysAgo >= 0; daysAgo--) {
+    const drift = direction * (daysAgo * 0.14);
+    const noise = Math.sin(daysAgo * 1.3) * 0.22;
+    const value = currentLevel - drift + noise;
+    points.push({
+      t: isoMinutesAgo(daysAgo * 24 * 60),
+      v: Math.round(value * 100) / 100,
     });
   }
   return points;
@@ -158,6 +177,7 @@ function mockRiverProvider(slug: RegionSlug): RiverSnapshot | null {
   if (!profile) return null;
   return {
     ...profile,
+    history7d: buildRiverHistory(profile.levelM ?? 0, profile.levelTrend),
     provenance: {
       source: "ANA HidroWebService (demonstração)",
       station: profile.stationName ?? undefined,

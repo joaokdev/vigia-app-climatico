@@ -4,8 +4,9 @@ import { getRegionSnapshot } from "@/lib/providers";
 import { RegionCard } from "@/components/region/RegionCard";
 import { Button } from "@/components/ui/Button";
 import { AlertCard } from "@/components/ui/Alert";
-import { IconMap, IconRefresh } from "@/components/icons";
+import { IconRefresh } from "@/components/icons";
 import { Card } from "@/components/ui/Card";
+import { FrostButton } from "@/components/effects/frost-button/FrostButton";
 
 export default async function HomePage() {
   const snapshots = await Promise.all(
@@ -47,13 +48,8 @@ export default async function HomePage() {
           Vitória / Porto União, Cruz Machado / Santana, Bituruna e Inácio
           Martins — em um só lugar, com a origem de cada dado sempre visível.
         </p>
-        <div className="flex flex-wrap gap-3">
-          <Link href="/mapa">
-            <Button variant="primary" size="md">
-              <IconMap size={16} />
-              Abrir mapa regional
-            </Button>
-          </Link>
+        <div className="flex flex-wrap items-center gap-3">
+          <FrostButton href="/mapa">Abrir mapa regional</FrostButton>
           <Link href="/sobre">
             <Button variant="secondary" size="md">
               Como o VIGIA funciona

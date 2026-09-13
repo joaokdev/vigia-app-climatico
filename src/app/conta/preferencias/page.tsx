@@ -4,7 +4,7 @@ import { useState } from "react";
 import { AccountShell } from "@/components/account/AccountShell";
 import { Card } from "@/components/ui/Card";
 import { Switch } from "@/components/ui/Switch";
-import { ThemeSwitcher } from "@/components/ui/ThemeSwitcher";
+import { DayNightWindowToggle } from "@/components/effects/day-night-toggle/DayNightWindowToggle";
 import { REGIONS } from "@/lib/data/regions";
 import { mockAccount } from "@/lib/data/mock-account";
 import { cn } from "@/lib/cn";
@@ -25,13 +25,9 @@ export default function PreferenciasPage() {
           </p>
         </div>
 
-        <Card className="flex flex-col gap-1 p-5">
-          <h2 className="mb-2 text-sm font-semibold text-[color:var(--color-text)]">Aparência</h2>
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-[color:var(--color-text-muted)]">Tema da interface</span>
-            <ThemeSwitcher />
-          </div>
-        </Card>
+        <div className="flex justify-center py-2">
+          <DayNightWindowToggle />
+        </div>
 
         <Card className="flex flex-col gap-1 p-5">
           <h2 className="mb-2 text-sm font-semibold text-[color:var(--color-text)]">Unidades</h2>

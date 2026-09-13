@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Logo } from "@/components/brand/Logo";
 import { REGIONS } from "@/lib/data/regions";
+import { SocialLinks } from "@/components/effects/social-links/SocialLinks";
 
 export function Footer() {
   return (
@@ -12,6 +13,9 @@ export function Footer() {
             Central regional de monitoramento ambiental para a região de União
             da Vitória, Cruz Machado, Bituruna e Inácio Martins.
           </p>
+          <div className="mt-1 origin-left scale-[0.55]">
+            <SocialLinks />
+          </div>
         </div>
 
         <div>

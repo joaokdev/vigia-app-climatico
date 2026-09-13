@@ -1,0 +1,72 @@
+/* ============================================================
+   "Glob Wipe" page transition — efeito de terceiro (pacote
+   page-transitions). Cores, curva de easing, geometria do blob e
+   o keyframe globSweep são idênticos ao original; o que mudou foi
+   o contexto de disparo: no pacote original a troca ocorria entre
+   duas páginas falsas dentro de uma janela de preview em miniatura
+   (inset: 36px 0 0); aqui o overlay cobre a janela real do app
+   (inset: 0) e é acionado a cada mudança de rota do Next.js, não
+   por cliques em um site de demonstração ("Wanderly").
+   ============================================================ */
+
+.pt-glob-root {
+  --pink: #ff3cac;
+  --cyan: #00e5ff;
+  --purple: #8b5cf6;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-toast, 70);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.pt-glob-root.is-active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.pt-glob-root__blob {
+  width: 140%;
+  height: 130%;
+  margin-left: -20%;
+  background:
+    radial-gradient(ellipse 45% 55% at 30% 40%, var(--pink), transparent 65%),
+    radial-gradient(ellipse 50% 45% at 70% 60%, var(--cyan), transparent 60%),
+    linear-gradient(120deg, var(--purple), var(--pink) 45%, var(--cyan));
+  border-radius: 42% 58% 63% 37% / 45% 52% 48% 55%;
+  filter: blur(1px) saturate(1.2);
+  transform: translateX(-130%) rotate(-4deg);
+  box-shadow:
+    0 0 40px rgba(255, 60, 172, 0.4),
+    0 0 60px rgba(0, 229, 255, 0.25);
+}
+
+.pt-glob-root.is-active .pt-glob-root__blob {
+  animation: pt-globSweep 1000ms var(--ease-out) forwards;
+}
+
+@keyframes pt-globSweep {
+  0% {
+    transform: translateX(-130%) rotate(-4deg) scale(1.05);
+  }
+  50% {
+    transform: translateX(5%) rotate(2deg) scale(1.15);
+    border-radius: 58% 42% 38% 62% / 52% 48% 55% 45%;
+  }
+  100% {
+    transform: translateX(130%) rotate(4deg) scale(1.05);
+    border-radius: 40% 60% 55% 45% / 48% 52% 42% 58%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pt-glob-root {
+    display: none;
+  }
+}

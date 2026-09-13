@@ -1,0 +1,76 @@
+/* ============================================================
+   Botão "Frost" — efeito de terceiro (pacote hover-buttons-part-4).
+   Cores, gradiente e glow preservados sem alteração. Fonte trocada
+   de "Syne" (Google Fonts) para a pilha tipográfica própria do
+   VIGIA, pelo mesmo motivo documentado em globals.css: o ambiente
+   de build não tem acesso a fonts.googleapis.com.
+   ============================================================ */
+
+.frost-btn {
+  --frost-radius: 14px;
+  --frost-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --frost-accent-cyan: #3ef0ff;
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 56px;
+  padding: 0 1.75rem;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #f4f4f8;
+  background: transparent;
+  border: none;
+  border-radius: var(--frost-radius);
+  cursor: pointer;
+  isolation: isolate;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.35s var(--frost-ease-out);
+}
+
+.frost-btn__text {
+  position: relative;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.frost-btn:focus-visible {
+  outline: 2px solid var(--frost-accent-cyan);
+  outline-offset: 4px;
+}
+
+.frost-btn__base {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(150deg, #3f7fb8 0%, #2b5d92 55%, #1f4878 100%);
+  border: 2px solid rgba(150, 200, 255, 0.4);
+  box-shadow: inset 0 0 22px rgba(180, 220, 255, 0.18);
+  z-index: 0;
+}
+
+.frost-btn__canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 1;
+  pointer-events: none;
+  display: block;
+}
+
+.frost-btn.is-active {
+  transform: scale(1.015);
+}
+
+.frost-btn.is-active .frost-btn__base {
+  border-color: rgba(205, 233, 255, 0.7);
+}
+
+.frost-btn.is-active .frost-btn__text {
+  text-shadow: 0 0 14px rgba(210, 242, 255, 0.7);
+}

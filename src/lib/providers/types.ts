@@ -65,6 +65,9 @@ export type RiverSnapshot = {
   stationName: string | null;
   /** Nível de atenção INTERNO do VIGIA — nunca é "alerta oficial". */
   vigiaAttentionLevel: "normal" | "observacao" | "atencao" | "critico";
+  /** Histórico de nível dos últimos 7 dias, para consulta sob demanda
+   * (Nível 3 da hierarquia de informação — não exibido por padrão). */
+  history7d: TimeseriesPoint[];
   provenance: Provenance;
 };
 
