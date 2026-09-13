@@ -67,7 +67,7 @@ export default function LoginPage() {
               Esqueci minha senha
             </Link>
           </div>
-          <Button type="submit" fullWidth loading={status === "loading"}>
+          <Button type="submit" size="lg" fullWidth loading={status === "loading"}>
             Entrar
           </Button>
         </form>

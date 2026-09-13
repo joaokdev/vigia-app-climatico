@@ -22,8 +22,11 @@ export function Tooltip({ label, children }: { label: string; children: React.Re
       <span
         id={id}
         role="tooltip"
-        className="pointer-events-none absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded-[var(--radius-sm)] bg-[color:var(--color-text)] px-2 py-1 text-xs text-[color:var(--color-background)] transition-opacity duration-[var(--duration-fast)]"
-        style={{ opacity: open ? 1 : 0 }}
+        className="pointer-events-none absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded-[var(--radius-sm)] bg-[color:var(--color-text)] px-2 py-1 text-xs text-[color:var(--color-background)] shadow-[var(--shadow-elevation-2)] transition-[opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-standard)]"
+        style={{
+          opacity: open ? 1 : 0,
+          transform: open ? "translate(-50%, 0)" : "translate(-50%, 2px)",
+        }}
       >
         {label}
       </span>

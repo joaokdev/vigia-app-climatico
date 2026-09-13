@@ -124,7 +124,8 @@ export function MapCard({
                   aria-label={`Camada ${label}`}
                   title={label}
                   className={cn(
-                    "flex h-7 w-7 items-center justify-center rounded-[var(--radius-sm)] border text-[11px] backdrop-blur-sm transition-colors",
+                    "flex h-7 w-7 items-center justify-center rounded-[var(--radius-sm)] border text-[11px] backdrop-blur-sm",
+                    "transition-[background-color,border-color,color,transform] duration-[var(--duration-fast)] ease-[var(--ease-standard)] active:scale-90",
                     active
                       ? "border-[color:var(--color-accent)] bg-[color:var(--color-accent-soft)] text-[color:var(--color-accent)]"
                       : "border-[color:var(--color-border)] bg-[color:var(--color-surface)]/80 text-[color:var(--color-text-muted)]"

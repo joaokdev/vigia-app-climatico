@@ -19,7 +19,7 @@ export default async function MapaPage() {
   return (
     <div className="vigia-container flex flex-col gap-6 py-8">
       <header className="flex flex-col gap-2">
-        <h1 className="text-2xl font-semibold text-[color:var(--color-text)] sm:text-3xl">
+        <h1 className="text-display text-[color:var(--color-text)]">
           Mapa regional
         </h1>
         <p className="max-w-2xl text-sm text-[color:var(--color-text-muted)]">

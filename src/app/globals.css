@@ -191,6 +191,33 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
+/* ---------- Escala tipográfica ----------
+   Tracking e leading são específicos por tamanho (nunca um valor
+   fixo para toda a UI): títulos grandes recebem tracking negativo
+   e leading apertado; corpo de texto fica perto de 0/relaxado.
+   `clamp()` deixa o display responsivo sem breakpoints extras. */
+.text-display {
+  font-size: clamp(1.75rem, 1.35rem + 1.8vw, 2.75rem);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+}
+
+.text-heading {
+  font-size: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  font-weight: 600;
+}
+
+.text-eyebrow {
+  font-size: 0.75rem;
+  line-height: 1.4;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

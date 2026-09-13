@@ -1,26 +1,47 @@
 /* ============================================================
-   "Glob Wipe" page transition — efeito de terceiro (pacote
-   page-transitions). Cores, curva de easing, geometria do blob e
-   o keyframe globSweep são idênticos ao original; o que mudou foi
-   o contexto de disparo: no pacote original a troca ocorria entre
-   duas páginas falsas dentro de uma janela de preview em miniatura
-   (inset: 36px 0 0); aqui o overlay cobre a janela real do app
-   (inset: 0) e é acionado a cada mudança de rota do Next.js, não
-   por cliques em um site de demonstração ("Wanderly").
+   Transição de página — ETAPA 5: evolução do "Glob Wipe" original
+   (pacote de terceiro page-transitions).
+
+   O que muda nesta etapa (autorizado explicitamente pelo master
+   prompt da ETAPA 5, que considerou o efeito anterior "travado" e
+   com identidade visual promocional demais para o VIGIA):
+   - a forma deixa de ser um único blob sólido cruzando a tela e
+     passa a ser duas camadas atmosféricas (uma faixa diagonal +
+     um halo mais suave atrás dela) que lembram névoa/frente de
+     nuvem — sem tentar literalmente desenhar uma onda de água;
+   - a duração cai de 1000ms para ~620ms (dentro da faixa 350–700ms
+     pedida), porque em 1000ms o "cruzamento" inteiro é perceptível
+     como uma pausa na navegação, não como uma transição;
+   - as duas camadas entram e saem em opacidade (0 → 1 → 0) em vez
+     de aparecer/sumir abruptamente junto com a classe `.is-active`
+     — é essa curva de opacidade, mais do que a duração em si, que
+     tira a sensação de "tela congelando" no meio da troca.
+
+   O que continua igual em relação ao efeito anterior:
+   - overlay fixo cobrindo a janela real do app (inset: 0), acionado
+     a cada mudança de rota do Next.js;
+   - só `transform` e `opacity` são animados por frame (GPU-friendly,
+     sem reflow); `filter: blur()` é aplicado como valor estático em
+     cada camada, nunca animado;
+   - a paleta continua vindo dos tokens de água/dado científico do
+     design system (--data-rain-*, --color-accent) — nenhuma cor
+     nova foi inventada;
+   - `prefers-reduced-motion` continua desativando o efeito por
+     completo, deixando só a troca de conteúdo (sem overlay).
    ============================================================ */
 
 .pt-glob-root {
-  --pink: #ff3cac;
-  --cyan: #00e5ff;
-  --purple: #8b5cf6;
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --mist-a: var(--data-rain-1, #bfe3ff);
+  --mist-b: var(--data-rain-3, #2f7fd6);
+  --mist-c: var(--data-rain-4, #1552a3);
+  --mist-accent: var(--color-accent, #1c7a5e);
+  --pt-duration: 620ms;
+  --pt-ease: cubic-bezier(0.19, 1, 0.22, 1);
 
   position: fixed;
   inset: 0;
   z-index: var(--z-toast, 70);
   pointer-events: none;
-  display: flex;
-  align-items: center;
   overflow: hidden;
   opacity: 0;
   visibility: hidden;
@@ -31,37 +52,82 @@
   visibility: visible;
 }
 
-.pt-glob-root__blob {
-  width: 140%;
-  height: 130%;
-  margin-left: -20%;
+.pt-glob-root__mist,
+.pt-glob-root__band {
+  position: absolute;
+  inset: -25% -15%;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+/* Camada de trás: halo suave, entra um pouco antes, dá profundidade
+   atmosférica sem precisar cobrir a tela inteira sozinha. */
+.pt-glob-root__mist {
   background:
-    radial-gradient(ellipse 45% 55% at 30% 40%, var(--pink), transparent 65%),
-    radial-gradient(ellipse 50% 45% at 70% 60%, var(--cyan), transparent 60%),
-    linear-gradient(120deg, var(--purple), var(--pink) 45%, var(--cyan));
-  border-radius: 42% 58% 63% 37% / 45% 52% 48% 55%;
-  filter: blur(1px) saturate(1.2);
-  transform: translateX(-130%) rotate(-4deg);
-  box-shadow:
-    0 0 40px rgba(255, 60, 172, 0.4),
-    0 0 60px rgba(0, 229, 255, 0.25);
+    radial-gradient(ellipse 55% 60% at 38% 45%, color-mix(in srgb, var(--mist-accent) 60%, transparent), transparent 70%),
+    radial-gradient(ellipse 50% 55% at 66% 58%, color-mix(in srgb, var(--mist-b) 55%, transparent), transparent 72%);
+  filter: blur(38px);
+  transform: translate3d(-55%, 4%, 0) scale(1.05);
 }
 
-.pt-glob-root.is-active .pt-glob-root__blob {
-  animation: pt-globSweep 1000ms var(--ease-out) forwards;
+/* Camada da frente: a faixa que de fato "varre" a tela — bordas
+   suaves via gradiente (não via blur), então ela pode ficar mais
+   opaca no centro sem parecer um retângulo duro. */
+.pt-glob-root__band {
+  background: linear-gradient(
+    108deg,
+    transparent 0%,
+    color-mix(in srgb, var(--mist-c) 88%, transparent) 22%,
+    color-mix(in srgb, var(--mist-b) 92%, transparent) 45%,
+    color-mix(in srgb, var(--mist-a) 85%, transparent) 62%,
+    transparent 88%
+  );
+  filter: blur(6px);
+  transform: translate3d(-70%, -3%, 0) rotate(-3deg) scaleX(1.2);
 }
 
-@keyframes pt-globSweep {
+.pt-glob-root.is-active .pt-glob-root__mist {
+  animation: pt-mist-sweep var(--pt-duration) var(--pt-ease) forwards;
+}
+
+.pt-glob-root.is-active .pt-glob-root__band {
+  animation: pt-band-sweep var(--pt-duration) var(--pt-ease) forwards;
+  animation-delay: 30ms;
+}
+
+@keyframes pt-mist-sweep {
   0% {
-    transform: translateX(-130%) rotate(-4deg) scale(1.05);
+    opacity: 0;
+    transform: translate3d(-55%, 4%, 0) scale(1.05);
   }
-  50% {
-    transform: translateX(5%) rotate(2deg) scale(1.15);
-    border-radius: 58% 42% 38% 62% / 52% 48% 55% 45%;
+  38% {
+    opacity: 0.9;
+  }
+  62% {
+    opacity: 0.9;
+    transform: translate3d(18%, -2%, 0) scale(1.1);
   }
   100% {
-    transform: translateX(130%) rotate(4deg) scale(1.05);
-    border-radius: 40% 60% 55% 45% / 48% 52% 42% 58%;
+    opacity: 0;
+    transform: translate3d(80%, 3%, 0) scale(1.05);
+  }
+}
+
+@keyframes pt-band-sweep {
+  0% {
+    opacity: 0;
+    transform: translate3d(-70%, -3%, 0) rotate(-3deg) scaleX(1.2);
+  }
+  30% {
+    opacity: 1;
+  }
+  55% {
+    opacity: 1;
+    transform: translate3d(12%, 2%, 0) rotate(2deg) scaleX(1.1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(95%, -2%, 0) rotate(4deg) scaleX(1.2);
   }
 }
 

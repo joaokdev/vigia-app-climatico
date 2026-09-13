@@ -31,7 +31,7 @@ export function AlertBanner({ alert }: { alert: OfficialAlert }) {
       <IconAlert size={20} className="mt-0.5 shrink-0" />
       <div className="flex flex-col gap-0.5">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs font-semibold uppercase tracking-wide">
+          <span className="text-eyebrow">
             {SEVERITY_LABEL[alert.severity]} · Alerta oficial
           </span>
         </div>
@@ -49,7 +49,12 @@ export function AlertBanner({ alert }: { alert: OfficialAlert }) {
 
 export function AlertCard({ alert }: { alert: OfficialAlert }) {
   return (
-    <li className="flex flex-col gap-1 border-b border-[color:var(--color-border)] py-3 last:border-0">
+    <li
+      className={cn(
+        "flex flex-col gap-1 rounded-[var(--radius-md)] border-b border-[color:var(--color-border)] px-2 py-3 last:border-0",
+        "transition-colors duration-[var(--duration-fast)] ease-[var(--ease-standard)] hover:bg-[color:var(--color-surface-sunken)]"
+      )}
+    >
       <div className="flex items-center gap-2 text-xs">
         <span className={cn("rounded-full px-2 py-0.5 font-medium", SEVERITY_STYLE[alert.severity])}>
           {SEVERITY_LABEL[alert.severity]}

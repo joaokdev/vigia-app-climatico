@@ -60,7 +60,7 @@ export default async function CidadePage({
 
       <header className="flex flex-col gap-2">
         <div className="flex flex-wrap items-center gap-3">
-          <h1 className="text-2xl font-semibold text-[color:var(--color-text)] sm:text-3xl">
+          <h1 className="text-display text-[color:var(--color-text)]">
             {region.name}
           </h1>
           <StatusBadge status={weather.provenance.status} />
@@ -120,14 +120,14 @@ export default async function CidadePage({
 
       {river ? (
         <section aria-labelledby="rio-heading" className="flex flex-col gap-3">
-          <h2 id="rio-heading" className="text-lg font-semibold text-[color:var(--color-text)]">
+          <h2 id="rio-heading" className="text-heading text-[color:var(--color-text)]">
             Situação do rio
           </h2>
           <RiverStatus river={river} />
         </section>
       ) : (
         <section className="flex flex-col gap-3">
-          <h2 className="text-lg font-semibold text-[color:var(--color-text)]">Situação do rio</h2>
+          <h2 className="text-heading text-[color:var(--color-text)]">Situação do rio</h2>
           <EmptyState
             title="Nenhuma estação fluviométrica associada a esta região"
             description="Não informado — nenhuma régua ou estação de nível de rio está mapeada para esta cidade na FASE 1."
@@ -136,7 +136,7 @@ export default async function CidadePage({
       )}
 
       <section aria-labelledby="estacoes-heading" className="flex flex-col gap-3">
-        <h2 id="estacoes-heading" className="text-lg font-semibold text-[color:var(--color-text)]">
+        <h2 id="estacoes-heading" className="text-heading text-[color:var(--color-text)]">
           Estações próximas
         </h2>
         {stations.length > 0 ? (

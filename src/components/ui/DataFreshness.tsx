@@ -20,9 +20,20 @@ function formatRelative(iso: string): string {
  * Comunica: fonte, quando foi observado e se está desatualizado.
  */
 export function DataFreshness({ provenance }: { provenance: Provenance }) {
-  const [label, setLabel] = useState(() => formatRelative(provenance.observedAt));
+  // `null` até montar no cliente: `formatRelative` depende de
+  // `Date.now()`, que quase nunca bate entre o momento em que a página
+  // (estática/SSG) foi gerada e o momento em que o navegador da pessoa
+  // realmente hidrata — isso causava hydration mismatch de texto em
+  // toda página que usa este componente (Home, Mapa, Cidade). O rótulo
+  // exato só é calculado depois de montar, no efeito abaixo; até lá
+  // mostramos um texto neutro que é idêntico em servidor e cliente.
+  const [label, setLabel] = useState<string | null>(null);
 
   useEffect(() => {
+    // Mesmo caso do ThemeProvider: sincronização única com uma fonte
+    // externa (o relógio) na montagem, não estado derivado de props.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setLabel(formatRelative(provenance.observedAt));
     const id = setInterval(
       () => setLabel(formatRelative(provenance.observedAt)),
       30_000
@@ -36,7 +47,7 @@ export function DataFreshness({ provenance }: { provenance: Provenance }) {
     <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[color:var(--color-text-subtle)]">
       <IconRefresh size={13} className={isStale ? "opacity-60" : "text-[color:var(--color-accent)]"} />
       <span>
-        Atualizado {label}
+        Atualizado {label ?? "recentemente"}
         {isStale && (
           <span className="ml-1 text-[color:var(--color-warning)]">
             · fonte pode estar desatualizada

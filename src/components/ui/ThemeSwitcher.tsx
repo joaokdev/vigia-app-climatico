@@ -37,10 +37,10 @@ export function ThemeSwitcher() {
             title={label}
             onClick={() => setPreference(value)}
             className={cn(
-              "flex h-8 w-8 items-center justify-center rounded-[var(--radius-full)] transition-colors duration-[var(--duration-base)]",
+              "flex h-8 w-8 items-center justify-center rounded-[var(--radius-full)] transition-[background-color,color,transform] duration-[var(--duration-base)] ease-[var(--ease-standard)] active:scale-90",
               selected
                 ? "bg-[color:var(--color-interactive)] text-[color:var(--color-on-accent)]"
-                : "text-[color:var(--color-text-subtle)] hover:text-[color:var(--color-text)]"
+                : "text-[color:var(--color-text-subtle)] hover:bg-[color:var(--color-surface-sunken)] hover:text-[color:var(--color-text)]"
             )}
           >
             <Icon size={16} />

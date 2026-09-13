@@ -11,7 +11,7 @@ export function AIInsight({ text }: { text: string }) {
     <div className="flex gap-3 rounded-[var(--radius-lg)] border border-[color:var(--color-border)] bg-[color:var(--color-accent-soft)] p-4">
       <IconEye size={18} className="mt-0.5 shrink-0 text-[color:var(--color-accent)]" />
       <div className="flex flex-col gap-1">
-        <p className="text-xs font-semibold uppercase tracking-wide text-[color:var(--color-accent)]">
+        <p className="text-eyebrow text-[color:var(--color-accent)]">
           VIGIA Intelligence · exemplo demonstrativo
         </p>
         <p className="text-sm text-[color:var(--color-text)]">{text}</p>

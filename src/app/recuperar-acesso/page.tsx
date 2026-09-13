@@ -48,7 +48,7 @@ export default function RecuperarAcessoPage() {
             autoComplete="email"
             required
           />
-          <Button type="submit" fullWidth loading={status === "loading"}>
+          <Button type="submit" size="lg" fullWidth loading={status === "loading"}>
             Enviar instruções
           </Button>
         </form>

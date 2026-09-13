@@ -31,7 +31,7 @@ export default function NotificacoesPage() {
       <div className="flex flex-col gap-5">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-semibold text-[color:var(--color-text)]">Notificações</h1>
+            <h1 className="text-heading text-[color:var(--color-text)]">Notificações</h1>
             <p className="text-sm text-[color:var(--color-text-muted)]">
               {unreadCount > 0 ? `${unreadCount} não lida(s)` : "Tudo em dia"}
             </p>
@@ -55,7 +55,7 @@ export default function NotificacoesPage() {
                 key={n.id}
                 onClick={() => setItems((prev) => prev.map((i) => (i.id === n.id ? { ...i, read: true } : i)))}
                 className={cn(
-                  "flex w-full items-start gap-3 p-4 text-left transition-colors hover:bg-[color:var(--color-surface-sunken)]",
+                  "flex w-full items-start gap-3 p-4 text-left transition-colors duration-[var(--duration-fast)] ease-[var(--ease-standard)] hover:bg-[color:var(--color-surface-sunken)] active:bg-[color:var(--color-surface-sunken)]",
                   !n.read && "bg-[color:var(--color-accent-soft)]/40"
                 )}
               >

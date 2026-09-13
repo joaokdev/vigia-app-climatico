@@ -35,7 +35,7 @@ export function RegionCard({ region, snapshot }: { region: Region; snapshot: Reg
   const TrendIcon = TREND_ICON[weather.trend];
 
   return (
-    <Card elevated className="flex flex-col overflow-hidden">
+    <Card elevated interactive className="group flex flex-col overflow-hidden">
       <MapCard slug={region.slug} regionLabel={region.shortName} providerStatus={weather.provenance.status} />
 
       <div className="flex flex-1 flex-col gap-4 p-4">
@@ -88,9 +88,12 @@ export function RegionCard({ region, snapshot }: { region: Region; snapshot: Reg
 
         <Link
           href={`/cidade/${region.slug}`}
-          className="mt-auto inline-flex items-center gap-1 text-sm font-medium text-[color:var(--color-interactive)] hover:underline"
+          className="mt-auto inline-flex items-center gap-1 text-sm font-medium text-[color:var(--color-interactive)] transition-[gap,color] duration-[var(--duration-fast)] ease-[var(--ease-standard)] hover:gap-2 hover:text-[color:var(--color-interactive-hover)] active:gap-1"
         >
-          Ver detalhes de {region.shortName} →
+          Ver detalhes de {region.shortName}
+          <span aria-hidden className="transition-transform duration-[var(--duration-fast)] ease-[var(--ease-standard)] group-hover:translate-x-0.5">
+            →
+          </span>
         </Link>
       </div>
     </Card>

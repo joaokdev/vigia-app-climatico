@@ -12,7 +12,7 @@ export default function SobrePage() {
   return (
     <div className="vigia-container flex max-w-3xl flex-col gap-10 py-10">
       <header className="flex flex-col gap-3">
-        <h1 className="text-3xl font-semibold text-[color:var(--color-text)]">Sobre o VIGIA</h1>
+        <h1 className="text-display text-[color:var(--color-text)]">Sobre o VIGIA</h1>
         <p className="text-[color:var(--color-text-muted)]">
           O VIGIA é uma central regional de inteligência climática,
           meteorológica, hidrológica e ambiental para União da Vitória /
@@ -24,7 +24,7 @@ export default function SobrePage() {
       </header>
 
       <section className="flex flex-col gap-3">
-        <h2 className="text-lg font-semibold text-[color:var(--color-text)]">
+        <h2 className="text-heading text-[color:var(--color-text)]">
           Como interpretamos os dados
         </h2>
         <p className="text-sm text-[color:var(--color-text-muted)]">
@@ -46,7 +46,7 @@ export default function SobrePage() {
       </section>
 
       <section className="flex flex-col gap-3">
-        <h2 className="text-lg font-semibold text-[color:var(--color-text)]">Regiões monitoradas</h2>
+        <h2 className="text-heading text-[color:var(--color-text)]">Regiões monitoradas</h2>
         <ul className="grid gap-3 sm:grid-cols-2">
           {REGIONS.map((r) => (
             <li key={r.slug} className="rounded-[var(--radius-md)] border border-[color:var(--color-border)] p-3">
@@ -58,7 +58,7 @@ export default function SobrePage() {
       </section>
 
       <section className="flex flex-col gap-3">
-        <h2 className="text-lg font-semibold text-[color:var(--color-text)]">O que o VIGIA não faz</h2>
+        <h2 className="text-heading text-[color:var(--color-text)]">O que o VIGIA não faz</h2>
         <ul className="list-disc pl-5 text-sm text-[color:var(--color-text-muted)]">
           <li>Não declara segurança absoluta (&ldquo;100% seguro&rdquo;).</li>
           <li>Não substitui alertas oficiais de defesa civil.</li>

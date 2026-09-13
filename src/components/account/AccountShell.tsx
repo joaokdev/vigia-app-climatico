@@ -28,7 +28,7 @@ export function AccountShell({ children }: { children: React.ReactNode }) {
               href={href}
               aria-current={isActive ? "page" : undefined}
               className={cn(
-                "flex shrink-0 items-center gap-2 rounded-[var(--radius-md)] px-3 py-2 text-sm font-medium transition-colors",
+                "flex shrink-0 items-center gap-2 rounded-[var(--radius-md)] px-3 py-2 text-sm font-medium transition-[background-color,color,transform] duration-[var(--duration-fast)] ease-[var(--ease-standard)] active:scale-[0.97]",
                 isActive
                   ? "bg-[color:var(--color-accent-soft)] text-[color:var(--color-interactive)]"
                   : "text-[color:var(--color-text-muted)] hover:bg-[color:var(--color-surface-sunken)] hover:text-[color:var(--color-text)]"

@@ -58,12 +58,28 @@ export const themeInitScript = `
 `;
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  // Inicializadores preguiçosos: leem localStorage/matchMedia uma vez,
-  // sem precisar de um efeito que dispare setState em cascata.
-  const [preference, setPreferenceState] = useState<ThemePreference>(
-    readStoredPreference
-  );
-  const [systemTheme, setSystemTheme] = useState<ResolvedTheme>(getSystemTheme);
+  // Estado inicial fixo (igual em servidor e na primeira pintura do
+  // cliente): "system"/"dark", o mesmo valor que `readStoredPreference`/
+  // `getSystemTheme` já retornavam quando `window` não existia. Isso
+  // evita hydration mismatch em qualquer componente que leia `resolved`
+  // no primeiro render (ex.: `Logo`, `ThemeSwitcher`) — o valor real
+  // (localStorage/matchMedia) só é lido depois de montar, no efeito
+  // abaixo. O script inline (`themeInitScript`) já cuida do FOUC visual
+  // via CSS/`data-theme` antes disso; este efeito só sincroniza o
+  // estado React com o que o script já aplicou ao DOM.
+  const [preference, setPreferenceState] = useState<ThemePreference>("system");
+  const [systemTheme, setSystemTheme] = useState<ResolvedTheme>("dark");
+
+  useEffect(() => {
+    // Sincronização única, só na montagem, com uma fonte externa
+    // (localStorage/matchMedia) para resolver o valor real do tema sem
+    // quebrar a hidratação (ver comentário acima). Não é o padrão de
+    // "estado derivado" que a regra normalmente evita — é leitura de
+    // uma fonte fora do React, uma única vez.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setPreferenceState(readStoredPreference());
+    setSystemTheme(getSystemTheme());
+  }, []);
 
   // Apenas se inscreve em um sistema externo (matchMedia); o setState
   // ocorre dentro do callback do listener, não no corpo do efeito.

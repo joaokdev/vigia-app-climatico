@@ -41,7 +41,7 @@ export default function CadastroPage() {
         <div>
           <PasswordStrengthVault />
         </div>
-        <Button type="submit" fullWidth loading={loading}>
+        <Button type="submit" size="lg" fullWidth loading={loading}>
           Continuar
         </Button>
         <p className="text-center text-[11px] text-[color:var(--color-text-subtle)]">

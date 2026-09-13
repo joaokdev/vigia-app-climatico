@@ -8,7 +8,7 @@ export function Footer() {
     <footer className="border-t border-[color:var(--color-border)] bg-[color:var(--color-surface)]">
       <div className="vigia-container grid gap-8 py-10 md:grid-cols-4">
         <div className="flex flex-col gap-3">
-          <Logo size={34} />
+          <Logo size={40} />
           <p className="max-w-xs text-sm text-[color:var(--color-text-muted)]">
             Central regional de monitoramento ambiental para a região de União
             da Vitória, Cruz Machado, Bituruna e Inácio Martins.

@@ -44,7 +44,7 @@ export default function FontesPage() {
   return (
     <div className="vigia-container flex max-w-3xl flex-col gap-6 py-10">
       <header className="flex flex-col gap-3">
-        <h1 className="text-3xl font-semibold text-[color:var(--color-text)]">Fontes de dados</h1>
+        <h1 className="text-display text-[color:var(--color-text)]">Fontes de dados</h1>
         <p className="text-[color:var(--color-text-muted)]">
           Na FASE 1, o VIGIA não consome nenhuma API externa real — toda a
           interface usa dados de demonstração centralizados e claramente

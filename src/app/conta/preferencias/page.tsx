@@ -18,7 +18,7 @@ export default function PreferenciasPage() {
     <AccountShell>
       <div className="flex flex-col gap-6">
         <div>
-          <h1 className="text-xl font-semibold text-[color:var(--color-text)]">Preferências</h1>
+          <h1 className="text-heading text-[color:var(--color-text)]">Preferências</h1>
           <p className="text-sm text-[color:var(--color-text-muted)]">
             Alterações nesta página são apenas locais nesta demonstração (FASE
             1) — nada é persistido em conta ou banco de dados.
@@ -40,10 +40,10 @@ export default function PreferenciasPage() {
                   onClick={() => setTempUnit(unit)}
                   aria-pressed={tempUnit === unit}
                   className={cn(
-                    "rounded-[var(--radius-full)] px-3 py-1 text-xs font-medium transition-colors",
+                    "rounded-[var(--radius-full)] px-3 py-1 text-xs font-medium transition-[background-color,color,transform] duration-[var(--duration-fast)] ease-[var(--ease-standard)] active:scale-95",
                     tempUnit === unit
                       ? "bg-[color:var(--color-interactive)] text-[color:var(--color-on-accent)]"
-                      : "text-[color:var(--color-text-muted)]"
+                      : "text-[color:var(--color-text-muted)] hover:text-[color:var(--color-text)]"
                   )}
                 >
                   {unit === "celsius" ? "°C" : "°F"}
@@ -62,10 +62,10 @@ export default function PreferenciasPage() {
                 onClick={() => setFavorite(r.slug)}
                 aria-pressed={favorite === r.slug}
                 className={cn(
-                  "rounded-[var(--radius-full)] border px-3 py-1.5 text-sm font-medium transition-colors",
+                  "rounded-[var(--radius-full)] border px-3 py-1.5 text-sm font-medium transition-[background-color,border-color,color,transform] duration-[var(--duration-fast)] ease-[var(--ease-standard)] active:scale-95",
                   favorite === r.slug
                     ? "border-[color:var(--color-interactive)] bg-[color:var(--color-accent-soft)] text-[color:var(--color-interactive)]"
-                    : "border-[color:var(--color-border)] text-[color:var(--color-text-muted)]"
+                    : "border-[color:var(--color-border)] text-[color:var(--color-text-muted)] hover:border-[color:var(--color-border-strong)] hover:text-[color:var(--color-text)]"
                 )}
               >
                 {r.shortName}

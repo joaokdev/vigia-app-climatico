@@ -40,7 +40,7 @@ export default async function HomePage() {
 
       {/* Hero contextual */}
       <section className="flex flex-col gap-4">
-        <h1 className="max-w-3xl text-3xl font-semibold tracking-tight text-[color:var(--color-text)] sm:text-4xl">
+        <h1 className="text-display max-w-3xl text-[color:var(--color-text)]">
           O que está acontecendo agora na região do Iguaçu e do Contestado.
         </h1>
         <p className="max-w-2xl text-[color:var(--color-text-muted)]">
@@ -61,7 +61,7 @@ export default async function HomePage() {
       {/* Alertas em destaque */}
       {allAlerts.length > 0 && (
         <section aria-labelledby="alertas-heading" className="flex flex-col gap-3">
-          <h2 id="alertas-heading" className="text-lg font-semibold text-[color:var(--color-text)]">
+          <h2 id="alertas-heading" className="text-heading text-[color:var(--color-text)]">
             Alertas oficiais ativos
           </h2>
           <Card className="p-4">
@@ -77,7 +77,7 @@ export default async function HomePage() {
       {/* Quatro cards regionais */}
       <section aria-labelledby="regioes-heading" className="flex flex-col gap-4">
         <div className="flex items-baseline justify-between">
-          <h2 id="regioes-heading" className="text-lg font-semibold text-[color:var(--color-text)]">
+          <h2 id="regioes-heading" className="text-heading text-[color:var(--color-text)]">
             Panorama regional
           </h2>
           <span className="text-xs text-[color:var(--color-text-subtle)]">

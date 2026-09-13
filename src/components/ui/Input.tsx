@@ -38,7 +38,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         aria-describedby={cn(hint && hintId, error && errorId) || undefined}
         aria-invalid={!!error}
         className={cn(
-          "h-11 rounded-[var(--radius-md)] border bg-[color:var(--color-surface)] px-3.5 text-[15px] text-[color:var(--color-text)] placeholder:text-[color:var(--color-text-subtle)] transition-colors duration-[var(--duration-fast)]",
+          // 16px (text-base), não 15px: abaixo de 16px o Safari/Chrome no
+          // iOS dá zoom automático ao focar o campo — no Android isso não
+          // acontece, mas o valor precisa ser o mesmo em todo lugar.
+          "h-12 rounded-[var(--radius-md)] border bg-[color:var(--color-surface)] px-3.5 text-base text-[color:var(--color-text)] placeholder:text-[color:var(--color-text-subtle)] transition-colors duration-[var(--duration-fast)]",
           error
             ? "border-[color:var(--color-danger)]"
             : "border-[color:var(--color-border)] focus:border-[color:var(--color-interactive)]",
@@ -71,7 +74,7 @@ export const PasswordField = forwardRef<HTMLInputElement, InputProps>(
           onClick={() => setVisible((v) => !v)}
           aria-label={visible ? "Ocultar senha" : "Mostrar senha"}
           aria-pressed={visible}
-          className="absolute right-3 top-[38px] text-[color:var(--color-text-subtle)] hover:text-[color:var(--color-text)]"
+          className="absolute right-3 top-[42px] text-[color:var(--color-text-subtle)] transition-[color,transform] duration-[var(--duration-fast)] ease-[var(--ease-standard)] hover:text-[color:var(--color-text)] active:scale-90"
         >
           {visible ? <IconEyeOff size={18} /> : <IconEye size={18} />}
         </button>
