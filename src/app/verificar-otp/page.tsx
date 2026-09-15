@@ -18,7 +18,7 @@ export default function VerificarOtpPage() {
   }, [router]);
 
   return (
-    <div className="flex min-h-[calc(100vh-64px)] flex-col items-center justify-center gap-6 px-4 py-12">
+    <div className="flex min-h-[calc(100vh-80px)] flex-col items-center justify-center gap-6 px-4 py-12">
       <Link href="/" aria-label="VIGIA — página inicial">
         <Logo size={44} />
       </Link>

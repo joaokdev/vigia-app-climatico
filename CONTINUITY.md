@@ -1,5 +1,71 @@
 # IG (VIGIA) — CONTINUITY
 
+## Estado atual (ETAPA 6 — reduced-motion, reduced-transparency e acessibilidade real)
+
+Sexta etapa. Escopo: fechar a pendência nº1 deixada no fim da ETAPA 5
+("`prefers-reduced-motion` e leitor de tela reais continuam sem teste
+com ferramenta real") — desta vez com o mesmo navegador real
+(Chromium via Playwright, `/opt/pw-browsers`) usado nas etapas 4 e 5,
+em vez de só ler o CSS. Nenhum arquivo de componente foi alterado
+nesta sessão — foi puramente investigação/validação; tudo que segue
+foi CONFIRMADO, não presumido.
+
+### O que foi testado e o resultado
+
+1. **`prefers-reduced-motion: reduce` real (via `context.reducedMotion`
+   do Playwright), nas 12 rotas do master prompt:** a regra global em
+   `globals.css` (`animation-duration`/`transition-duration:
+   0.001ms !important`) funciona de ponta a ponta — medi a maior
+   `animation-duration`/`transition-duration` computada em qualquer
+   elemento de cada página, em ambos os estados. Sem a preferência,
+   valores normais (220–1150ms; um pico de 82000ms em
+   `/conta/preferencias`, que é uma animação ambiente lenta do
+   Day/Night Toggle — está bem longe da faixa de ~5s/ciclo que a
+   Apple Design Skill pede pra evitar, então não é um problema). Com
+   a preferência ativa, **0ms em todas as 12 rotas**, confirmando que
+   nenhum efeito de terceiro escapa da regra global.
+2. **`prefers-reduced-transparency: reduce` real (via CDP
+   `Emulation.setEmulatedMedia`)** nas 4 páginas com `AuthShell`
+   (login, cadastro, recuperar-acesso) + verificar-otp: o
+   `.auth-ambient-glow` (o glow radial de fundo) confirma
+   `display: none` corretamente nas 3 páginas que o usam.
+   `/verificar-otp` não usa `AuthShell` (é uma página própria, sem o
+   glow desde a origem) — não é uma lacuna, é um layout diferente que
+   já existia antes desta sessão.
+3. **Aproximação de leitor de tela (árvore de acessibilidade real via
+   `page.accessibility.snapshot`)** em 8 rotas centrais: nenhum
+   elemento interativo (`textbox`/`button`/`combobox`/`image`) sem
+   nome acessível ou alt. Landmarks (`main`/`nav`/`header`/`footer`)
+   presentes em todas. Regiões `aria-live`/`role="alert"` confirmadas
+   funcionando de verdade no DOM: o banner de alerta oficial na home
+   (`role="alert"`), o status ao vivo do Vault e do OTP
+   (`aria-live="polite"`), e o rótulo do Day/Night Toggle.
+4. **Ordem de tab real (`Keyboard.press('Tab')`)** em `/cadastro` e
+   `/verificar-otp`: ordem correta e previsível (skip-link → logo →
+   nav → tema → notificação → entrar/criar conta). Um resultado
+   inicialmente estranho em `/verificar-otp` (Tab parecia pular
+   direto pro rodapé) foi investigado e **não é bug**: o campo OTP
+   recebe autofocus real no carregamento (confirmado via
+   `document.activeElement` antes de qualquer Tab), e o
+   `resend-button` fica `disabled` durante o cooldown — por isso o
+   navegador o pula corretamente, e o `continue-button` fica oculto
+   até o código ser válido. Comportamento nativo esperado do
+   navegador, confirmado, não um problema de foco perdido.
+
+### Testes (ETAPA 6)
+- `npm install`, `npx tsc --noEmit`, `npx eslint .`, `npm run build`
+  — todos limpos (17 rotas), antes de qualquer teste de navegador.
+- `next start` (produção) + scripts Playwright dedicados para cada um
+  dos 4 itens acima.
+
+### Pendência que permanece (não fechada nesta etapa, é subjetiva)
+- Revisão humana final de gosto/sensação na transição de página
+  ("Glob Wipe" em tons de água) — já registrada como pendência de
+  direção na ETAPA 5, continua sendo decisão do proprietário, não
+  algo que um script possa validar.
+
+---
+
 ## Estado atual (ETAPA 5 — revisão profunda de UX/UI + mobile Android)
 
 Quinta etapa, com uma prioridade diferente das anteriores: não bastava

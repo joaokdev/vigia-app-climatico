@@ -65,6 +65,7 @@ function randomInt(min: number, max: number) {
 
 export function DayNightWindowToggle() {
   const { resolved, setPreference } = useTheme();
+  const rootRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const starsLayerRef = useRef<HTMLSpanElement>(null);
   const birdsLayerRef = useRef<HTMLSpanElement>(null);
@@ -311,6 +312,7 @@ export function DayNightWindowToggle() {
     const copy = isNight ? MODE_COPY.night : MODE_COPY.day;
 
     toggle.classList.toggle("is-night", isNight);
+    rootRef.current?.classList.toggle("is-night", isNight);
     toggle.setAttribute("aria-pressed", String(isNight));
     toggle.setAttribute("aria-label", copy.label);
     if (modeIconRef.current) modeIconRef.current.textContent = copy.icon;
@@ -340,7 +342,7 @@ export function DayNightWindowToggle() {
   }
 
   return (
-    <div className="dn-root">
+    <div className="dn-root" ref={rootRef}>
       <section className="appearance-widget" aria-labelledby="vigiaAppearanceTitle">
         <div className="appearance-widget__glow" aria-hidden="true" />
         <header className="appearance-widget__header">

@@ -24,9 +24,9 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-[var(--z-header)] border-b border-[color:var(--color-border)] bg-[color:var(--color-surface)]/90 backdrop-blur-sm">
-      <div className="vigia-container flex h-16 items-center justify-between">
+      <div className="vigia-container flex h-20 items-center justify-between">
         <Link href="/" className="flex items-center" aria-label="VIGIA — página inicial">
-          <Logo size={44} />
+          <Logo size={60} />
         </Link>
 
         <nav aria-label="Navegação principal" className="hidden items-center gap-1 md:flex">

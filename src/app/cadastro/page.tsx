@@ -38,7 +38,7 @@ export default function CadastroPage() {
       <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
         <Input label="Nome" name="name" autoComplete="name" required />
         <Input label="E-mail" type="email" name="email" autoComplete="email" required />
-        <div>
+        <div className="mt-1 rounded-[var(--radius-lg)] bg-[color:var(--color-surface-sunken)] p-2.5">
           <PasswordStrengthVault />
         </div>
         <Button type="submit" size="lg" fullWidth loading={loading}>

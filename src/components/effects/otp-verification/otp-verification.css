@@ -15,8 +15,8 @@
   --text: #f2f4f3;
   --muted: #9aa3ad;
   --faint: #707985;
-  --purple: #4f74e8;
-  --purple-bright: #7f9bf3;
+  --purple: #22b8a3;
+  --purple-bright: #5be0cc;
   --cyan: #3de0d0;
   --cyan-bright: #7af5e8;
   --green: #2bcf8b;
@@ -98,7 +98,7 @@
   position: relative;
   isolation: isolate;
   width: 100%;
-  min-height: 512px;
+  min-height: 385px;
   padding: 27px 38px 24px;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.075);
@@ -124,7 +124,7 @@
   content: "";
   border-radius: inherit;
   background:
-    radial-gradient(360px 180px at 50% -40px, rgba(145, 131, 255, 0.075), transparent 74%),
+    radial-gradient(360px 180px at 50% -40px, rgba(61, 224, 208, 0.075), transparent 74%),
     linear-gradient(120deg, transparent 18%, rgba(255, 255, 255, 0.016) 46%, transparent 70%);
   transition: opacity 700ms var(--premium-ease);
 }
@@ -152,7 +152,7 @@
   height: 220px;
   border-radius: 50%;
   pointer-events: none;
-  background: rgba(111, 91, 255, 0.085);
+  background: rgba(45, 200, 182, 0.085);
   filter: blur(52px);
   transform: translateX(-50%);
   transition: background-color 700ms ease, opacity 700ms ease;
@@ -199,7 +199,7 @@
 
 .otp-root .stage-stack {
   display: grid;
-  min-height: 340px;
+  min-height: 210px;
 }
 
 .otp-root .verification-form,
@@ -209,7 +209,7 @@
 
 .otp-root .verification-form {
   position: relative;
-  height: 340px;
+  height: 210px;
 }
 
 .otp-root .otp-input {
@@ -235,7 +235,7 @@
 .otp-root .otp-scene {
   position: relative;
   width: 100%;
-  height: 340px;
+  height: 210px;
   overflow: visible;
   perspective: 920px;
   perspective-origin: 50% 47%;
@@ -250,7 +250,7 @@
   border-radius: 50%;
   pointer-events: none;
   opacity: 0;
-  background: radial-gradient(circle, rgba(111, 91, 255, 0.095), rgba(111, 91, 255, 0.02) 38%, transparent 69%);
+  background: radial-gradient(circle, rgba(45, 200, 182, 0.095), rgba(45, 200, 182, 0.02) 38%, transparent 69%);
   filter: blur(8px);
   transform: translate3d(-50%, -50%, -80px) scale(0.65);
   transition: opacity 720ms ease, transform 900ms var(--premium-ease);
@@ -274,8 +274,8 @@
   pointer-events: none;
   opacity: 0;
   background:
-    linear-gradient(rgba(111, 91, 255, 0.052) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(111, 91, 255, 0.052) 1px, transparent 1px);
+    linear-gradient(rgba(45, 200, 182, 0.052) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(45, 200, 182, 0.052) 1px, transparent 1px);
   background-size: 20px 20px;
   -webkit-mask-image: radial-gradient(circle, rgba(0, 0, 0, 0.8), transparent 69%);
   mask-image: radial-gradient(circle, rgba(0, 0, 0, 0.8), transparent 69%);
@@ -345,7 +345,7 @@
   color: #eef9ff;
   text-shadow:
     0 0 10px rgba(122, 245, 232, 0.35),
-    0 0 18px rgba(127, 155, 243, 0.18);
+    0 0 18px rgba(94, 234, 212, 0.18);
 }
 
 .otp-root .otp-node.is-flash .node-trace {
@@ -362,7 +362,7 @@
   color: #e8f7ff;
   text-shadow:
     0 0 14px rgba(122, 245, 232, 0.7),
-    0 0 28px rgba(127, 155, 243, 0.45);
+    0 0 28px rgba(94, 234, 212, 0.45);
 }
 
 .otp-root .otp-node.is-tracing .node-trace,
@@ -372,11 +372,11 @@
 }
 
 .otp-root .otp-node.is-tracing .node-trace {
-  filter: drop-shadow(0 0 8px rgba(127, 155, 243, 0.65));
+  filter: drop-shadow(0 0 8px rgba(94, 234, 212, 0.65));
 }
 
 .otp-root .otp-node.is-tracing .node-trace-path {
-  stroke: #9eb6ff;
+  stroke: #7ff0dd;
   stroke-dasharray: 100;
   animation: otp-nodeTraceDraw 1.4s var(--premium-ease) both;
 }
@@ -406,8 +406,8 @@
     transparent 0deg,
     rgba(61, 224, 208, 0.0) 40deg,
     rgba(122, 245, 232, 0.85) 78deg,
-    rgba(127, 155, 243, 0.9) 118deg,
-    rgba(79, 116, 232, 0.35) 160deg,
+    rgba(94, 234, 212, 0.9) 118deg,
+    rgba(31, 157, 132, 0.35) 160deg,
     transparent 210deg
   );
   -webkit-mask:
@@ -539,8 +539,8 @@
   height: 30px;
   border-radius: 99px;
   opacity: 0;
-  background: linear-gradient(180deg, #a99eff, var(--purple));
-  box-shadow: 0 0 11px rgba(111, 91, 255, 0.72);
+  background: linear-gradient(180deg, #7ff0dd, var(--purple));
+  box-shadow: 0 0 11px rgba(45, 200, 182, 0.72);
   transform: translate(-50%, -50%) scaleY(0.86);
 }
 
@@ -556,19 +556,19 @@
 
 .otp-root .verification-form.is-input-focused .otp-node.is-active .node-face,
 .otp-root .verification-form.is-primed .otp-node.is-active .node-face {
-  border-color: #806fff;
+  border-color: #22c3a6;
   background-color: #11111b;
   box-shadow:
-    0 0 0 3px rgba(111, 91, 255, 0.12),
-    0 0 32px rgba(111, 91, 255, 0.27),
-    inset 0 0 22px rgba(111, 91, 255, 0.11),
+    0 0 0 3px rgba(45, 200, 182, 0.12),
+    0 0 32px rgba(45, 200, 182, 0.27),
+    inset 0 0 22px rgba(45, 200, 182, 0.11),
     inset 0 1px 0 rgba(255, 255, 255, 0.07);
 }
 
 .otp-root .verification-form.is-input-focused .otp-node.is-active::before,
 .otp-root .verification-form.is-primed .otp-node.is-active::before {
   opacity: 0.2;
-  background: rgba(111, 91, 255, 0.32);
+  background: rgba(45, 200, 182, 0.32);
 }
 
 /* =============================================
@@ -585,11 +585,11 @@
   border-radius: 999px;
   opacity: 0;
   pointer-events: none;
-  background: linear-gradient(90deg, rgba(61, 224, 208, 0.85), var(--purple) 28%, #ada4ff 68%, rgba(122, 245, 232, 0.7));
+  background: linear-gradient(90deg, rgba(61, 224, 208, 0.85), var(--purple) 28%, #8ef2e0 68%, rgba(122, 245, 232, 0.7));
   box-shadow:
     0 0 5px rgba(61, 224, 208, 0.75),
-    0 0 12px rgba(111, 91, 255, 0.55),
-    0 0 24px rgba(111, 91, 255, 0.18);
+    0 0 12px rgba(45, 200, 182, 0.55),
+    0 0 24px rgba(45, 200, 182, 0.18);
   transform-origin: 0 50%;
   will-change: auto;
 }
@@ -599,7 +599,7 @@
   inset: -4px 0;
   content: "";
   border-radius: inherit;
-  background: rgba(111, 91, 255, 0.14);
+  background: rgba(45, 200, 182, 0.14);
   filter: blur(4px);
 }
 
@@ -611,8 +611,8 @@
   height: 5px;
   border-radius: 99px;
   opacity: 0;
-  background: linear-gradient(90deg, transparent, #f0fffc 40%, #dce4ff 70%, transparent);
-  box-shadow: 0 0 14px rgba(122, 245, 232, 0.95), 0 0 18px rgba(173, 164, 255, 0.7);
+  background: linear-gradient(90deg, transparent, #f0fffc 40%, #d8fff2 70%, transparent);
+  box-shadow: 0 0 14px rgba(122, 245, 232, 0.95), 0 0 18px rgba(143, 245, 228, 0.7);
   transform: translate3d(0%, -50%, 0) scaleX(0.3);
 }
 
@@ -660,7 +660,7 @@
 }
 
 .otp-root .demo-code {
-  color: #9eb6ff;
+  color: #7ff0dd;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.08em;
@@ -686,7 +686,7 @@
   padding: 5px 8px;
   border: 0;
   border-radius: 8px;
-  color: #8177ba;
+  color: #4f9d8f;
   background: transparent;
   font-size: 12px;
   font-weight: 600;
@@ -694,12 +694,12 @@
 }
 
 .otp-root .resend-button:not(:disabled) {
-  color: #a99eff;
+  color: #7ff0dd;
   cursor: pointer;
 }
 
 .otp-root .resend-button:not(:disabled):hover {
-  background: rgba(111, 91, 255, 0.08);
+  background: rgba(45, 200, 182, 0.08);
 }
 
 .otp-root .otp-feedback.is-error {
@@ -748,7 +748,7 @@
    ============================================= */
 
 .otp-root .verification-card[data-state="processing"] {
-  border-color: rgba(111, 91, 255, 0.18);
+  border-color: rgba(45, 200, 182, 0.18);
   background-color: #0c0f0f;
   box-shadow:
     0 36px 105px rgba(0, 0, 0, 0.58),
@@ -763,7 +763,7 @@
 
 .otp-root .verification-card[data-state="processing"] .card-reflection {
   opacity: 0.28;
-  background: rgba(111, 91, 255, 0.12);
+  background: rgba(45, 200, 182, 0.12);
 }
 
 .otp-root .verification-card[data-state="processing"]::before,
@@ -787,25 +787,25 @@
 
 .otp-root .verification-card[data-state="processing"] .otp-node::before {
   opacity: 0.18;
-  background: rgba(111, 91, 255, 0.28);
+  background: rgba(45, 200, 182, 0.28);
   transform: translateZ(-1px) scale(1.02);
 }
 
 .otp-root .verification-card[data-state="processing"] .node-face {
-  border-color: rgba(145, 131, 255, 0.52);
+  border-color: rgba(61, 224, 208, 0.52);
   border-radius: 17px;
   color: #d5d9d7;
   background-color: #080b0a;
   box-shadow:
     0 12px 28px rgba(0, 0, 0, 0.34),
-    0 0 20px rgba(111, 91, 255, 0.12),
-    inset 0 1px 0 rgba(218, 213, 255, 0.07),
+    0 0 20px rgba(45, 200, 182, 0.12),
+    inset 0 1px 0 rgba(214, 250, 244, 0.07),
     inset 0 -10px 22px rgba(0, 0, 0, 0.26);
 }
 
 .otp-root .verification-card[data-state="processing"] .node-sheen {
   opacity: 0.3;
-  background: linear-gradient(120deg, transparent 22%, rgba(173, 164, 255, 0.13) 47%, transparent 66%);
+  background: linear-gradient(120deg, transparent 22%, rgba(143, 245, 228, 0.13) 47%, transparent 66%);
 }
 
 .otp-root .otp-node.is-routing {
@@ -829,7 +829,7 @@
   position: relative;
   z-index: 6;
   display: flex;
-  height: 340px;
+  height: 210px;
   padding-top: 12px;
   flex-direction: column;
   align-items: center;
@@ -1142,7 +1142,7 @@
    ============================================= */
 
 .otp-root button:focus-visible {
-  outline: 2px solid #a69cff;
+  outline: 2px solid #5eead4;
   outline-offset: 3px;
 }
 
@@ -1176,7 +1176,7 @@
 }
 
 @keyframes otp-nodeTraceLock {
-  0% { stroke: #9eb6ff; }
+  0% { stroke: #7ff0dd; }
   40% { stroke: var(--cyan-bright); }
   100% { stroke: var(--green-bright); }
 }
@@ -1336,7 +1336,7 @@
   color: #eef9ff;
   text-shadow:
     0 0 10px rgba(122, 245, 232, 0.4),
-    0 0 18px rgba(127, 155, 243, 0.2);
+    0 0 18px rgba(94, 234, 212, 0.2);
 }
 
 .otp-root .otp-node.has-value.is-active .node-face,
@@ -1368,13 +1368,13 @@
 }
 
 .otp-root .demo-code {
-  color: #9eb6ff;
+  color: #7ff0dd;
 }
 
 .otp-root .node-sheen {
   display: block;
   opacity: 0.18;
-  background: linear-gradient(120deg, transparent 24%, rgba(127, 155, 243, 0.11) 48%, transparent 68%);
+  background: linear-gradient(120deg, transparent 24%, rgba(94, 234, 212, 0.11) 48%, transparent 68%);
 }
 
 .otp-root .digit {
@@ -1383,16 +1383,16 @@
 }
 
 .otp-root .custom-caret {
-  background: #7f9bf3;
+  background: #5be0cc;
   box-shadow: none;
 }
 
 .otp-root .verification-form.is-input-focused .otp-node.is-active .node-face,
 .otp-root .verification-form.is-primed .otp-node.is-active .node-face {
-  border-color: #6f8ff0;
+  border-color: #34d8b8;
   background-color: #151922;
   box-shadow:
-    0 0 0 3px rgba(79, 116, 232, 0.14),
+    0 0 0 3px rgba(31, 157, 132, 0.14),
     0 8px 22px rgba(0, 0, 0, 0.24);
 }
 
@@ -1400,15 +1400,15 @@
 .otp-root .verification-form.is-primed .otp-node.is-active::before,
 .otp-root .verification-card[data-state="processing"] .otp-node::before {
   opacity: 0.14;
-  background: rgba(79, 116, 232, 0.26);
+  background: rgba(31, 157, 132, 0.26);
 }
 
 .otp-root .wire {
   height: 2.5px;
-  background: linear-gradient(90deg, #3de0d0, #5f7fe8 42%, #a8baff 78%, #7af5e8);
+  background: linear-gradient(90deg, #3de0d0, #2fb59c 42%, #7ff5e4 78%, #7af5e8);
   box-shadow:
     0 0 6px rgba(61, 224, 208, 0.45),
-    0 0 14px rgba(79, 116, 232, 0.35);
+    0 0 14px rgba(31, 157, 132, 0.35);
 }
 
 .otp-root .wire::before {
@@ -1420,17 +1420,17 @@
 .otp-root .wire span {
   display: block;
   height: 5px;
-  background: linear-gradient(90deg, transparent, #f0fffc 42%, #c9d6ff 68%, transparent);
+  background: linear-gradient(90deg, transparent, #f0fffc 42%, #d3fff2 68%, transparent);
   box-shadow:
     0 0 10px rgba(122, 245, 232, 0.85),
-    0 0 18px rgba(127, 155, 243, 0.55);
+    0 0 18px rgba(94, 234, 212, 0.55);
 }
 
 .otp-root .wire.is-live {
   height: 3px;
   box-shadow:
     0 0 8px rgba(61, 224, 208, 0.7),
-    0 0 20px rgba(79, 116, 232, 0.45);
+    0 0 20px rgba(31, 157, 132, 0.45);
 }
 
 .otp-root .collapse-core {
@@ -1451,11 +1451,11 @@
 
 .otp-root .resend-button,
 .otp-root .resend-button:not(:disabled) {
-  color: #7f9bf3;
+  color: #5be0cc;
 }
 
 .otp-root .resend-button:not(:disabled):hover {
-  background: rgba(79, 116, 232, 0.1);
+  background: rgba(31, 157, 132, 0.1);
 }
 
 .otp-root .verification-card[data-state="processing"] {
@@ -1463,7 +1463,7 @@
   background-color: #151a22;
   box-shadow:
     0 24px 56px rgba(0, 0, 0, 0.36),
-    0 0 0 1px rgba(79, 116, 232, 0.08),
+    0 0 0 1px rgba(31, 157, 132, 0.08),
     0 0 48px rgba(61, 224, 208, 0.08);
 }
 
@@ -1474,7 +1474,7 @@
   background-color: #0e141b;
   box-shadow:
     0 8px 20px rgba(0, 0, 0, 0.28),
-    0 0 16px rgba(79, 116, 232, 0.14),
+    0 0 16px rgba(31, 157, 132, 0.14),
     0 0 22px rgba(61, 224, 208, 0.08);
 }
 
@@ -1550,7 +1550,7 @@
 }
 
 .otp-root button:focus-visible {
-  outline-color: #7f9bf3;
+  outline-color: #5be0cc;
 }
 
 .otp-root .continue-button:focus-visible {
@@ -1589,7 +1589,7 @@
   
 
   .otp-root .verification-card {
-    min-height: 505px;
+    min-height: 373px;
     padding: 24px 24px 20px;
   }
 
@@ -1597,8 +1597,8 @@
 .otp-root .verification-form,
 .otp-root .otp-scene,
 .otp-root .success-view {
-    min-height: 342px;
-    height: 342px;
+    min-height: 210px;
+    height: 210px;
   }
 
   .otp-root .digit {
@@ -1606,11 +1606,11 @@
   }
 
   .otp-root .demo-note {
-    bottom: 86px;
+    bottom: 62px;
   }
 
   .otp-root .otp-feedback {
-    bottom: 52px;
+    bottom: 30px;
   }
 }
 
@@ -1637,8 +1637,8 @@
 .otp-root .verification-form,
 .otp-root .otp-scene,
 .otp-root .success-view {
-    min-height: 348px;
-    height: 348px;
+    min-height: 215px;
+    height: 215px;
   }
 
   .otp-root .node-face {
@@ -1648,7 +1648,7 @@
   .otp-root .verification-form.is-input-focused .otp-node.is-active .node-face,
 .otp-root .verification-form.is-primed .otp-node.is-active .node-face {
     box-shadow:
-      0 0 0 3px rgba(79, 116, 232, 0.14),
+      0 0 0 3px rgba(31, 157, 132, 0.14),
       0 8px 20px rgba(0, 0, 0, 0.24);
   }
 
@@ -1657,12 +1657,12 @@
   }
 
   .otp-root .demo-note {
-    bottom: 84px;
+    bottom: 60px;
     font-size: 11px;
   }
 
   .otp-root .otp-feedback {
-    bottom: 48px;
+    bottom: 28px;
   }
 
   .otp-root .success-art {

@@ -13,7 +13,7 @@ export function AuthShell({
   footer?: React.ReactNode;
 }) {
   return (
-    <div className="relative flex min-h-[calc(100vh-64px)] items-center justify-center overflow-hidden px-4 py-8 sm:px-6 sm:py-12">
+    <div className="relative flex min-h-[calc(100vh-80px)] items-center justify-center overflow-hidden px-4 py-8 sm:px-6 sm:py-12">
       {/* Fundo climático — sutil, decorativo, sem interferir no formulário.
           Usa os mesmos tokens de dado científico do resto do produto para
           que autenticação pareça parte do VIGIA, não uma tela genérica. */}
