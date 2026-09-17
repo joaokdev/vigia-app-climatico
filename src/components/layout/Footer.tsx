@@ -13,7 +13,14 @@ export function Footer() {
             Central regional de monitoramento ambiental para a região de União
             da Vitória, Cruz Machado, Bituruna e Inácio Martins.
           </p>
-          <div className="mt-1 origin-left scale-[0.55]">
+          {/* Antes: `scale-[0.55]`, que encolhia também a área de toque
+              (48px viravam ~29px, abaixo do mínimo de 44px do WCAG).
+              Agora o tamanho vem do próprio token do efeito, então os
+              botões ficam compactos mas continuam tocáveis. */}
+          <div
+            className="mt-1"
+            style={{ ["--smb-button-size" as string]: "2.75rem" }}
+          >
             <SocialLinks />
           </div>
         </div>

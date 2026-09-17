@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { AccountShell } from "@/components/account/AccountShell";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { SignOutButton } from "@/components/account/SignOutButton";
 import { IconAccount } from "@/components/icons";
 import { mockAccount } from "@/lib/data/mock-account";
 import { getRegionBySlug } from "@/lib/data/regions";
@@ -44,7 +45,7 @@ export default function ContaPage() {
 
         <div className="flex gap-3">
           <Button variant="secondary" size="sm">Editar perfil</Button>
-          <Button variant="ghost" size="sm">Sair</Button>
+          <SignOutButton />
         </div>
       </Card>
     </AccountShell>

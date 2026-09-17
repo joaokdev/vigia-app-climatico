@@ -1,0 +1,293 @@
+/* ── Code Candy — Expanding Hover Menu ── */
+
+:root {
+  --bg: #050510;
+  --card: rgba(255, 255, 255, 0.07);
+  --card-strong: rgba(255, 255, 255, 0.12);
+  --cyan: #00e5ff;
+  --pink: #ff3cac;
+  --purple: #8b5cf6;
+  --white: #f8fafc;
+  --muted: #94a3b8;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  min-height: 100%;
+  height: 100dvh;
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--white);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  animation: pageFadeIn 0.9s ease both;
+}
+
+/* ── Animated background glow ── */
+
+.bg-glow {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(90px);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.45;
+}
+
+.bg-glow--cyan {
+  width: 420px;
+  height: 420px;
+  background: var(--cyan);
+  top: -120px;
+  left: 50%;
+  transform: translateX(-60%);
+  animation: driftCyan 12s ease-in-out infinite alternate;
+}
+
+.bg-glow--pink {
+  width: 320px;
+  height: 320px;
+  background: var(--pink);
+  bottom: 10%;
+  right: -80px;
+  opacity: 0.3;
+  animation: driftPink 14s ease-in-out infinite alternate;
+}
+
+.bg-glow--purple {
+  width: 380px;
+  height: 380px;
+  background: var(--purple);
+  bottom: 30%;
+  left: -100px;
+  opacity: 0.28;
+  animation: driftPurple 16s ease-in-out infinite alternate;
+}
+
+@keyframes driftCyan {
+  from { transform: translateX(-60%) translateY(0); }
+  to   { transform: translateX(-40%) translateY(40px); }
+}
+
+@keyframes driftPink {
+  from { transform: translate(0, 0); }
+  to   { transform: translate(-30px, -20px); }
+}
+
+@keyframes driftPurple {
+  from { transform: translate(0, 0); }
+  to   { transform: translate(40px, 30px); }
+}
+
+@keyframes pageFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Layout ── */
+
+.showcase {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100dvh;
+  margin: 0;
+  padding: clamp(1rem, 4vw, 2rem);
+}
+
+/* ── Demo area ── */
+
+.demo-area {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+/* ── Floating menu ── */
+
+.menu {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.menu-list {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem;
+  background: var(--card);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.45),
+    0 0 60px rgba(139, 92, 246, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.menu-item {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  border-radius: 999px;
+  text-decoration: none;
+  color: var(--white);
+  background: transparent;
+  flex-shrink: 0;
+  transition:
+    width 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    background 0.3s ease,
+    box-shadow 0.3s ease,
+    color 0.3s ease,
+    padding 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    gap 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Hover — subtle glass expand */
+.menu-item:hover {
+  width: 160px;
+  justify-content: flex-start;
+  gap: 0.75rem;
+  padding: 0 0.9rem;
+  background: var(--card-strong);
+  box-shadow: 0 0 28px rgba(0, 229, 255, 0.22);
+}
+
+.menu-item--logout:hover {
+  box-shadow: 0 0 28px rgba(255, 60, 172, 0.25);
+}
+
+.menu-item--logout:hover .menu-icon {
+  color: var(--pink);
+}
+
+/* Clicked — solid white fill, stays compact until hovered */
+.menu-item.selected {
+  background: var(--white);
+  color: var(--bg);
+  box-shadow:
+    0 4px 24px rgba(255, 255, 255, 0.18),
+    0 0 32px rgba(255, 255, 255, 0.08);
+}
+
+.menu-item.selected .menu-icon {
+  color: var(--bg);
+}
+
+.menu-item--logout.selected .menu-icon {
+  color: var(--pink);
+}
+
+.menu-item.selected:hover {
+  width: 160px;
+  justify-content: flex-start;
+  gap: 0.75rem;
+  padding: 0 0.9rem;
+  background: var(--white);
+  box-shadow:
+    0 4px 28px rgba(255, 255, 255, 0.22),
+    0 0 36px rgba(255, 255, 255, 0.1);
+}
+
+.menu-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  color: var(--cyan);
+  transition: color 0.3s ease;
+}
+
+.menu-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.menu-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  opacity: 0;
+  max-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  transform: translateX(-8px);
+  transition:
+    opacity 0.35s ease,
+    max-width 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.45s ease;
+}
+
+.menu-item:hover .menu-label,
+.menu-item.selected:hover .menu-label {
+  opacity: 1;
+  max-width: 100px;
+  transform: translateX(0);
+}
+
+/* ── Responsive ── */
+
+@media (max-width: 640px) {
+  .showcase {
+    padding: 0.85rem;
+  }
+
+  .menu-list {
+    gap: 0.2rem;
+    padding: 0.4rem;
+    max-width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .menu-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .menu-item {
+    width: 46px;
+    height: 46px;
+  }
+
+  .menu-item:hover,
+  .menu-item.selected:hover {
+    width: 140px;
+  }
+
+  .menu-label {
+    font-size: 0.8rem;
+  }
+
+  .menu-item:hover .menu-label,
+  .menu-item.selected:hover .menu-label {
+    max-width: 88px;
+  }
+}

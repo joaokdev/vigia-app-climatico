@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Split Panel Auth</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Ambient background -->
+  <div class="bg-ambient" aria-hidden="true">
+    <div class="bg-orb bg-orb--1"></div>
+    <div class="bg-orb bg-orb--2"></div>
+    <div class="bg-orb bg-orb--3"></div>
+    <div class="bg-grain"></div>
+  </div>
+
+  <main class="auth-container" id="authContainer">
+
+    <!-- Light sweep during panel switch -->
+    <div class="light-sweep" id="lightSweep" aria-hidden="true"></div>
+
+    <!-- Login form (left panel) -->
+    <section class="form-panel form-panel--login" aria-label="Sign in">
+      <form class="auth-form" id="loginForm" novalidate>
+
+        <header class="form-header">
+          <p class="form-eyebrow">WELCOME BACK</p>
+          <h1 class="form-title">Sign in</h1>
+          <p class="form-sub">Enter your details to continue.</p>
+        </header>
+
+        <div class="field field--stagger" style="--i: 0">
+          <label class="field-label" for="loginEmail">Email</label>
+          <div class="field-wrap">
+            <svg class="field-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 6h16v12H4V6zm0 0l8 7 8-7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <input type="email" id="loginEmail" name="email" class="field-input"
+                   placeholder="you@example.com" autocomplete="email" required>
+          </div>
+        </div>
+
+        <div class="field field--stagger" style="--i: 1">
+          <label class="field-label" for="loginPassword">Password</label>
+          <div class="field-wrap">
+            <svg class="field-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="5" y="11" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <input type="password" id="loginPassword" name="password" class="field-input"
+                   placeholder="••••••••" autocomplete="current-password" required>
+          </div>
+        </div>
+
+        <div class="form-row field--stagger" style="--i: 2">
+          <label class="checkbox-label">
+            <input type="checkbox" id="rememberMe" name="remember">
+            <span class="checkbox-box" aria-hidden="true"></span>
+            <span>Remember me</span>
+          </label>
+          <a href="#" class="form-link" tabindex="0">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="btn btn--primary field--stagger" style="--i: 3">
+          <span class="btn-text">Sign in</span>
+          <span class="btn-success" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><polyline points="5,13 10,18 19,7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </button>
+
+        <div class="social-divider field--stagger" style="--i: 4">
+          <span>or continue with</span>
+        </div>
+
+        <div class="social-row field--stagger" style="--i: 5">
+          <button type="button" class="btn btn--social" aria-label="Sign in with Google">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 11v2.4h3.7c-.2 1.6-1.8 4.6-5.1 4.6-3.1 0-5.6-2.5-5.6-5.6S7.5 6.8 10.6 6.8c1.8 0 3 .8 3.7 1.4l2.5-2.4C15.2 4.6 13.1 3.6 10.6 3.6 5.9 3.6 2 7.5 2 12.2s3.9 8.6 8.6 8.6c5 0 8.3-3.5 8.3-8.5 0-.6-.1-1-.1-1.2H12z" fill="currentColor"/>
+            </svg>
+          </button>
+          <button type="button" class="btn btn--social" aria-label="Sign in with GitHub">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 2C6.48 2 2 6.58 2 12.26c0 4.52 2.87 8.35 6.84 9.7.5.1.68-.22.68-.48 0-.24-.01-.87-.01-1.7-2.78.62-3.37-1.37-3.37-1.37-.45-1.17-1.11-1.48-1.11-1.48-.91-.64.07-.63.07-.63 1 .07 1.53 1.06 1.53 1.06.9 1.57 2.36 1.12 2.94.85.09-.67.35-1.12.63-1.38-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.32.1-2.75 0 0 .84-.27 2.75 1.05A9.2 9.2 0 0 1 12 6.84c.85 0 1.71.12 2.51.34 1.91-1.32 2.75-1.05 2.75-1.05.55 1.43.2 2.49.1 2.75.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.07.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.8 0 .27.18.59.69.48A10.03 10.03 0 0 0 22 12.26C22 6.58 17.52 2 12 2z" fill="currentColor"/>
+            </svg>
+          </button>
+        </div>
+
+      </form>
+    </section>
+
+    <!-- Register form (right panel) -->
+    <section class="form-panel form-panel--register" aria-label="Create account">
+      <form class="auth-form" id="registerForm" novalidate>
+
+        <header class="form-header">
+          <p class="form-eyebrow">JOIN THE SPACE</p>
+          <h1 class="form-title">Create account</h1>
+          <p class="form-sub">It only takes a few seconds.</p>
+        </header>
+
+        <div class="field field--stagger" style="--i: 0">
+          <label class="field-label" for="registerName">Full name</label>
+          <div class="field-wrap">
+            <svg class="field-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <input type="text" id="registerName" name="name" class="field-input"
+                   placeholder="Alex Morgan" autocomplete="name" required>
+          </div>
+        </div>
+
+        <div class="field field--stagger" style="--i: 1">
+          <label class="field-label" for="registerEmail">Email</label>
+          <div class="field-wrap">
+            <svg class="field-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 6h16v12H4V6zm0 0l8 7 8-7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <input type="email" id="registerEmail" name="email" class="field-input"
+                   placeholder="you@example.com" autocomplete="email" required>
+          </div>
+        </div>
+
+        <div class="field field--stagger" style="--i: 2">
+          <label class="field-label" for="registerPassword">Password</label>
+          <div class="field-wrap">
+            <svg class="field-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="5" y="11" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <input type="password" id="registerPassword" name="password" class="field-input"
+                   placeholder="••••••••" autocomplete="new-password" required>
+          </div>
+        </div>
+
+        <div class="field field--stagger" style="--i: 3">
+          <label class="field-label" for="registerConfirm">Confirm password</label>
+          <div class="field-wrap">
+            <svg class="field-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M9 12l2 2 4-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <rect x="5" y="11" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <input type="password" id="registerConfirm" name="confirm" class="field-input"
+                   placeholder="••••••••" autocomplete="new-password" required>
+          </div>
+        </div>
+
+        <div class="form-row field--stagger" style="--i: 4">
+          <label class="checkbox-label">
+            <input type="checkbox" id="acceptTerms" name="terms" required>
+            <span class="checkbox-box" aria-hidden="true"></span>
+            <span>I agree to the <a href="#" class="form-link form-link--inline">Terms</a></span>
+          </label>
+        </div>
+
+        <button type="submit" class="btn btn--primary field--stagger" style="--i: 5">
+          <span class="btn-text">Create account</span>
+          <span class="btn-success" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><polyline points="5,13 10,18 19,7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </button>
+
+      </form>
+    </section>
+
+    <!-- Gradient overlay panel -->
+    <aside class="overlay-panel" aria-label="Panel switch">
+
+      <div class="overlay-decor" aria-hidden="true">
+        <div class="decor-orb decor-orb--1"></div>
+        <div class="decor-orb decor-orb--2"></div>
+        <div class="decor-orb decor-orb--3"></div>
+        <div class="decor-orbit">
+          <span class="decor-dot decor-dot--1"></span>
+          <span class="decor-dot decor-dot--2"></span>
+          <span class="decor-dot decor-dot--3"></span>
+        </div>
+        <div class="decor-streak decor-streak--1"></div>
+        <div class="decor-streak decor-streak--2"></div>
+        <div class="decor-grain"></div>
+      </div>
+
+      <div class="overlay-content overlay-content--signup">
+        <h2 class="overlay-title">New around here?</h2>
+        <p class="overlay-sub">Create an account and unlock the full experience.</p>
+        <button type="button" class="btn btn--outline" id="showRegister">Create account</button>
+      </div>
+
+      <div class="overlay-content overlay-content--signin">
+        <h2 class="overlay-title">Already a member?</h2>
+        <p class="overlay-sub">Sign back in and pick up where you left off.</p>
+        <button type="button" class="btn btn--outline" id="showLogin">Sign in</button>
+      </div>
+
+    </aside>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

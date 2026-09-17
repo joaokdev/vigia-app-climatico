@@ -1,5 +1,122 @@
 # IG (VIGIA) — CONTINUITY
 
+## Estado atual (ETAPA 7 — login obrigatório + Split Panel Auth + tema nos efeitos)
+
+Sétima etapa. Três pedidos do proprietário, todos validados com
+Chromium real (Playwright), não por leitura de código.
+
+### Extra concluído depois da entrega da ETAPA 7 (sem precisar de decisão do proprietário)
+- **Tap targets pré-existentes corrigidas**: ícones sociais do rodapé
+  (causa real: `scale-[0.55]` no wrapper, que encolhia a área de toque
+  junto — o efeito social-links agora aceita `--smb-button-size` de
+  fora em vez de um valor fixo no próprio elemento), botão "Abrir
+  menu" do header, e `suggest-btn`/`visibility-btn` do Vault (área de
+  toque ampliada via pseudo-elemento, sem mudar o tamanho visual
+  aprovado). Atenção: `.visibility-btn` já é `position: absolute` e
+  NÃO pode virar `relative`. Confirmado com `elementFromPoint`, não só
+  `getBoundingClientRect` — que continua acusando esses 3 como
+  "pequenos" mesmo corrigidos, porque mede só a caixa visual.
+- **Header mostrava "Entrar"/"Criar conta" mesmo autenticado**: como o
+  login agora é obrigatório, quem vê o Header numa rota protegida já
+  está logado por definição. O Header checa `isPublicRoute` e troca
+  para um ícone "Minha conta" (→ `/conta`) fora das rotas de auth —
+  ajustado no header desktop e no drawer mobile.
+
+### 1. Vault e OTP agora seguem o tema (bug real corrigido)
+Os dois efeitos tinham `color-scheme: dark` e ~90 cores hardcoded —
+ficavam presos no visual escuro mesmo com o app no tema claro (o mesmo
+padrão de bug do Day/Night Toggle da etapa anterior). Os tokens locais
+de cada um agora apontam para as variáveis semânticas de
+`globals.css`, e os estados (ativo/erro/processando/sucesso) e bordas
+sutis passaram a ser derivados via `color-mix()` — assim funcionam nos
+dois temas sem precisar de um valor escrito à mão por tema. Nenhuma
+animação/timing foi tocada. Confirmado por screenshot nos dois temas.
+
+### 2. Login/cadastro obrigatórios (gate de sessão mock)
+- `src/lib/auth/session.ts`: flag em localStorage + `authGateInitScript`
+  (roda no `<head>`, antes da hidratação, como o `themeInitScript`) que
+  redireciona para `/login` sem piscar conteúdo protegido.
+- `src/components/auth/AuthGate.tsx`: rede de segurança para navegações
+  client-side do Next (que não recarregam o `<head>`).
+- Rotas públicas: `/login`, `/cadastro`, `/verificar-otp`,
+  `/recuperar-acesso`.
+- A sessão é marcada no sucesso do login e no sucesso do OTP (não no
+  submit do cadastro). `/conta` ganhou um "Sair" funcional
+  (`SignOutButton`) para dar pra testar o ciclo de novo.
+- Confirmado: `/` e `/mapa` sem sessão → `/login`; `/recuperar-acesso`
+  não redireciona; login → home com sessão criada; cadastro → OTP
+  ainda SEM sessão.
+
+### 3. Efeito "Split Panel Auth" (login-signup-animation) integrado
+Porte fiel para React em `src/components/effects/split-panel-auth/`.
+Preservados: `SWITCH_DURATION` 900ms, guarda de animação em andamento,
+reflow forçado para reiniciar o light-sweep, clip-path/stagger. Só cor,
+dimensão, idioma e a ação pós-submit mudaram. A paleta rosa/roxo/azul
+do pacote virou a família azul-água/teal já usada no app. O Vault
+substitui o par senha/confirmar-senha no lado de cadastro.
+`/login` e `/cadastro` agora renderizam essa tela única (via
+`SplitAuthShell`, variante larga do AuthShell).
+
+### Bugs reais encontrados e corrigidos durante a validação
+- **Painel oculto interceptava cliques**: com `pointer-events: auto` no
+  formulário, o painel invisível bloqueava o botão de enviar do painel
+  visível (fatal no mobile, onde os dois se sobrepõem). Só o painel
+  ativo recebe ponteiro agora. Achado porque o teste de fluxo real
+  falhou com timeout — não apareceria em leitura de código.
+- **Painel oculto era focável por Tab**: resolvido com `inert`.
+- **Botão de enviar espremido a 31px**: filhos do formulário flex
+  encolhiam; `flex-shrink: 0` restaurou os 48px.
+- **Tokens mobile em `:root` não venciam** os declarados no próprio
+  `.split-auth-root` (mesma especificidade, mesmo elemento) — o layout
+  mobile do pacote simplesmente não aplicava. Reescopados.
+- **Altura mobile única cortava o cadastro**: login (~535px) e cadastro
+  (~741px) têm alturas bem diferentes, e no estado "cadastro" o overlay
+  desliza para o rodapé cobrindo os últimos 190px. Agora cada painel
+  tem sua altura e o formulário é ancorado no topo no mobile.
+- **Tap targets** de `.checkbox-label` e `.form-link` estavam com ~20px
+  de altura no mobile → 44px de área clicável (WCAG), sem mudar o
+  tamanho visual do texto.
+- **Reduced-motion do pacote era global** (`*`), vazaria para o app
+  inteiro — reescopado para `.split-auth-root`.
+
+### Testes (ETAPA 7)
+- `npx tsc --noEmit`, `npx eslint .`, `npm run build` — limpos.
+- Smoke das 15 rotas em mobile (390), tablet (820) e desktop (1440):
+  0 overflow horizontal, 0 erro de JS, nenhum redirect indevido.
+- Screenshots reais de `/login` e `/cadastro` nos dois temas, desktop e
+  mobile, incluindo o estado pós-troca de painel.
+
+### Pendências
+- `expanding-hover-menu.zip` foi enviado mas **não integrado** — falta
+  o proprietário dizer onde ele deve entrar (header? menu mobile?).
+- Revisão humana de gosto na transição de página (pendência da ETAPA 5).
+
+### Tap targets pré-existentes — CORRIGIDOS (fim da ETAPA 7)
+- **Ícones sociais do rodapé (29px)**: a causa era `scale-[0.55]` no
+  wrapper do Footer, que encolhia junto a área de toque. O efeito
+  passou a aceitar override do tamanho (`--smb-button-size`) em vez de
+  declarar um valor fixo no próprio elemento (que vencia qualquer
+  herança e forçava o uso de `transform: scale`). Agora 44x44 reais.
+- **Botão "Abrir menu" do header (40px)**: tamanho visual mantido (o
+  design já estava aprovado); a área clicável foi ampliada para 48x48
+  com pseudo-elemento. O primeiro valor tentado (`-inset-0.5`, 44x44
+  exatos) falhou no teste de ponto por arredondamento — só passou em
+  4/4 com `-inset-1`.
+- **`suggest-btn` (26px) e `visibility-btn` (38px) do Vault**: mesma
+  técnica, `::after` com `min-width/min-height: 44px`. Atenção:
+  `.visibility-btn` já é `position: absolute` e NÃO pode receber
+  `position: relative` (quebra o posicionamento) — o absolute já serve
+  de contexto para o pseudo-elemento.
+- Verificação: o script que mede só `getBoundingClientRect` continua
+  listando esses três como "abaixo de 44px", porque a caixa VISUAL não
+  mudou de propósito — a área de toque real foi confirmada à parte com
+  `elementFromPoint` (4/4 nos pontos de borda de um alvo de 44px).
+  Cuidado com um falso negativo nesse teste: `elementFromPoint` só
+  funciona dentro da viewport, então elementos abaixo da dobra (como o
+  rodapé) retornam `null` sem que haja problema algum.
+
+---
+
 ## Estado atual (ETAPA 6 — reduced-motion, reduced-transparency e acessibilidade real)
 
 Sexta etapa. Escopo: fechar a pendência nº1 deixada no fim da ETAPA 5

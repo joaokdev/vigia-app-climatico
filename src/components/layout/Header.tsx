@@ -8,7 +8,8 @@ import { ThemeSwitcher } from "@/components/ui/ThemeSwitcher";
 import { IconButton } from "@/components/ui/IconButton";
 import { Button } from "@/components/ui/Button";
 import { Drawer } from "@/components/ui/Drawer";
-import { IconMenu, IconNotification } from "@/components/icons";
+import { IconMenu, IconNotification, IconAccount } from "@/components/icons";
+import { isPublicRoute } from "@/lib/auth/session";
 import { cn } from "@/lib/cn";
 
 const NAV_LINKS = [
@@ -21,6 +22,11 @@ const NAV_LINKS = [
 export function Header() {
   const pathname = usePathname();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  // Login é obrigatório em todo o app — quem está vendo o Header numa
+  // rota protegida já está autenticado por definição (senão o AuthGate
+  // já teria redirecionado). "Entrar"/"Criar conta" só fazem sentido
+  // nas próprias rotas públicas do fluxo de auth.
+  const showAuthCta = isPublicRoute(pathname);
 
   return (
     <header className="sticky top-0 z-[var(--z-header)] border-b border-[color:var(--color-border)] bg-[color:var(--color-surface)]/90 backdrop-blur-sm">
@@ -74,16 +80,25 @@ export function Header() {
               <IconNotification size={17} />
             </IconButton>
           </div>
-          <Link href="/login" className="hidden md:block">
+          <Link href="/login" className={showAuthCta ? "hidden md:block" : "hidden"}>
             <Button variant="secondary" size="sm">
               Entrar
             </Button>
           </Link>
-          <Link href="/cadastro" className="hidden md:block">
+          <Link href="/cadastro" className={showAuthCta ? "hidden md:block" : "hidden"}>
             <Button variant="primary" size="sm">
               Criar conta
             </Button>
           </Link>
+          {!showAuthCta && (
+            <Link
+              href="/conta"
+              aria-label="Minha conta"
+              className="relative hidden h-10 w-10 items-center justify-center rounded-[var(--radius-md)] border border-[color:var(--color-border)] text-[color:var(--color-text-muted)] transition-[background-color,border-color,color,transform] duration-[var(--duration-fast)] ease-[var(--ease-standard)] hover:border-[color:var(--color-border-strong)] hover:bg-[color:var(--color-surface-sunken)] hover:text-[color:var(--color-text)] active:scale-90 after:absolute after:-inset-1 after:content-[''] md:inline-flex"
+            >
+              <IconAccount size={17} />
+            </Link>
+          )}
           <IconButton
             label="Abrir menu"
             className="md:hidden"
@@ -128,20 +143,33 @@ export function Header() {
 
           <div className="my-3 border-t border-[color:var(--color-border)]" />
 
-          <Link
-            href="/login"
-            onClick={() => setDrawerOpen(false)}
-            className="rounded-[var(--radius-md)] px-3.5 py-3 text-[15px] font-medium text-[color:var(--color-text)] hover:bg-[color:var(--color-surface-sunken)]"
-          >
-            Entrar
-          </Link>
-          <Link
-            href="/cadastro"
-            onClick={() => setDrawerOpen(false)}
-            className="mt-1 rounded-[var(--radius-md)] bg-[color:var(--color-interactive)] px-3.5 py-3 text-center text-[15px] font-semibold text-[color:var(--color-on-accent)]"
-          >
-            Criar conta
-          </Link>
+          {showAuthCta ? (
+            <>
+              <Link
+                href="/login"
+                onClick={() => setDrawerOpen(false)}
+                className="rounded-[var(--radius-md)] px-3.5 py-3 text-[15px] font-medium text-[color:var(--color-text)] hover:bg-[color:var(--color-surface-sunken)]"
+              >
+                Entrar
+              </Link>
+              <Link
+                href="/cadastro"
+                onClick={() => setDrawerOpen(false)}
+                className="mt-1 rounded-[var(--radius-md)] bg-[color:var(--color-interactive)] px-3.5 py-3 text-center text-[15px] font-semibold text-[color:var(--color-on-accent)]"
+              >
+                Criar conta
+              </Link>
+            </>
+          ) : (
+            <Link
+              href="/conta"
+              onClick={() => setDrawerOpen(false)}
+              className="flex items-center gap-2 rounded-[var(--radius-md)] px-3.5 py-3 text-[15px] font-medium text-[color:var(--color-text)] hover:bg-[color:var(--color-surface-sunken)]"
+            >
+              <IconAccount size={17} className="text-[color:var(--color-text-subtle)]" />
+              Minha conta
+            </Link>
+          )}
 
           <div className="my-3 border-t border-[color:var(--color-border)]" />
           <span className="px-3.5 text-xs font-medium text-[color:var(--color-text-subtle)]">Tema</span>

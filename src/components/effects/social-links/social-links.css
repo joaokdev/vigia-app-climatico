@@ -10,7 +10,11 @@
 
 .smb-root {
   color-scheme: light;
-  --button-size: clamp(3rem, 13.333vw, 3.5rem);
+  /* Aceita override de fora (ex.: rodapé) — antes era um valor fixo
+     declarado no próprio elemento, que vencia qualquer herança e
+     obrigava quem quisesse um tamanho menor a usar transform: scale
+     (o que encolhia junto a área de toque). */
+  --button-size: var(--smb-button-size, clamp(3rem, 13.333vw, 3.5rem));
   --spring: cubic-bezier(0.68, -0.55, 0.265, 1.55);
   --text: #080709;
   --surface: #fff;
@@ -184,7 +188,7 @@
 /* --- Responsive --- */
 @media (max-width: 25rem) {
   .smb-root {
-    --button-size: clamp(2.75rem, 14vw, 3.25rem);
+    --button-size: var(--smb-button-size, clamp(2.75rem, 14vw, 3.25rem));
   }
 
   .smb-root .social-links {
