@@ -2,57 +2,57 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import { IconCheck } from "@/components/icons";
 
 export default function RecuperarAcessoPage() {
-  const [status, setStatus] = useState<"idle" | "loading" | "done">("idle");
+  const router = useRouter();
+  const [status, setStatus] = useState<"idle" | "loading">("idle");
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setStatus("loading");
-    setTimeout(() => setStatus("done"), 800);
+
+    const email = String(new FormData(e.currentTarget).get("email") ?? "");
+
+    // Resposta sempre neutra (200, sem indicar se o e-mail existe) —
+    // por isso seguimos para a tela de código de qualquer forma: se a
+    // conta não existir, o próximo passo (verificar-otp) simplesmente
+    // rejeitará qualquer código digitado, sem vazar mais informação
+    // do que isso.
+    await fetch("/api/auth/request-password-reset", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    }).catch(() => {});
+
+    router.push(`/verificar-otp?email=${encodeURIComponent(email)}&purpose=password_reset`);
   }
 
   return (
     <AuthShell
       title="Recuperar acesso"
-      subtitle="Enviaremos um código para redefinir sua senha."
+      subtitle="Enviaremos um código para redefinir sua senha, se o e-mail estiver cadastrado."
       footer={
         <Link href="/login" className="font-medium text-[color:var(--color-interactive)] hover:underline">
           Voltar para o login
         </Link>
       }
     >
-      {status === "done" ? (
-        <div className="flex flex-col items-center gap-3 py-2 text-center" role="status">
-          <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[color:var(--color-info-soft)] text-[color:var(--color-info)]">
-            <IconCheck size={22} />
-          </span>
-          <p className="text-sm font-medium text-[color:var(--color-text)]">
-            Se o e-mail existir, enviaremos instruções
-          </p>
-          <p className="text-xs text-[color:var(--color-text-subtle)]">
-            Resposta neutra por padrão — não revela se um e-mail está
-            cadastrado. Implementado visualmente como mock para a FASE 1.
-          </p>
-        </div>
-      ) : (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
-          <Input
-            label="E-mail da conta"
-            type="email"
-            name="email"
-            autoComplete="email"
-            required
-          />
-          <Button type="submit" size="lg" fullWidth loading={status === "loading"}>
-            Enviar instruções
-          </Button>
-        </form>
-      )}
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
+        <Input
+          label="E-mail da conta"
+          type="email"
+          name="email"
+          autoComplete="email"
+          required
+        />
+        <Button type="submit" size="lg" fullWidth loading={status === "loading"}>
+          Enviar código
+        </Button>
+      </form>
     </AuthShell>
   );
 }

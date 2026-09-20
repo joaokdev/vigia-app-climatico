@@ -1,20 +1,19 @@
 import type { RegionSlug } from "../data/regions";
 import type { RegionSnapshot } from "./types";
-import { getMockRegionSnapshot } from "./mock";
+import { getRegionSnapshot as getRealRegionSnapshot } from "@/server/regions/service";
 
 /**
  * Ponto único de acesso a dados de região para toda a UI.
  *
- * FASE 1: delega para os mock providers.
- * FASE 2: passa a chamar a camada real (adapters + cache Redis +
- * banco), preservando a mesma assinatura — nenhum componente
- * precisa mudar.
+ * FASE 2: delega para a camada real (Open-Meteo + cache Redis +
+ * histórico em Postgres) — ver src/server/regions/service.ts. A
+ * assinatura não mudou desde a FASE 1, então nenhum componente de UI
+ * precisou ser alterado para essa troca.
  */
 export async function getRegionSnapshot(
   slug: RegionSlug
 ): Promise<RegionSnapshot> {
-  // FASE 1 — dado de demonstração, estrutura idêntica ao contrato real.
-  return getMockRegionSnapshot(slug);
+  return getRealRegionSnapshot(slug);
 }
 
 export * from "./types";

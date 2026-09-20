@@ -1,3 +1,139 @@
+# VIGIA — FASE 2 (Backend)
+
+> Status: **FASE 2 em andamento.** Autenticação real, preferências/
+> notificações e clima ao vivo (Open-Meteo) estão implementados,
+> testados de ponta a ponta e persistindo em Postgres real. Rio,
+> alertas oficiais e observabilidade **não** estão integrados ainda —
+> ver "Limitações conhecidas" abaixo. Segurança/hardening ficam para a
+> FASE 3, por pedido explícito do proprietário.
+
+## Como rodar (com backend)
+
+Pré-requisitos locais: PostgreSQL 16+ com extensão PostGIS, Redis.
+
+```bash
+cd app
+cp .env.example .env.local   # edite DATABASE_URL/REDIS_URL se necessário
+npm install
+npx drizzle-kit migrate      # aplica o schema no Postgres
+npm run dev                  # http://localhost:3000
+```
+
+## Arquitetura do backend
+
+### Decisão: Drizzle ORM + `pg`, não Prisma
+Prisma foi a escolha inicial (alinhada com o `VIGIA_MASTER_PROMPT.md`),
+mas o passo de instalação do Prisma baixa um binário nativo
+(`schema-engine`) de `binaries.prisma.sh` — um domínio fora da lista de
+rede permitida no ambiente onde este projeto foi desenvolvido, então a
+instalação nunca completava. Drizzle ORM + driver `pg` são pacotes JS
+puros (sem binário nativo, sem download externo no install), oferecem
+migração SQL versionada (`drizzle-kit`) e tipagem igualmente forte.
+Reavalie se Prisma for viável no seu ambiente de deploy real.
+
+### Estrutura
+```
+src/server/
+  auth/        registro, OTP, login, sessão, recuperação de senha
+  account/     preferências e notificações
+  regions/     clima (Open-Meteo real) + rio/alertas/estações
+  db/          client Postgres (Drizzle), client Redis, schema.ts, migrations/
+  lib/         env.ts (validação de ambiente), http.ts (helpers de rota)
+src/app/api/   rotas HTTP finas — só validam entrada e chamam server/*
+src/proxy.ts   proteção de rota (convenção Next.js 16; substitui middleware.ts)
+```
+
+### Autenticação
+- Senha: argon2id (parâmetros OWASP). Sessão: token opaco de 256 bits,
+  cookie httpOnly, guardado em Postgres (não JWT — revogar é um DELETE).
+- OTP de 4 dígitos, hash SHA-256, expira em 10 min, máx. 5 tentativas,
+  cooldown de reenvio de 24s (via Redis, mesmo tempo que a UI já mostrava).
+- E-mail: adapter Resend. **Sem `RESEND_API_KEY` configurada (nenhum
+  ambiente até agora), nada é enviado de verdade — o código cai no log
+  do servidor**, e com `VIGIA_DEV_EXPOSE_OTP=true` também volta na
+  própria resposta HTTP, só em desenvolvimento.
+- Login/registro/recuperação de senha respondem de forma neutra onde
+  cabia (não vazam se um e-mail existe), e usam hash "morto" na
+  ausência de usuário para dificultar enumeração por tempo de resposta.
+
+### Clima (Open-Meteo)
+Integração real, sem chave de API. Cache de 10 min em Redis; cada leitura
+também grava em `weather_readings` (serve de histórico para o sparkline
+e de fallback se a Open-Meteo cair). **Aviso de verificação:** o adapter
+foi escrito a partir da documentação oficial, mas o ambiente de
+desenvolvimento bloqueia rede para `api.open-meteo.com` — não foi
+possível testar contra a API ao vivo daqui. Teste antes de confiar em
+produção.
+
+### Rio, alertas oficiais, estações — NÃO integrados
+As tabelas (`river_readings`, `official_alerts`, `stations`) existem no
+schema, e o contrato de dados (`RegionSnapshot`) já tem os campos, mas
+não há nenhum adapter real ligado a eles ainda (ANA HidroWebService,
+CEMADEN/defesa civil). `river` retorna `null` e `alerts`/`stations`
+retornam listas vazias — nunca um número inventado. Pesquisei o
+caminho real de acesso à ANA e ao SIMEPAR (Paraná) — ver `/fontes` no
+app e a seção de limitações abaixo.
+
+## Testes automatizados
+
+```bash
+npm run test        # roda uma vez, contra Postgres/Redis reais
+npm run test:watch  # modo watch
+```
+
+20 testes de integração (Vitest) cobrindo o módulo de autenticação por
+completo (cadastro, OTP com limite de tentativas, login, logout,
+reenvio com cooldown, recuperação de senha de ponta a ponta incluindo
+revogação de sessões antigas) e o módulo de conta (perfil, preferências
+parciais, notificações, isolamento entre usuários). Rodam contra banco
+de dados real (`TRUNCATE` entre testes), não mocks — mesma filosofia
+usada durante todo o desenvolvimento desta fase. Não cobrem as rotas
+HTTP em si (que dependem de `next/headers`, fora do alcance do Vitest
+puro) — essas foram validadas manualmente via `curl` durante o
+desenvolvimento; adicionar `next-test-api-route-handler` é o próximo
+passo natural se quiser cobertura também nesse nível.
+
+## Observabilidade
+
+`src/server/lib/logger.ts` — logger estruturado mínimo (JSON por linha
+em produção, texto legível em dev). Instrumentado nos pontos que mais
+importam para operar o sistema: tentativas de login inválidas, OTP
+bloqueado por excesso de tentativas, login bem-sucedido, senha
+redefinida (com revogação de sessões), e falha ao buscar clima na
+Open-Meteo (com fallback para o último dado salvo). Isto não é uma
+solução completa (sem tracing, sem métricas, sem id de correlação por
+requisição) — é o piso que torna os logs pesquisáveis.
+
+## Limitações conhecidas (declaradas, não escondidas)
+
+- **Rio (ANA)**: pesquisado a fundo. Existe um webservice antigo sem
+  credencial, mas a própria ANA já anunciou seu desligamento (prazo
+  prorrogado até 30/06/2026, já vencido) — não vale construir sobre um
+  serviço que a própria agência está desligando. A API nova exige
+  credencial manual: enviar e-mail para **hidro@ana.gov.br**, assunto
+  "Solicitação de acesso à API", com nome/instituição, CPF ou CNPJ e
+  e-mail de contato (documentado também em `/fontes`). Isso só o
+  proprietário pode solicitar.
+- **SIMEPAR (Paraná)**: achado um candidato melhor para União da
+  Vitória especificamente — uma estação oficial com esse nome, dado
+  público ao vivo (`simepar.br/simepar/dados_estacoes/26145103`). Sem
+  API JSON documentada, só página HTML — não construí um raspador
+  (quebraria silenciosamente se o layout mudar). Vale contatar o
+  SIMEPAR perguntando por acesso estruturado antes de automatizar.
+- Alertas oficiais (CEMADEN/defesa civil) e estações: sem integração
+  real ainda — mesma decisão de não inventar dado.
+- E-mail: sem provedor configurado em nenhum ambiente testado — só log.
+- Adapter da Open-Meteo: escrito pela documentação, não testado ao vivo
+  (rede do sandbox bloqueia `api.open-meteo.com`).
+- Observabilidade: logging estruturado existe (ver seção acima), mas
+  sem tracing, métricas ou id de correlação por requisição ainda.
+- Testes automatizados: 20 testes de integração cobrindo auth e conta
+  (ver seção acima) — rotas HTTP em si e o módulo de clima ainda sem
+  testes automatizados (validados manualmente via `curl`).
+- Segurança/hardening: adiado para a FASE 3 por pedido explícito.
+
+---
+
 # VIGIA — FASE 1 (Frontend + Design + IHM)
 
 > Status: **FASE 1 implementada e validada.** Aguardando aprovação explícita

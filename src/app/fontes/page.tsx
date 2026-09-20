@@ -21,10 +21,16 @@ const SOURCES = [
     note: "Rede oficial de estações meteorológicas automáticas. Cobertura para as quatro regiões será verificada na FASE 2.",
   },
   {
+    name: "SIMEPAR (Paraná)",
+    domain: "Meteorologia oficial do estado do Paraná",
+    status: "Pista real encontrada — sem API JSON documentada",
+    note: "Descoberta nesta sessão: o SIMEPAR mantém uma estação chamada literalmente \"União da Vitória\" com dado público ao vivo (simepar.br/simepar/dados_estacoes/26145103). É uma fonte melhor que a Open-Meteo para essa região especificamente (estação real no local, não interpolação de modelo global) — mas só existe como página HTML, sem API JSON documentada. Não construímos um raspador de HTML como integração \"real\": quebraria silenciosamente se o SIMEPAR mudar o layout da página, e isso violaria o princípio de nunca mostrar dado errado como se fosse bom. Vale contatar o SIMEPAR perguntando por acesso a dados estruturados antes de tentar automatizar isso.",
+  },
+  {
     name: "ANA — HidroWebService",
     domain: "Hidrologia (nível de rio, vazão, chuva)",
-    status: "Candidata — não integrada na FASE 1",
-    note: "Fonte prioritária para o Rio Iguaçu em União da Vitória / Porto União. Requer verificação de autenticação e disponibilidade de estações na região.",
+    status: "Caminho de acesso identificado — credencial pendente",
+    note: "Fonte prioritária para o Rio Iguaçu em União da Vitória / Porto União. Existe um webservice antigo sem credencial, mas a própria ANA já anunciou seu desligamento (prorrogado até 30/06/2026) — não vale construir sobre algo que a própria agência está desligando. A API nova (HidroWebService) exige credencial: enviar e-mail para hidro@ana.gov.br com assunto \"Solicitação de acesso à API\", informando nome/instituição, CPF ou CNPJ e o e-mail de contato. A aprovação é manual, feita pela equipe da ANA.",
   },
   {
     name: "CEMADEN",

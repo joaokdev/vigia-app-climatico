@@ -3,7 +3,6 @@
 import { useCallback, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import "./split-panel-auth.css";
-import { markAuthenticated } from "@/lib/auth/session";
 import { PasswordStrengthVault } from "@/components/effects/password-strength/PasswordStrengthVault";
 
 /**
@@ -36,6 +35,8 @@ export function SplitPanelAuth({
   const [mode, setMode] = useState<PanelMode>(initialMode);
   const [loginState, setLoginState] = useState<SubmitState>("idle");
   const [registerState, setRegisterState] = useState<SubmitState>("idle");
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const [registerError, setRegisterError] = useState<string | null>(null);
   const isAnimatingRef = useRef(false);
   const sweepRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -64,29 +65,66 @@ export function SplitPanelAuth({
     [mode, triggerSweep]
   );
 
-  function handleLoginSubmit(e: React.FormEvent) {
+  async function handleLoginSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (loginState === "success") return;
+    setLoginError(null);
+
+    const form = new FormData(e.currentTarget);
+    const email = String(form.get("email") ?? "");
+    const password = String(form.get("password") ?? "");
+
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+    const body = await res.json().catch(() => ({}));
+
+    if (!res.ok) {
+      setLoginError(body?.error?.message ?? "Não foi possível entrar. Tente novamente.");
+      return;
+    }
+
     setLoginState("success");
     window.setTimeout(() => setLoginState("idle"), SUCCESS_REVERT_MS);
-    // FASE 1: sem verificação real de credenciais. Marca a sessão mock e
-    // libera o app — a verificação real chega na FASE 2.
     window.setTimeout(() => {
-      markAuthenticated();
       router.push("/");
+      router.refresh();
     }, 900); // mesmo delay que a tela de login anterior já usava
   }
 
-  function handleRegisterSubmit(e: React.FormEvent) {
+  async function handleRegisterSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (registerState === "success") return;
+    setRegisterError(null);
+
+    const form = new FormData(e.currentTarget);
+    const name = String(form.get("name") ?? "");
+    const email = String(form.get("email") ?? "");
+    const password = String(form.get("vault-password") ?? "");
+
+    if (password.length < 8) {
+      setRegisterError("A senha precisa ter pelo menos 8 caracteres.");
+      return;
+    }
+
+    const res = await fetch("/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password }),
+    });
+    const body = await res.json().catch(() => ({}));
+
+    if (!res.ok) {
+      setRegisterError(body?.error?.message ?? "Não foi possível criar a conta. Tente novamente.");
+      return;
+    }
+
     setRegisterState("success");
     window.setTimeout(() => setRegisterState("idle"), SUCCESS_REVERT_MS);
-    // FASE 1: simula o passo "envio de OTP" e segue para a verificação,
-    // igual ao cadastro anterior — a sessão só é marcada lá, após o
-    // código ser confirmado.
     window.setTimeout(() => {
-      router.push("/verificar-otp?origem=cadastro");
+      router.push(`/verificar-otp?email=${encodeURIComponent(email)}`);
     }, 700); // mesmo delay que a tela de cadastro anterior já usava
   }
 
@@ -176,6 +214,11 @@ export function SplitPanelAuth({
                 <CheckIcon />
               </span>
             </button>
+            {loginError && (
+              <p className="split-auth-error" role="alert">
+                {loginError}
+              </p>
+            )}
 
             <div className="social-divider field--stagger" style={{ ["--i" as string]: 4 }}>
               <span>ou continue com</span>
@@ -200,8 +243,8 @@ export function SplitPanelAuth({
               </button>
             </div>
             <p className="split-auth-note">
-              Implementado visualmente como mock para a FASE 1 — nenhuma
-              autenticação real é realizada.
+              Ao entrar, você concorda com o uso de um cookie de sessão
+              para manter você conectado.
             </p>
           </form>
         </section>
@@ -290,9 +333,14 @@ export function SplitPanelAuth({
                 <CheckIcon />
               </span>
             </button>
+            {registerError && (
+              <p className="split-auth-error" role="alert">
+                {registerError}
+              </p>
+            )}
             <p className="split-auth-note">
-              Implementado visualmente como mock para a FASE 1 — cadastro
-              real, hashing de senha e criação de conta chegam na FASE 2.
+              Enviaremos um código de verificação de 4 dígitos para o
+              seu e-mail antes de ativar a conta.
             </p>
           </form>
         </section>

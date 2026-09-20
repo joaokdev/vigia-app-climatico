@@ -235,6 +235,17 @@
   color: var(--color-text-subtle);
 }
 
+.split-auth-error {
+  font-size: 13px;
+  line-height: 1.4;
+  text-align: center;
+  color: var(--color-danger);
+  background: var(--color-danger-soft);
+  border-radius: var(--radius-sm, 8px);
+  padding: 8px 12px;
+  margin-top: -4px;
+}
+
 .split-auth-vault-field {
   gap: var(--space-xs);
 }

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { REGIONS, getRegionBySlug } from "@/lib/data/regions";
+import { getRegionBySlug } from "@/lib/data/regions";
 import { getRegionSnapshot } from "@/lib/providers";
 import { MapCard } from "@/components/map/MapCard";
 import { WeatherMetric } from "@/components/ui/WeatherMetric";
@@ -20,9 +20,11 @@ import {
   IconWind,
 } from "@/components/icons";
 
-export function generateStaticParams() {
-  return REGIONS.map((r) => ({ slug: r.slug }));
-}
+// Clima é dado ao vivo (Open-Meteo + cache Redis de 10 min) — pré-gerar
+// esta página em build time (SSG) congelaria o clima no valor de quando
+// o build rodou. A cache de verdade já é o Redis do service, então esta
+// rota renderiza sob demanda a cada requisição.
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,

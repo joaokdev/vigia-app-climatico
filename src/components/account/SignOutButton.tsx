@@ -2,16 +2,13 @@
 
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
-import { clearSession } from "@/lib/auth/session";
+import { signOut } from "@/lib/auth/session";
 
 export function SignOutButton() {
   const router = useRouter();
 
-  function handleSignOut() {
-    // FASE 1: só limpa a sessão mock local — não existe token/servidor
-    // envolvido ainda. Isso fecha o ciclo do login obrigatório, para dar
-    // pra testar o fluxo de novo sem precisar limpar o localStorage à mão.
-    clearSession();
+  async function handleSignOut() {
+    await signOut();
     router.push("/login");
   }
 

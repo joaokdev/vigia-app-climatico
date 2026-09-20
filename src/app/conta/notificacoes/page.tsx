@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AccountShell } from "@/components/account/AccountShell";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/States";
 import { IconNotification } from "@/components/icons";
-import { mockNotifications } from "@/lib/data/mock-account";
 import { cn } from "@/lib/cn";
+
+type Notification = { id: string; title: string; body: string; read: boolean; createdAt: string };
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleString("pt-BR", {
@@ -19,11 +20,25 @@ function formatDate(iso: string) {
 }
 
 export default function NotificacoesPage() {
-  const [items, setItems] = useState(mockNotifications);
+  const [items, setItems] = useState<Notification[]>([]);
+  const [loading, setLoading] = useState(true);
   const unreadCount = items.filter((i) => !i.read).length;
+
+  useEffect(() => {
+    fetch("/api/account/notifications", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((body: { notifications: Notification[] }) => setItems(body.notifications))
+      .finally(() => setLoading(false));
+  }, []);
 
   function markAllRead() {
     setItems((prev) => prev.map((i) => ({ ...i, read: true })));
+    fetch("/api/account/notifications", { method: "PATCH" }).catch(() => {});
+  }
+
+  function markOneRead(id: string) {
+    setItems((prev) => prev.map((i) => (i.id === id ? { ...i, read: true } : i)));
+    fetch(`/api/account/notifications/${id}`, { method: "PATCH" }).catch(() => {});
   }
 
   return (
@@ -43,7 +58,7 @@ export default function NotificacoesPage() {
           )}
         </div>
 
-        {items.length === 0 ? (
+        {loading ? null : items.length === 0 ? (
           <EmptyState
             title="Nenhuma notificação"
             description="Você será avisado aqui quando houver alertas ou atualizações relevantes."
@@ -53,7 +68,7 @@ export default function NotificacoesPage() {
             {items.map((n) => (
               <button
                 key={n.id}
-                onClick={() => setItems((prev) => prev.map((i) => (i.id === n.id ? { ...i, read: true } : i)))}
+                onClick={() => markOneRead(n.id)}
                 className={cn(
                   "flex w-full items-start gap-3 p-4 text-left transition-colors duration-[var(--duration-fast)] ease-[var(--ease-standard)] hover:bg-[color:var(--color-surface-sunken)] active:bg-[color:var(--color-surface-sunken)]",
                   !n.read && "bg-[color:var(--color-accent-soft)]/40"

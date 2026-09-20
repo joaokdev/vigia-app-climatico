@@ -23,9 +23,9 @@ export function Header() {
   const pathname = usePathname();
   const [drawerOpen, setDrawerOpen] = useState(false);
   // Login é obrigatório em todo o app — quem está vendo o Header numa
-  // rota protegida já está autenticado por definição (senão o AuthGate
-  // já teria redirecionado). "Entrar"/"Criar conta" só fazem sentido
-  // nas próprias rotas públicas do fluxo de auth.
+  // rota protegida já está autenticado por definição (senão o
+  // middleware já teria redirecionado). "Entrar"/"Criar conta" só
+  // fazem sentido nas próprias rotas públicas do fluxo de auth.
   const showAuthCta = isPublicRoute(pathname);
 
   return (

@@ -8,6 +8,9 @@ import { IconRefresh } from "@/components/icons";
 import { Card } from "@/components/ui/Card";
 import { FrostButton } from "@/components/effects/frost-button/FrostButton";
 
+// Clima ao vivo (Redis já cuida do cache de verdade) — sem SSG aqui.
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   const snapshots = await Promise.all(
     REGIONS.map(async (region) => ({

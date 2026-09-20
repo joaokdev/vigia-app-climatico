@@ -8,6 +8,9 @@ export const metadata: Metadata = {
   description: "Mapa demonstrativo das quatro regiões monitoradas pelo VIGIA.",
 };
 
+// Clima ao vivo (Redis já cuida do cache de verdade) — sem SSG aqui.
+export const dynamic = "force-dynamic";
+
 export default async function MapaPage() {
   const items = await Promise.all(
     REGIONS.map(async (region) => ({

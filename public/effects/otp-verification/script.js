@@ -837,7 +837,16 @@
       return;
     }
 
-    if (cleanCode !== DEMO_CODE) {
+    // FASE 2: se a página que montou este widget definiu um verificador
+    // real (window.__vigiaVerifyOtp), usa ele. Sem isso definido (ex:
+    // abrindo este arquivo isolado), cai de volta pro DEMO_CODE fixo —
+    // mantém o pacote utilizável como demonstração standalone.
+    const isCorrect =
+      typeof window.__vigiaVerifyOtp === "function"
+        ? await window.__vigiaVerifyOtp(cleanCode)
+        : cleanCode === DEMO_CODE;
+
+    if (!isCorrect) {
       rejectWrongCode(cleanCode);
       return;
     }
