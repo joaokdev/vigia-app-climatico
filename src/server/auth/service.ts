@@ -20,6 +20,12 @@ export type ServiceResult<T> =
 
 const RESET_TOKEN_PREFIX = "pwreset:";
 const RESEND_COOLDOWN_PREFIX = "otp-cooldown:";
+const LOGIN_ATTEMPT_PREFIX = "login-attempts:";
+// Janela deslizante simples (INCR + EXPIRE só no primeiro hit) — não é
+// tão preciso quanto um sliding window de verdade, mas é o suficiente
+// para conter brute force por e-mail sem adicionar dependência nova.
+const LOGIN_MAX_ATTEMPTS = 10;
+const LOGIN_WINDOW_SECONDS = 15 * 60;
 
 function ok<T>(data: T): ServiceResult<T> {
   return { ok: true, data };
@@ -161,6 +167,22 @@ const DUMMY_HASH =
   "$argon2id$v=19$m=19456,t=2,p=1$c29tZXNhbHRzb21lc2FsdA$Y8L3sJ4XxK5X0V1qXwqjHqXwqjHqXwqjHqXwqjHqXwo";
 
 export async function login(input: { email: string; password: string; userAgent?: string | null }) {
+  // Limite por e-mail antes de tocar no banco/argon2 — contém brute
+  // force de senha (o OTP já tem seu próprio limite em `attempts`,
+  // mas login não tinha nenhum antes desta correção).
+  const attemptsKey = LOGIN_ATTEMPT_PREFIX + input.email;
+  const attempts = await redis.incr(attemptsKey);
+  if (attempts === 1) await redis.expire(attemptsKey, LOGIN_WINDOW_SECONDS);
+  if (attempts > LOGIN_MAX_ATTEMPTS) {
+    const retryAfterSeconds = await redis.ttl(attemptsKey);
+    logger.warn("login bloqueado: excesso de tentativas", { email: input.email });
+    return fail(
+      "too_many_attempts",
+      "Muitas tentativas de login. Tente novamente mais tarde.",
+      retryAfterSeconds > 0 ? retryAfterSeconds : LOGIN_WINDOW_SECONDS
+    );
+  }
+
   const user = await repo.findUserByEmail(input.email);
 
   const passwordOk = await verifyPassword(user?.passwordHash ?? DUMMY_HASH, input.password);
@@ -168,6 +190,10 @@ export async function login(input: { email: string; password: string; userAgent?
     logger.warn("login falhou: credenciais inválidas", { email: input.email });
     return fail("invalid_credentials", "E-mail ou senha incorretos.");
   }
+
+  // Login bem-sucedido — libera o contador para não punir o próximo
+  // ciclo de tentativas legítimas do mesmo usuário.
+  await redis.del(attemptsKey);
 
   if (!user.emailVerifiedAt) {
     logger.warn("login recusado: e-mail não verificado", { email: input.email, userId: user.id });

@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { env } from "@/server/lib/env";
 
 /**
  * Substitui o gate mock (script inline + AuthGate client-side lendo
@@ -18,7 +19,7 @@ import { NextResponse, type NextRequest } from "next/server";
  * segurança, é uma cobertura em duas camadas com custos diferentes.
  */
 
-const SESSION_COOKIE_NAME = process.env.SESSION_COOKIE_NAME ?? "vigia_session";
+const SESSION_COOKIE_NAME = env.SESSION_COOKIE_NAME;
 
 const PUBLIC_ROUTES = ["/login", "/cadastro", "/verificar-otp", "/recuperar-acesso"];
 

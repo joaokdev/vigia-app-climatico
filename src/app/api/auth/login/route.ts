@@ -13,8 +13,15 @@ export async function POST(req: Request) {
     userAgent: req.headers.get("user-agent"),
   });
   if (!result.ok) {
-    const status = result.code === "email_not_verified" ? 403 : 401;
-    return jsonError(result.code, result.message, status);
+    const status =
+      result.code === "email_not_verified"
+        ? 403
+        : result.code === "too_many_attempts"
+          ? 429
+          : 401;
+    return jsonError(result.code, result.message, status, {
+      retryAfterSeconds: result.retryAfterSeconds,
+    });
   }
 
   await setSessionCookie(result.data.session.token, result.data.session.expiresAt);
