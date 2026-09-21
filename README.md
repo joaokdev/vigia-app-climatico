@@ -1,4 +1,89 @@
-# VIGIA — FASE 2 (Backend)
+# VIGIA — FASE 3 (Previsão, Mapa real, IA, Agro)
+
+> Status: implementação real das quatro frentes pedidas em
+> `ATUALIZACAO_DO_VIGIA.md` que não dependiam de credencial externa
+> nova para funcionar de ponta a ponta: previsão detalhada, mapa
+> geográfico real, camada de IA (NVIDIA) e VIGIA Agro. Rio (ANA) e
+> alertas oficiais (CEMADEN) continuam com a mesma limitação da FASE 2
+> (exigem credencial manual do proprietário) — não mudou nesta fase.
+
+### Previsão de 7 dias + detalhamento por hora
+`server/regions/open-meteo.ts` agora busca também os blocos `daily` e
+`hourly` da Open-Meteo (mesma fonte gratuita já usada, sem chave nova)
+e monta `RegionSnapshot.forecast: ForecastDay[]` — 7 dias, cada um com
+seu detalhamento horário completo. UI: `ForecastStrip` (faixa
+compacta) + `DayDetailDrawer` (detalhamento em blocos: temperatura,
+chuva, vento, atmosfera, sol, linha do tempo), na página da cidade.
+
+### Mapa real (MapLibre GL JS)
+`components/map/RealMap.tsx` substitui as ilustrações SVG da FASE 1 por
+um mapa vetorial real: basemap **OpenFreeMap "liberty"** (público, sem
+chave — `lib/map-config.ts`) e camada real de radar de chuva
+(**RainViewer**, pública, sem chave, mas de uso pessoal/educacional —
+ver `rainviewer.com/api.html`, não indicada para alto volume
+comercial). As camadas de nuvens/vento continuam na UI (arquitetura de
+alternância preservada), mas **desabilitadas e rotuladas** como
+indisponíveis — não há hoje um provedor de tiles real e gratuito
+equivalente; melhor não ter a camada do que fingir uma.
+
+### IA (NVIDIA) — "VIGIA Intelligence"
+`server/ai/nvidia.ts` + `server/ai/insight.ts`: interpretação por IA
+dos dados que o próprio VIGIA já mede/prevê (nunca fonte de dado nova),
+via endpoint hospedado OpenAI-compatível da NVIDIA NIM
+(`integrate.api.nvidia.com/v1/chat/completions`), cacheada 45 min no
+Redis para ser econômica em chamadas. Sem chat público. Sem
+`NVIDIA_API_KEY`, o card mostra um estado "indisponível" explícito — a
+página inteira continua funcional sem essa camada. **Aviso de
+verificação**: mesma limitação de rede do adapter da Open-Meteo — não
+foi possível testar contra a API ao vivo neste ambiente de
+desenvolvimento (sandbox não alcança `integrate.api.nvidia.com`).
+
+### VIGIA Agro (`/agro` e `/cidade/[slug]/agro`)
+Blocos com dado real por trás: fase da lua (cálculo astronômico
+próprio, sem API — `lib/moon-phase.ts` — apresentada como referência
+cultural, não recomendação técnica, dado o debate científico sobre o
+tema, com a tradição de plantio por fase agora também em
+`MOON_PLANTING_TRADITION` no mesmo arquivo), condições de
+forrageamento para apicultura (heurística sobre temperatura/vento/
+chuva **reais** do snapshot da região — `lib/agro.ts`, reaproveitada
+sem chamada duplicada) e um calendário regional de plantio.
+
+Nova entrada por município (`/cidade/[slug]/agro`, com link visível na
+página da cidade, conforme pedido explícito do item 12 do
+`ATUALIZACAO_DO_VIGIA.md`): card "O que plantar agora"
+(`server/agro/plantio.ts` + `lib/agro/culturas.ts`) classifica cada
+cultura como favorável/atenção/fora de época cruzando o mês atual, a
+previsão real de 3–7 dias (temperatura, chuva, risco de geada) e uma
+referência agronômica geral por cultura — sempre com a lista de
+"por que aparece aqui" visível, nunca linguagem de garantia
+agronômica. Reaproveita `MoonCard`/`BeekeepingCard` (que por sua vez
+reaproveitam `lib/moon-phase.ts`/`lib/agro.ts`) em vez de duplicar essa
+lógica — a página global `/agro` e a página por cidade compartilham a
+mesma base, cada uma com seu recorte (visão geral com seleção de
+região vs. ação por cidade).
+
+### Outras mudanças
+- Transição global de página ("Glob Wipe") removida do `layout.tsx`
+  por pedido explícito — `PageTransition.tsx` ficou no repositório como
+  referência histórica, sem uso ativo.
+- `.env.example`/`env.ts` reorganizados por domínio (DATABASE, REDIS,
+  SESSÃO, EMAIL, WEATHER, MAP, HYDROLOGY, OFFICIAL ALERTS, STATIONS,
+  NVIDIA AI), documentando explicitamente o que já tem fonte real e o
+  que ainda depende de credencial manual.
+
+### Validação executada nesta fase
+`npx tsc --noEmit`, `npx eslint src`, e `npm run build` (produção,
+Turbopack) passam limpos com as páginas novas/alteradas (`/agro`,
+`/mapa`, `/cidade/[slug]`, `/cidade/[slug]/agro`, mais os componentes
+de previsão, mapa, IA e agro). A suíte Vitest de auth/conta não foi
+executada com sucesso neste ambiente por falta de Postgres local
+(`ECONNREFUSED`) — mesma limitação de infraestrutura da FASE 2, não
+uma regressão introduzida aqui; os testes existentes não foram
+alterados.
+
+---
+
+
 
 > Status: **FASE 2 em andamento.** Autenticação real, preferências/
 > notificações e clima ao vivo (Open-Meteo) estão implementados,

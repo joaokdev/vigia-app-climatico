@@ -164,6 +164,10 @@ export async function getRegionSnapshot(slug: RegionSlug): Promise<RegionSnapsho
   const snapshot: RegionSnapshot = {
     regionSlug: slug,
     weather,
+    // Faixa de ~7 dias + detalhamento horário, direto da Open-Meteo.
+    // Quando a fonte falha, fica vazia — nunca preenchida com valor
+    // inventado (ver ATUALIZACAO_DO_VIGIA.md, "nunca invente dados").
+    forecast: result.ok ? result.forecast : [],
     river: null, // ver comentário da função — integração real pendente
     alerts,
     stations,

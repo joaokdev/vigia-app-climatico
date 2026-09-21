@@ -2,19 +2,24 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { RegionIllustration } from "@/components/map/RegionIllustration";
+import { RealMap } from "@/components/map/RealMap";
 import { Skeleton } from "@/components/ui/States";
 import { IconCloud, IconRain, IconWind } from "@/components/icons";
-import type { RegionSlug } from "@/lib/data/regions";
+import { getRegionBySlug, type RegionSlug } from "@/lib/data/regions";
 import type { ProviderStatus } from "@/lib/providers/types";
 import { cn } from "@/lib/cn";
 
 type LayerKey = "nuvens" | "chuva" | "vento";
 
-const LAYER_META: Record<LayerKey, { label: string; icon: typeof IconCloud }> = {
-  nuvens: { label: "Nuvens", icon: IconCloud },
-  chuva: { label: "Chuva", icon: IconRain },
-  vento: { label: "Vento", icon: IconWind },
+// "chuva" tem fonte real sem chave (RainViewer). "nuvens"/"vento" ainda
+// não têm um provedor de tiles real e gratuito equivalente — em vez de
+// simular com uma camada decorativa, o botão fica desabilitado e
+// rotulado, preservando a arquitetura de alternância de camadas para
+// quando um provedor com credencial for adotado.
+const LAYER_META: Record<LayerKey, { label: string; icon: typeof IconCloud; available: boolean }> = {
+  chuva: { label: "Chuva (radar)", icon: IconRain, available: true },
+  nuvens: { label: "Nuvens — indisponível (requer provedor com chave)", icon: IconCloud, available: false },
+  vento: { label: "Vento — indisponível (requer provedor com chave)", icon: IconWind, available: false },
 };
 
 /**
@@ -63,6 +68,7 @@ export function MapCard({
   }, [inView, initialized]);
 
   function toggleLayer(layer: LayerKey) {
+    if (!LAYER_META[layer].available) return;
     setActiveLayers((prev) => {
       const next = new Set(prev);
       if (next.has(layer)) {
@@ -75,6 +81,7 @@ export function MapCard({
   }
 
   const isOffline = providerStatus === "indisponivel";
+  const region = getRegionBySlug(slug);
 
   return (
     <div
@@ -87,45 +94,36 @@ export function MapCard({
 
       {initialized && !isOffline && (
         <>
-          <div className={cn(inView ? "" : "[&_*]:!animation-none")}>
-            <RegionIllustration slug={slug} />
-          </div>
-
-          {/* Camadas sob demanda — demonstrativas na FASE 1 */}
-          <div className="pointer-events-none absolute inset-0">
-            {activeLayers.has("chuva") && (
-              <div className="absolute inset-0 bg-[color:var(--data-rain-2)] opacity-15" />
-            )}
-            {activeLayers.has("nuvens") && (
-              <div className="absolute inset-0 bg-white opacity-10 dark:opacity-[0.06]" />
-            )}
-            {activeLayers.has("vento") && (
-              <div
-                className="absolute inset-0 opacity-20"
-                style={{
-                  backgroundImage:
-                    "repeating-linear-gradient(100deg, transparent 0 8px, var(--color-text) 8px 9px)",
-                }}
+          <div className={cn("h-full w-full", inView ? "" : "[&_*]:!animation-none")}>
+            {region ? (
+              <RealMap
+                markers={[{ slug: region.slug, lat: region.center.lat, lng: region.center.lng, label: region.shortName }]}
+                focusSlug={region.slug}
+                showRain={activeLayers.has("chuva")}
+                interactive={false}
               />
-            )}
+            ) : null}
           </div>
 
           {/* Controles de camada */}
           <div className="absolute left-2 top-2 z-[var(--z-map-controls)] flex gap-1">
             {(Object.keys(LAYER_META) as LayerKey[]).map((key) => {
-              const { label, icon: Icon } = LAYER_META[key];
+              const { label, icon: Icon, available } = LAYER_META[key];
               const active = activeLayers.has(key);
               return (
                 <button
                   key={key}
                   type="button"
                   onClick={() => toggleLayer(key)}
+                  disabled={!available}
                   aria-pressed={active}
+                  aria-disabled={!available}
                   aria-label={`Camada ${label}`}
                   title={label}
                   className={cn(
                     "flex h-7 w-7 items-center justify-center rounded-[var(--radius-sm)] border text-[11px] backdrop-blur-sm",
                     "transition-[background-color,border-color,color,transform] duration-[var(--duration-fast)] ease-[var(--ease-standard)] active:scale-90",
+                    !available && "cursor-not-allowed opacity-40",
                     active
                       ? "border-[color:var(--color-accent)] bg-[color:var(--color-accent-soft)] text-[color:var(--color-accent)]"
                       : "border-[color:var(--color-border)] bg-[color:var(--color-surface)]/80 text-[color:var(--color-text-muted)]"

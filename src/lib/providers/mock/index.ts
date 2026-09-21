@@ -242,6 +242,11 @@ export function getMockRegionSnapshot(slug: RegionSlug): RegionSnapshot {
   return {
     regionSlug: slug,
     weather: mockWeatherProvider(slug),
+    // Mantido vazio propositalmente: este provider é histórico da
+    // FASE 1 (sem referências no código a partir da FASE 2, ver
+    // providers/index.ts) e nunca gerou faixa de previsão — não é o
+    // lugar de simular uma agora.
+    forecast: [],
     river: mockRiverProvider(slug),
     alerts: mockAlertProvider(slug),
     stations: mockStationProvider(slug),

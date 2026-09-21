@@ -16,17 +16,7 @@ import {
 } from "@/components/icons";
 import type { Region } from "@/lib/data/regions";
 import type { RegionSnapshot } from "@/lib/providers/types";
-
-const CONDITION_LABEL: Record<NonNullable<RegionSnapshot["weather"]["condition"]>, string> = {
-  "ceu-limpo": "Céu limpo",
-  "parcialmente-nublado": "Parcialmente nublado",
-  nublado: "Nublado",
-  "chuva-fraca": "Chuva fraca",
-  "chuva-moderada": "Chuva moderada",
-  "chuva-forte": "Chuva forte",
-  tempestade: "Tempestade",
-  nevoeiro: "Nevoeiro",
-};
+import { conditionLabel } from "@/lib/weather-labels";
 
 const TREND_ICON = { subindo: IconTrendUp, descendo: IconTrendDown, estavel: IconTrendFlat, indefinido: IconTrendFlat };
 
@@ -45,7 +35,7 @@ export function RegionCard({ region, snapshot }: { region: Region; snapshot: Reg
               {region.name}
             </h3>
             <p className="text-xs text-[color:var(--color-text-subtle)]">
-              {weather.condition ? CONDITION_LABEL[weather.condition] : "Condição não disponível"}
+              {conditionLabel(weather.condition)}
             </p>
           </div>
           <NatureBadge nature={weather.provenance.nature} />

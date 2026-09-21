@@ -15,6 +15,7 @@ import { cn } from "@/lib/cn";
 const NAV_LINKS = [
   { href: "/", label: "Painel" },
   { href: "/mapa", label: "Mapa" },
+  { href: "/agro", label: "Agro" },
   { href: "/sobre", label: "Sobre" },
   { href: "/fontes", label: "Fontes" },
 ];

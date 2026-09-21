@@ -95,9 +95,56 @@ export type StationInfo = {
 
 export type TimeseriesPoint = { t: string; v: number | null };
 
+/**
+ * Um ponto horário dentro do detalhamento de um dia de previsão.
+ * Todos os campos são `previsto` (mesma proveniência do `ForecastDay`
+ * que os contém) — nunca observação.
+ */
+export type HourlyForecastPoint = {
+  t: string; // ISO 8601
+  temperatureC: number | null;
+  feelsLikeC: number | null;
+  precipitationMm: number | null;
+  precipitationProbabilityPct: number | null;
+  windSpeedKmh: number | null;
+  windGustKmh: number | null;
+  windDirectionDeg: number | null;
+  humidityPct: number | null;
+  pressureHpa: number | null;
+  cloudCoverPct: number | null;
+  dewPointC: number | null;
+  visibilityM: number | null;
+  uvIndex: number | null;
+  condition: WeatherSnapshot["condition"];
+};
+
+/**
+ * Um dia da faixa de previsão de ~7 dias (Nível 2 da hierarquia de
+ * informação). `hourly` é o detalhamento que só aparece quando o
+ * usuário expande o dia (Nível 3) — sempre populado aqui (o custo de
+ * já vir na resposta é pequeno e evita uma segunda ida ao servidor),
+ * mas a UI só o renderiza sob demanda.
+ */
+export type ForecastDay = {
+  date: string; // YYYY-MM-DD, fuso America/Sao_Paulo
+  condition: WeatherSnapshot["condition"];
+  temperatureMaxC: number | null;
+  temperatureMinC: number | null;
+  precipitationProbabilityMaxPct: number | null;
+  precipitationSumMm: number | null;
+  windSpeedMaxKmh: number | null;
+  windGustMaxKmh: number | null;
+  uvIndexMax: number | null;
+  sunrise: string | null; // ISO 8601
+  sunset: string | null; // ISO 8601
+  hourly: HourlyForecastPoint[];
+  provenance: Provenance;
+};
+
 export type RegionSnapshot = {
   regionSlug: string;
   weather: WeatherSnapshot;
+  forecast: ForecastDay[];
   river: RiverSnapshot | null;
   alerts: OfficialAlert[];
   stations: StationInfo[];

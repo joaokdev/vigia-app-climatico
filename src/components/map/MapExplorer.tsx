@@ -1,22 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { MapCard } from "@/components/map/MapCard";
+import { RealMap } from "@/components/map/RealMap";
 import { Card } from "@/components/ui/Card";
 import { WeatherMetric } from "@/components/ui/WeatherMetric";
 import { DataFreshness } from "@/components/ui/DataFreshness";
 import { NatureBadge } from "@/components/ui/StatusBadge";
 import { IconHumidity, IconRain, IconWind } from "@/components/icons";
+import { conditionLabel } from "@/lib/weather-labels";
 import { cn } from "@/lib/cn";
 import type { Region } from "@/lib/data/regions";
 import type { RegionSnapshot } from "@/lib/providers/types";
-
-const LEGEND = [
-  { color: "var(--data-rain-1)", label: "Chuva fraca" },
-  { color: "var(--data-rain-2)", label: "Chuva moderada" },
-  { color: "var(--data-rain-3)", label: "Chuva forte" },
-  { color: "var(--data-rain-4)", label: "Chuva intensa" },
-];
 
 export function MapExplorer({
   items,
@@ -24,7 +18,17 @@ export function MapExplorer({
   items: { region: Region; snapshot: RegionSnapshot }[];
 }) {
   const [activeSlug, setActiveSlug] = useState(items[0]?.region.slug);
+  const [showRain, setShowRain] = useState(false);
   const active = items.find((i) => i.region.slug === activeSlug) ?? items[0];
+
+  const markers = items.map(({ region, snapshot }) => ({
+    slug: region.slug,
+    lat: region.center.lat,
+    lng: region.center.lng,
+    label: region.shortName,
+    summary: `${conditionLabel(snapshot.weather.condition)} · ${snapshot.weather.temperatureC ?? "—"}°C`,
+    href: `/cidade/${region.slug}`,
+  }));
 
   return (
     <div className="flex flex-col gap-4">
@@ -57,17 +61,25 @@ export function MapExplorer({
 
       <div className="grid gap-5 lg:grid-cols-[1.6fr_1fr] lg:items-start">
         <div className="flex flex-col gap-2">
-          <div className="aspect-[16/10] overflow-hidden rounded-[var(--radius-lg)] shadow-[var(--shadow-elevation-2)]">
-            <MapCard
-              key={active.region.slug}
-              slug={active.region.slug}
-              regionLabel={active.region.shortName}
-              providerStatus={active.snapshot.weather.provenance.status}
-            />
+          <div className="relative aspect-[16/10] overflow-hidden rounded-[var(--radius-lg)] shadow-[var(--shadow-elevation-2)]">
+            <RealMap key={active.region.slug} markers={markers} focusSlug={active.region.slug} showRain={showRain} />
+            <button
+              type="button"
+              onClick={() => setShowRain((v) => !v)}
+              aria-pressed={showRain}
+              className={cn(
+                "absolute left-2 top-2 z-[var(--z-map-controls)] flex items-center gap-1.5 rounded-[var(--radius-sm)] border px-2.5 py-1.5 text-xs font-medium backdrop-blur-sm",
+                showRain
+                  ? "border-[color:var(--color-accent)] bg-[color:var(--color-accent-soft)] text-[color:var(--color-accent)]"
+                  : "border-[color:var(--color-border)] bg-[color:var(--color-surface)]/85 text-[color:var(--color-text-muted)]"
+              )}
+            >
+              <IconRain size={14} />
+              Radar de chuva
+            </button>
           </div>
           <p className="text-xs text-[color:var(--color-text-subtle)]">
-            Ilustração esquemática demonstrativa — mapa com dados geoespaciais
-            reais chega na FASE 2.
+            Mapa real (MapLibre GL JS, basemap OpenFreeMap) · radar de chuva: RainViewer, últimos 2h.
           </p>
         </div>
 
@@ -91,22 +103,9 @@ export function MapExplorer({
           </div>
 
           <DataFreshness provenance={active.snapshot.weather.provenance} />
-
-          <div>
-            <p className="mb-2 text-xs font-medium text-[color:var(--color-text-subtle)]">
-              Intensidade de chuva (demonstrativa)
-            </p>
-            <ul className="flex flex-wrap gap-x-4 gap-y-1.5">
-              {LEGEND.map((l) => (
-                <li key={l.label} className="flex items-center gap-1.5 text-xs text-[color:var(--color-text-muted)]">
-                  <span className="h-2.5 w-2.5 rounded-sm" style={{ background: l.color }} aria-hidden />
-                  {l.label}
-                </li>
-              ))}
-            </ul>
-          </div>
         </Card>
       </div>
     </div>
   );
 }
+

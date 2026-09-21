@@ -11,6 +11,7 @@ import { NatureBadge, StatusBadge } from "@/components/ui/StatusBadge";
 import { AlertBanner } from "@/components/ui/Alert";
 import { RiverStatus, StationCard } from "@/components/ui/River";
 import { AIInsight } from "@/components/region/AIInsight";
+import { ForecastStrip } from "@/components/forecast/ForecastStrip";
 import { EmptyState } from "@/components/ui/States";
 import { Card } from "@/components/ui/Card";
 import {
@@ -18,6 +19,7 @@ import {
   IconPressure,
   IconRain,
   IconWind,
+  IconChevronRight,
 } from "@/components/icons";
 
 // Clima é dado ao vivo (Open-Meteo + cache Redis de 10 min) — pré-gerar
@@ -50,7 +52,7 @@ export default async function CidadePage({
   if (!region) notFound();
 
   const snapshot = await getRegionSnapshot(region.slug);
-  const { weather, river, alerts, stations } = snapshot;
+  const { weather, forecast, river, alerts, stations } = snapshot;
 
   return (
     <div className="vigia-container flex flex-col gap-8 py-8">
@@ -116,9 +118,28 @@ export default async function CidadePage({
         </Card>
       </div>
 
-      <AIInsight
-        text={`Nas últimas horas, ${region.shortName} apresentou tendência ${weather.trend} de temperatura, com ${weather.rain24hMm ?? 0} mm de chuva acumulada em 24h. Continue acompanhando os indicadores oficiais para decisões de segurança.`}
-      />
+      <section aria-labelledby="previsao-heading" className="flex flex-col gap-3">
+        <h2 id="previsao-heading" className="text-heading text-[color:var(--color-text)]">
+          Previsão dos próximos dias
+        </h2>
+        <ForecastStrip forecast={forecast} regionLabel={region.shortName} />
+      </section>
+
+      <AIInsight regionSlug={region.slug} regionLabel={region.shortName} snapshot={snapshot} />
+
+      <Link
+        href={`/cidade/${region.slug}/agro`}
+        className="flex items-center justify-between gap-3 rounded-[var(--radius-lg)] border border-[color:var(--color-border)] bg-[color:var(--color-surface)] p-4 transition-colors hover:bg-[color:var(--color-surface-elevated)]"
+      >
+        <div>
+          <p className="text-eyebrow text-[color:var(--color-text-subtle)]">Nova área</p>
+          <p className="text-base font-semibold text-[color:var(--color-text)]">Área do Agricultor</p>
+          <p className="text-sm text-[color:var(--color-text-muted)]">
+            O que plantar agora, calendário agrícola, apicultura e lua e tradição.
+          </p>
+        </div>
+        <IconChevronRight size={20} className="shrink-0 text-[color:var(--color-text-subtle)]" />
+      </Link>
 
       {river ? (
         <section aria-labelledby="rio-heading" className="flex flex-col gap-3">

@@ -4,7 +4,7 @@
  * geográfica/administrativa, estável e não sujeita a "frescor".
  *
  * Coordenadas são aproximações do centro urbano de cada município,
- * suficientes para posicionamento de mapa demonstrativo na FASE 1.
+ * usadas como centro/marcador no mapa real (MapLibre GL JS).
  * Fonte: domínio público (divisão político-administrativa do IBGE).
  */
 

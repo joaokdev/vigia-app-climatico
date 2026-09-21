@@ -3,7 +3,6 @@ import "./globals.css";
 import { ThemeProvider, themeInitScript } from "@/lib/theme/theme-provider";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { PageTransition } from "@/components/layout/PageTransition";
 
 export const metadata: Metadata = {
   title: {
@@ -42,8 +41,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             Pular para o conteúdo principal
           </a>
           <Header />
+          {/* Transição global de página ("Glob Wipe") removida por
+              pedido explícito da ATUALIZACAO_DO_VIGIA.md — o
+              componente PageTransition.tsx foi mantido no repositório
+              como referência histórica, mas não é mais importado
+              aqui. */}
           <main id="conteudo-principal" className="flex-1">
-            <PageTransition>{children}</PageTransition>
+            {children}
           </main>
           <Footer />
         </ThemeProvider>

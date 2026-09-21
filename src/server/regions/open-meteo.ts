@@ -1,4 +1,10 @@
-import type { WeatherSnapshot, ProviderStatus } from "@/lib/providers/types";
+import type {
+  WeatherSnapshot,
+  ProviderStatus,
+  ForecastDay,
+  HourlyForecastPoint,
+  Provenance,
+} from "@/lib/providers/types";
 
 /**
  * Adapter para a Weather Forecast API da Open-Meteo (api.open-meteo.com).
@@ -29,6 +35,45 @@ const CURRENT_VARS = [
   "wind_gusts_10m",
 ].join(",");
 
+// Variáveis horárias — cobrem tanto o sparkline de curto prazo quanto
+// o detalhamento por hora de cada dia da faixa de previsão (Nível 3
+// da hierarquia de informação: "Previsão detalhada" no escopo desta
+// atualização).
+const HOURLY_VARS = [
+  "temperature_2m",
+  "apparent_temperature",
+  "precipitation",
+  "precipitation_probability",
+  "wind_speed_10m",
+  "wind_gusts_10m",
+  "wind_direction_10m",
+  "relative_humidity_2m",
+  "surface_pressure",
+  "cloud_cover",
+  "dew_point_2m",
+  "visibility",
+  "uv_index",
+  "weather_code",
+].join(",");
+
+// Variáveis diárias — alimentam a faixa de ~7 dias e o resumo de cada
+// dia (mín/máx, probabilidade e volume de chuva, vento, sol, UV).
+const DAILY_VARS = [
+  "weather_code",
+  "temperature_2m_max",
+  "temperature_2m_min",
+  "precipitation_sum",
+  "precipitation_probability_max",
+  "wind_speed_10m_max",
+  "wind_gusts_10m_max",
+  "uv_index_max",
+  "sunrise",
+  "sunset",
+].join(",");
+
+/** Quantos dias de previsão futura buscar (hoje + 6 dias = 7 no total). */
+const FORECAST_DAYS = 7;
+
 type OpenMeteoResponse = {
   current?: {
     time: string;
@@ -45,7 +90,32 @@ type OpenMeteoResponse = {
   hourly?: {
     time: string[];
     temperature_2m: (number | null)[];
+    apparent_temperature: (number | null)[];
     precipitation: (number | null)[];
+    precipitation_probability: (number | null)[];
+    wind_speed_10m: (number | null)[];
+    wind_gusts_10m: (number | null)[];
+    wind_direction_10m: (number | null)[];
+    relative_humidity_2m: (number | null)[];
+    surface_pressure: (number | null)[];
+    cloud_cover: (number | null)[];
+    dew_point_2m: (number | null)[];
+    visibility: (number | null)[];
+    uv_index: (number | null)[];
+    weather_code: (number | null)[];
+  };
+  daily?: {
+    time: string[];
+    weather_code: (number | null)[];
+    temperature_2m_max: (number | null)[];
+    temperature_2m_min: (number | null)[];
+    precipitation_sum: (number | null)[];
+    precipitation_probability_max: (number | null)[];
+    wind_speed_10m_max: (number | null)[];
+    wind_gusts_10m_max: (number | null)[];
+    uv_index_max: (number | null)[];
+    sunrise: (string | null)[];
+    sunset: (string | null)[];
   };
 };
 
@@ -66,17 +136,84 @@ function mapWeatherCode(code: number | null): WeatherSnapshot["condition"] {
 }
 
 export type OpenMeteoResult =
-  | { ok: true; snapshot: Omit<WeatherSnapshot, "provenance">; sparkline: { t: string; v: number | null }[] }
+  | {
+      ok: true;
+      snapshot: Omit<WeatherSnapshot, "provenance">;
+      sparkline: { t: string; v: number | null }[];
+      forecast: ForecastDay[];
+    }
   | { ok: false; status: ProviderStatus };
+
+/** Constrói o detalhamento horário (Nível 3) de um único dia (YYYY-MM-DD). */
+function buildHourlyForDay(
+  hourly: NonNullable<OpenMeteoResponse["hourly"]>,
+  date: string
+): HourlyForecastPoint[] {
+  const points: HourlyForecastPoint[] = [];
+  for (let i = 0; i < hourly.time.length; i++) {
+    if (!hourly.time[i].startsWith(date)) continue;
+    points.push({
+      t: new Date(hourly.time[i]).toISOString(),
+      temperatureC: hourly.temperature_2m[i] ?? null,
+      feelsLikeC: hourly.apparent_temperature[i] ?? null,
+      precipitationMm: hourly.precipitation[i] ?? null,
+      precipitationProbabilityPct: hourly.precipitation_probability[i] ?? null,
+      windSpeedKmh: hourly.wind_speed_10m[i] ?? null,
+      windGustKmh: hourly.wind_gusts_10m[i] ?? null,
+      windDirectionDeg: hourly.wind_direction_10m[i] ?? null,
+      humidityPct: hourly.relative_humidity_2m[i] ?? null,
+      pressureHpa: hourly.surface_pressure[i] ?? null,
+      cloudCoverPct: hourly.cloud_cover[i] ?? null,
+      dewPointC: hourly.dew_point_2m[i] ?? null,
+      visibilityM: hourly.visibility[i] ?? null,
+      uvIndex: hourly.uv_index[i] ?? null,
+      condition: mapWeatherCode(hourly.weather_code[i] ?? null),
+    });
+  }
+  return points;
+}
+
+function buildForecast(
+  daily: NonNullable<OpenMeteoResponse["daily"]>,
+  hourly: NonNullable<OpenMeteoResponse["hourly"]>,
+  fetchedAt: Date
+): ForecastDay[] {
+  return daily.time.map((date, i) => {
+    const provenance: Provenance = {
+      source: OPEN_METEO_SOURCE_NAME,
+      observedAt: fetchedAt.toISOString(),
+      fetchedAt: fetchedAt.toISOString(),
+      validUntil: `${date}T23:59:59-03:00`,
+      nature: "previsto",
+      status: "ok",
+    };
+    return {
+      date,
+      condition: mapWeatherCode(daily.weather_code[i] ?? null),
+      temperatureMaxC: daily.temperature_2m_max[i] ?? null,
+      temperatureMinC: daily.temperature_2m_min[i] ?? null,
+      precipitationProbabilityMaxPct: daily.precipitation_probability_max[i] ?? null,
+      precipitationSumMm: daily.precipitation_sum[i] ?? null,
+      windSpeedMaxKmh: daily.wind_speed_10m_max[i] ?? null,
+      windGustMaxKmh: daily.wind_gusts_10m_max[i] ?? null,
+      uvIndexMax: daily.uv_index_max[i] ?? null,
+      sunrise: daily.sunrise[i] ? new Date(daily.sunrise[i] as string).toISOString() : null,
+      sunset: daily.sunset[i] ? new Date(daily.sunset[i] as string).toISOString() : null,
+      hourly: buildHourlyForDay(hourly, date),
+      provenance,
+    };
+  });
+}
 
 export async function fetchOpenMeteoSnapshot(lat: number, lng: number): Promise<OpenMeteoResult> {
   const url = new URL(BASE_URL);
   url.searchParams.set("latitude", String(lat));
   url.searchParams.set("longitude", String(lng));
   url.searchParams.set("current", CURRENT_VARS);
-  url.searchParams.set("hourly", "temperature_2m,precipitation");
+  url.searchParams.set("hourly", HOURLY_VARS);
+  url.searchParams.set("daily", DAILY_VARS);
   url.searchParams.set("past_days", "1");
-  url.searchParams.set("forecast_days", "1");
+  url.searchParams.set("forecast_days", String(FORECAST_DAYS));
   url.searchParams.set("timezone", "America/Sao_Paulo");
 
   let res: Response;
@@ -96,11 +233,11 @@ export async function fetchOpenMeteoSnapshot(lat: number, lng: number): Promise<
   }
 
   const data = (await res.json()) as OpenMeteoResponse;
-  if (!data.current || !data.hourly) {
+  if (!data.current || !data.hourly || !data.daily) {
     return { ok: false, status: "degradado" };
   }
 
-  const { current, hourly } = data;
+  const { current, hourly, daily } = data;
 
   // A hora "atual" dentro do array hourly — usada para somar chuva de
   // 1h/24h e para não incluir horas futuras no sparkline de tendência.
@@ -144,6 +281,7 @@ export async function fetchOpenMeteoSnapshot(lat: number, lng: number): Promise<
       trend: "indefinido", // calculado depois, comparando com a leitura anterior salva no banco
     },
     sparkline,
+    forecast: buildForecast(daily, hourly, new Date(current.time)),
   };
 }
 

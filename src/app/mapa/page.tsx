@@ -5,7 +5,7 @@ import { MapExplorer } from "@/components/map/MapExplorer";
 
 export const metadata: Metadata = {
   title: "Mapa regional",
-  description: "Mapa demonstrativo das quatro regiões monitoradas pelo VIGIA.",
+  description: "Mapa real e interativo das quatro regiões monitoradas pelo VIGIA, com radar de chuva.",
 };
 
 // Clima ao vivo (Redis já cuida do cache de verdade) — sem SSG aqui.
@@ -26,10 +26,10 @@ export default async function MapaPage() {
           Mapa regional
         </h1>
         <p className="max-w-2xl text-sm text-[color:var(--color-text-muted)]">
-          Visualização demonstrativa das quatro regiões monitoradas pelo
-          VIGIA. Na FASE 1, os mapas são ilustrações esquemáticas — a
-          integração com dados geoespaciais reais (MapLibre GL JS) chega na
-          FASE 2.
+          Mapa geográfico real (MapLibre GL JS, basemap OpenFreeMap) das
+          quatro regiões monitoradas pelo VIGIA, com camada real de radar
+          de chuva (RainViewer). Nuvens e vento ainda não têm um provedor
+          de tiles gratuito equivalente — ver <a href="/fontes" className="underline underline-offset-2">/fontes</a>.
         </p>
       </header>
 
