@@ -1,5 +1,189 @@
 # IG (VIGIA) — CONTINUITY
 
+## Estado atual (ETAPA 8 — sem verificação por código no cadastro, textos técnicos fora da interface, hero do clima com hierarquia, mapa sem remount ao trocar de região)
+
+Oitava etapa, a partir do pedido `vigia_ajustes_ux_ui.md` do proprietário.
+Validado com Postgres + Redis reais rodando no próprio ambiente de
+execução (`npm run build`, `npx vitest run` — 20/20, e o servidor de
+produção real via `npm run start` + `curl` para os fluxos de auth e
+todas as rotas principais). **Sem navegador gráfico disponível** neste
+ambiente — nenhuma captura de tela real foi feita nesta etapa; ver
+"Problemas conhecidos" abaixo, que já falava disso na ETAPA 7 e
+continua valendo.
+
+### 1. Verificação por código removida do fluxo de cadastro (arquitetura preservada)
+- `src/server/auth/service.ts`: nova flag `EMAIL_VERIFICATION_REQUIRED
+  = false`. Com ela desligada, `registerUser` já cria a conta
+  verificada (`repo.markEmailVerified`) e devolve sessão na hora —
+  sem passar por `issueOtp`. `login()` também não exige mais
+  `emailVerifiedAt` (mesma flag). O mecanismo inteiro de OTP
+  (`issueOtp`/`verifyOtp`/`resendOtp`, rotas `/api/auth/verify-otp` e
+  `/api/auth/resend-otp`, tela `/verificar-otp`) continua existindo e
+  funcionando — só não é chamado por cadastro/login enquanto a flag
+  estiver `false`. Reativar é só virar a flag para `true`.
+- Nova função `requestEmailVerification(email)` em `service.ts`,
+  pensada para ser reaproveitada pela Área do Agricultor quando a
+  verificação virar parte de assinatura/plano premium (ainda não
+  implementado — só a arquitetura ficou preparada, como pedido).
+- `POST /api/auth/register` seta o cookie de sessão direto quando o
+  resultado é `{ kind: "session" }`.
+- `SplitPanelAuth.tsx`: cadastro bem-sucedido vai para `/` (como o
+  login), não mais para `/verificar-otp`. Removidas as frases
+  residuais "Receba um código de verificação..." e "Enviaremos um
+  código de verificação de 4 dígitos..." da tela de cadastro.
+- `/api/auth/request-password-reset` e `/verificar-otp` (fluxo de
+  redefinição de senha) **não foram tocados** — continuam usando OTP
+  normalmente, é um fluxo diferente do cadastro.
+- Testes (`src/server/auth/service.test.ts`,
+  `src/server/account/repository.test.ts`) reescritos para o novo
+  comportamento; suíte completa passando (20/20) contra Postgres/Redis
+  reais.
+
+### 2. Textos técnicos/internos removidos da interface
+- Rodapé: removida a frase "Dados de demonstração na FASE 1; nenhuma
+  fonte externa real está integrada" (desatualizada — o app já usa
+  Open-Meteo real desde a ETAPA 2).
+- Link "Fontes" removido do Header e do Footer — a página
+  `/fontes` continua existindo (não foi apagada, só deslinkada da
+  navegação) para referência interna, mas mostra nome de provider e
+  status de integração, que não deveria aparecer para o usuário final.
+- `DataFreshness.tsx` mostrava **"Fonte: Open-Meteo"** direto embaixo
+  de cada card de clima (home e cidade) — removido. Mantido "Atualizado
+  há X min" + aviso de desatualizado.
+- `ForecastStrip`/`DayDetailDrawer`: removida menção a "Open-Meteo" no
+  texto visível.
+- `AIInsight.tsx`: removido o nome do modelo de IA entre parênteses.
+- Página inicial (`src/app/page.tsx`): removido o rótulo interno
+  "Nível 1 — o que está acontecendo agora" e a seção de 3 colunas
+  explicando a arquitetura de dados (observado/previsto/simulado) —
+  isso já vive em `/sobre` (que continua linkado no Header), então
+  virou só um card-convite curto para `/sobre` em vez de duplicar.
+  Barra de status trocou "dados de demonstração (FASE 1)" por "N
+  regiões monitoradas em tempo real".
+- Frases em jargão de formulário/banco ("não informado") trocadas por
+  linguagem mais natural em `ForecastStrip`, `AIInsight`, na página da
+  cidade (`Não informado.` de um `EmptyState`) e em `/conta`
+  (`favoriteRegion favorita` vazia).
+- `layout.tsx`: corrigido "Clima sempre a frente" → "à frente" (bate
+  com o rodapé agora).
+
+### 3. Hero do clima diário — hierarquia + Apple Design
+- `src/app/cidade/[slug]/page.tsx`: hero agora mostra, nessa ordem,
+  condição atual com ícone (`CONDITION_ICON`/`conditionLabel`, que já
+  existiam mas não eram usados no hero), temperatura (tipografia
+  ajustada: `tracking-[-0.02em]`, `leading-[0.95]`, tamanho fluido via
+  `clamp()`), sensação térmica + chance de chuva do dia
+  (`forecast[0].precipitationProbabilityMaxPct`, dado que já existia
+  mas não era exibido em lugar nenhum).
+- Novo componente `src/components/forecast/HourlyGlance.tsx`: faixa
+  horizontal das próximas horas (ícone/hora/temp/chance de chuva),
+  usando `forecast[0].hourly` filtrado a partir do horário atual.
+  Preenche o vazio que existia entre "agora" (hero) e "próximos dias"
+  (`ForecastStrip`). Retorna `null` sem quebrar nada quando não há
+  dado (`today.hourly.length === 0`) — comportamento confirmado neste
+  ambiente, onde a Open-Meteo está inacessível (ver abaixo) e o card
+  simplesmente não aparece, sem gerar erro nem dado falso.
+- **Não validado visualmente com números reais** — ver "Problemas
+  conhecidos".
+
+### 4. Mapa — bug de performance real corrigido (não só leitura de código)
+- `MapExplorer.tsx` usava `key={active.region.slug}` no `RealMap`,
+  forçando o React a destruir e recriar o mapa inteiro (novo contexto
+  WebGL, tiles do zero) a cada clique de região.
+- `RealMap.tsx`: novo efeito que reage a mudança de `focusSlug`
+  chamando `map.flyTo(...)` em vez de depender de remount. Markers
+  lidos via `markersRef` (atualizado num `useEffect` próprio) para não
+  disparar o voo da câmera em re-renders não relacionados (ex.:
+  alternar a camada de chuva) — `markers` chega como array novo a cada
+  render do componente pai.
+- `key` removido do `RealMap` em `MapExplorer.tsx`.
+- Containers do mapa (`MapCard`, `MapExplorer`) já tinham
+  `aspect-[16/10]` — não havia o bug clássico de "mapa com altura
+  zero"; não precisou de correção aí.
+- O próprio mapa já é real (MapLibre GL + basemap vetorial OpenFreeMap
+  + radar de chuva real via RainViewer, sem chave em nenhum dos dois)
+  — não é ilustração, isso já vinha de antes desta etapa.
+
+### 5. Área do Agricultor — revisada, sem mudança necessária
+`src/app/agro/page.tsx` e `src/app/cidade/[slug]/agro/page.tsx` já
+usam dados reais do mesmo snapshot da cidade, têm disclaimers honestos
+("não substitui agrônomo") e **não têm nenhum vestígio de
+assinatura/paywall/plano premium/código** em lugar nenhum do código
+(busca cruzada em `src/app`, `src/components`, `src/server`) — já
+satisfaz o pedido de "preparado para o futuro sem bloquear o uso
+atual" sem precisar de alteração.
+
+### Confirmado nesta etapa, com serviços reais rodando (não só leitura de código)
+- `npx tsc --noEmit` e `npx eslint .` limpos depois de cada bloco de
+  mudança.
+- `npm run build` limpo (22 rotas).
+- `npx vitest run` — 20/20, contra Postgres + Redis reais criados
+  neste ambiente (não estavam disponíveis por padrão; foram instalados
+  via `apt-get install postgresql redis-server` e o schema aplicado
+  com `npx drizzle-kit push`).
+- `npm run start` real na porta 3100 + `curl`:
+  `POST /api/auth/register` → já volta `{"kind":"session", ...}` com
+  cookie de sessão setado, sem nenhuma etapa de código no meio.
+  `/`, `/mapa`, `/agro`, `/cidade/uniao-da-vitoria`,
+  `/cidade/uniao-da-vitoria/agro`, `/conta` autenticados → todos 200.
+  `/` sem sessão → 307 para `/login` (proxy de auth intacto).
+- **Confirmado por log real, não suposição**: a Open-Meteo não está
+  acessível neste ambiente de execução (egress bloqueado —
+  `api.open-meteo.com` responde 403 no proxy de rede daqui). O
+  servidor loga corretamente `"falha ao buscar clima na Open-Meteo,
+  usando último dado salvo"`, marca `status: "degradado"` e a UI
+  mostra `—` em vez de inventar número — ou seja, o comportamento de
+  fallback do item 5 do pedido do proprietário está correto, e isso
+  foi visto acontecendo de verdade, não inferido.
+
+## Problemas conhecidos
+- Nenhum erro de build/TypeScript/ESLint no momento da entrega deste
+  ZIP (`npm run build`, `npx tsc --noEmit`, `npx eslint .` — todos
+  limpos, confirmado ao final desta sessão).
+- Este ambiente de execução não tem navegador disponível (sem
+  Chromium instalado, sem acesso de rede aos binários de
+  Playwright/Puppeteer) — toda a validação visual desta sessão foi
+  por leitura de código, não por captura de tela real. Repetido aqui
+  de propósito porque é o maior risco residual do projeto neste
+  momento.
+- Este ambiente também não tem egress para `api.open-meteo.com` (só
+  para registries de pacote) — não foi possível ver o hero/HourlyGlance
+  novos com números de verdade preenchidos, só confirmar que degradam
+  graciosamente sem dado. Precisa ser visto num ambiente com rede
+  aberta (local do proprietário ou deploy).
+
+## Próximo passo recomendado
+1. Rodar `npm run dev` num ambiente com navegador E rede aberta até a
+   Open-Meteo, e validar visualmente: o hero novo da cidade (condição +
+   ícone + chance de chuva + `HourlyGlance`) com dados reais
+   preenchidos, e o mapa trocando de região sem recarregar (ETAPA 8,
+   item 4) — confirmar visualmente a transição suave da câmera.
+   Também Light/Dark + os 5 breakpoints do master prompt.
+2. Passada dedicada de responsividade mobile-first (item 9/11 do
+   `vigia_ajustes_ux_ui.md`) — não foi feita nesta etapa além do que já
+   existia de sessões anteriores (Header/menu mobile já tratado na
+   ETAPA 7).
+3. Estados de loading/erro/sem-dados (item 12) — várias telas já têm
+   fallback bom (`EmptyState`, `Skeleton`), mas não houve uma varredura
+   sistemática de todas as páginas nesta etapa.
+4. A partir do que a validação visual encontrar, fazer uma segunda
+   passada de ajustes finos.
+5. Revisão cruzada de consistência entre todas as páginas (item 2 de
+   "O que falta fazer" acima, se ainda existir).
+
+## Observações
+- Todos os efeitos de terceiro continuam funcionando e nenhum arquivo
+  em `reference/efeitos-selecionados/` ou `components/effects/` foi
+  removido ou reescrito estruturalmente nesta sessão.
+- Este ambiente não trouxe `node_modules` — rode `npm install` antes
+  de `npm run dev`/`build` se for continuar a partir deste ZIP.
+- Este ZIP não inclui `.env.local` (era só uma cópia local de
+  `.env.example` com credenciais de teste, criada apenas para validar
+  nesta sessão) — copie `.env.example` para `.env.local` e preencha
+  com suas credenciais reais antes de rodar.
+
+---
+
 ## Estado atual (ETAPA 7 — login obrigatório + Split Panel Auth + tema nos efeitos)
 
 Sétima etapa. Três pedidos do proprietário, todos validados com

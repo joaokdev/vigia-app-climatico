@@ -12,8 +12,10 @@ import { AlertBanner } from "@/components/ui/Alert";
 import { RiverStatus, StationCard } from "@/components/ui/River";
 import { AIInsight } from "@/components/region/AIInsight";
 import { ForecastStrip } from "@/components/forecast/ForecastStrip";
+import { HourlyGlance } from "@/components/forecast/HourlyGlance";
 import { EmptyState } from "@/components/ui/States";
 import { Card } from "@/components/ui/Card";
+import { conditionLabel, CONDITION_ICON } from "@/lib/weather-labels";
 import {
   IconHumidity,
   IconPressure,
@@ -83,17 +85,33 @@ export default async function CidadePage({
 
         <Card className="flex flex-col gap-5 p-5">
           <div className="flex items-start justify-between">
-            <div className="flex items-baseline gap-1">
-              <span className="font-data text-4xl text-[color:var(--color-text)]">
-                {weather.temperatureC ?? "—"}
-              </span>
-              <span className="text-lg text-[color:var(--color-text-subtle)]">°C</span>
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-2">
+                {weather.condition && (() => {
+                  const ConditionIcon = CONDITION_ICON[weather.condition];
+                  return <ConditionIcon size={22} className="text-[color:var(--color-text-muted)]" />;
+                })()}
+                <span className="text-sm font-medium text-[color:var(--color-text-muted)]">
+                  {conditionLabel(weather.condition)}
+                </span>
+              </div>
+              <div className="flex items-baseline gap-1">
+                <span className="font-data text-[clamp(2.75rem,6vw,3.5rem)] leading-[0.95] tracking-[-0.02em] text-[color:var(--color-text)]">
+                  {weather.temperatureC ?? "—"}
+                </span>
+                <span className="text-lg text-[color:var(--color-text-subtle)]">°C</span>
+              </div>
             </div>
             <NatureBadge nature={weather.provenance.nature} />
           </div>
           <p className="text-sm text-[color:var(--color-text-muted)]">
             Sensação térmica de {weather.feelsLikeC ?? "—"}°C
+            {forecast[0]?.precipitationProbabilityMaxPct != null && (
+              <> · {forecast[0].precipitationProbabilityMaxPct}% de chance de chuva hoje</>
+            )}
           </p>
+
+          <HourlyGlance today={forecast[0]} />
 
           <div className="grid grid-cols-2 gap-4">
             <WeatherMetric icon={<IconRain size={16} />} label="Chuva últimas 24h" value={weather.rain24hMm} unit="mm" />
@@ -153,7 +171,7 @@ export default async function CidadePage({
           <h2 className="text-heading text-[color:var(--color-text)]">Situação do rio</h2>
           <EmptyState
             title="Nenhuma estação fluviométrica associada a esta região"
-            description="Não informado — nenhuma régua ou estação de nível de rio está mapeada para esta cidade na FASE 1."
+            description="Ainda não há régua ou estação de nível de rio mapeada para esta cidade."
           />
         </section>
       )}
@@ -169,7 +187,7 @@ export default async function CidadePage({
             ))}
           </div>
         ) : (
-          <EmptyState title="Nenhuma estação disponível" description="Não informado." />
+          <EmptyState title="Nenhuma estação disponível" description="Ainda não há estações cadastradas para esta região." />
         )}
       </section>
     </div>

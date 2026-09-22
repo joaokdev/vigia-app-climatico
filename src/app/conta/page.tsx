@@ -36,7 +36,7 @@ export default async function ContaPage() {
         <dl className="grid gap-4 sm:grid-cols-2">
           <div>
             <dt className="text-xs text-[color:var(--color-text-subtle)]">Região favorita</dt>
-            <dd className="text-sm text-[color:var(--color-text)]">{favoriteRegion?.name ?? "Não informado"}</dd>
+            <dd className="text-sm text-[color:var(--color-text)]">{favoriteRegion?.name ?? "Nenhuma ainda"}</dd>
           </div>
           <div>
             <dt className="text-xs text-[color:var(--color-text-subtle)]">Membro desde</dt>

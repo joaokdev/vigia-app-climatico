@@ -2,7 +2,7 @@ import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { cleanDatabase } from "../__tests__/db-helpers";
 import { pool } from "../db/client";
 import { redis } from "../db/redis";
-import { registerUser, verifyOtp } from "../auth/service";
+import { registerUser } from "../auth/service";
 import {
   updatePreferences,
   updateProfile,
@@ -26,11 +26,12 @@ afterAll(async () => {
 });
 
 async function createVerifiedUser(email: string) {
+  // registerUser já entrega a conta verificada e com sessão no fluxo
+  // atual (sem tela de código) — ver EMAIL_VERIFICATION_REQUIRED em
+  // server/auth/service.ts.
   const reg = await registerUser({ name: "Teste", email, password: "senhaforte123" });
-  if (!reg.ok) throw new Error("setup falhou");
-  const verify = await verifyOtp({ email, code: reg.data.devCode!, purpose: "email_verification" });
-  if (!verify.ok || verify.data.kind !== "session") throw new Error("setup falhou");
-  return verify.data.user;
+  if (!reg.ok || reg.data.kind !== "session") throw new Error("setup falhou");
+  return reg.data.user;
 }
 
 describe("updateProfile", () => {

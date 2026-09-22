@@ -62,7 +62,7 @@ export function MapExplorer({
       <div className="grid gap-5 lg:grid-cols-[1.6fr_1fr] lg:items-start">
         <div className="flex flex-col gap-2">
           <div className="relative aspect-[16/10] overflow-hidden rounded-[var(--radius-lg)] shadow-[var(--shadow-elevation-2)]">
-            <RealMap key={active.region.slug} markers={markers} focusSlug={active.region.slug} showRain={showRain} />
+            <RealMap markers={markers} focusSlug={active.region.slug} showRain={showRain} />
             <button
               type="button"
               onClick={() => setShowRain((v) => !v)}

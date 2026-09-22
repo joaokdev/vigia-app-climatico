@@ -17,7 +17,6 @@ const NAV_LINKS = [
   { href: "/mapa", label: "Mapa" },
   { href: "/agro", label: "Agro" },
   { href: "/sobre", label: "Sobre" },
-  { href: "/fontes", label: "Fontes" },
 ];
 
 export function Header() {

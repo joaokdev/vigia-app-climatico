@@ -50,12 +50,10 @@ export function DataFreshness({ provenance }: { provenance: Provenance }) {
         Atualizado {label ?? "recentemente"}
         {isStale && (
           <span className="ml-1 text-[color:var(--color-warning)]">
-            · fonte pode estar desatualizada
+            · pode estar desatualizado
           </span>
         )}
       </span>
-      <span aria-hidden>·</span>
-      <span>Fonte: {provenance.source}</span>
     </div>
   );
 }

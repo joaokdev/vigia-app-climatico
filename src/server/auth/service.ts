@@ -21,6 +21,18 @@ export type ServiceResult<T> =
 const RESET_TOKEN_PREFIX = "pwreset:";
 const RESEND_COOLDOWN_PREFIX = "otp-cooldown:";
 const LOGIN_ATTEMPT_PREFIX = "login-attempts:";
+
+/**
+ * Verificação de e-mail por código (OTP) desativada no fluxo geral de
+ * cadastro/login — pedido do proprietário: "criar conta → conta criada →
+ * usuário entra normalmente", sem tela de código no meio. O mecanismo
+ * inteiro (issueOtp/verifyOtp/resendOtp, rotas, telas) continua intacto
+ * e funcional; só não é mais chamado por registerUser/login enquanto
+ * esta flag estiver `false`. Ele será reaproveitado futuramente para
+ * liberar a Área do Agricultor (assinatura/plano premium), sem precisar
+ * reescrever nada — só religar esta flag e o fluxo que a consome.
+ */
+const EMAIL_VERIFICATION_REQUIRED = false;
 // Janela deslizante simples (INCR + EXPIRE só no primeiro hit) — não é
 // tão preciso quanto um sliding window de verdade, mas é o suficiente
 // para conter brute force por e-mail sem adicionar dependência nova.
@@ -73,7 +85,12 @@ async function createSessionFor(userId: string, userAgent?: string | null) {
 
 /* ==================== REGISTER ==================== */
 
-export async function registerUser(input: { name: string; email: string; password: string }) {
+export async function registerUser(input: {
+  name: string;
+  email: string;
+  password: string;
+  userAgent?: string | null;
+}) {
   const existing = await repo.findUserByEmail(input.email);
 
   if (existing && existing.emailVerifiedAt) {
@@ -86,9 +103,41 @@ export async function registerUser(input: { name: string; email: string; passwor
     ? await repo.updateUserCredentials(existing.id, { name: input.name, passwordHash })
     : await repo.insertUser({ name: input.name, email: input.email, passwordHash });
 
-  const { devCode } = await issueOtp(user!.id, input.email, "email_verification");
-  logger.info("cadastro iniciado, otp enviado", { email: input.email, userId: user!.id, resumed: !!existing });
-  return ok({ email: input.email, devCode });
+  if (EMAIL_VERIFICATION_REQUIRED) {
+    const { devCode } = await issueOtp(user!.id, input.email, "email_verification");
+    logger.info("cadastro iniciado, otp enviado", { email: input.email, userId: user!.id, resumed: !!existing });
+    return ok({ kind: "otp_sent" as const, email: input.email, devCode });
+  }
+
+  // Sem verificação: a conta já nasce confirmada e o usuário entra
+  // direto, sem passar por nenhuma tela intermediária.
+  const verified = await repo.markEmailVerified(user!.id);
+  const session = await createSessionFor(verified!.id, input.userAgent);
+  logger.info("cadastro concluído, sessão criada sem verificação", {
+    email: input.email,
+    userId: user!.id,
+    resumed: !!existing,
+  });
+  return ok({
+    kind: "session" as const,
+    session,
+    user: toPublicUser(verified!),
+  });
+}
+
+/**
+ * Emite um novo código de verificação por e-mail para um usuário já
+ * existente, fora do fluxo de cadastro/login (que não passa mais por
+ * aqui — ver EMAIL_VERIFICATION_REQUIRED). Pensado para ser
+ * reaproveitado pela Área do Agricultor quando a verificação for
+ * associada a assinatura/plano premium; também usado pelos testes do
+ * mecanismo de OTP em si.
+ */
+export async function requestEmailVerification(email: string) {
+  const user = await repo.findUserByEmail(email);
+  if (!user) return fail("invalid_code", "Não foi possível enviar o código.");
+  const { devCode } = await issueOtp(user.id, email, "email_verification");
+  return ok({ email, devCode });
 }
 
 /* ==================== VERIFY OTP ==================== */
@@ -195,7 +244,7 @@ export async function login(input: { email: string; password: string; userAgent?
   // ciclo de tentativas legítimas do mesmo usuário.
   await redis.del(attemptsKey);
 
-  if (!user.emailVerifiedAt) {
+  if (EMAIL_VERIFICATION_REQUIRED && !user.emailVerifiedAt) {
     logger.warn("login recusado: e-mail não verificado", { email: input.email, userId: user.id });
     return fail("email_not_verified", "Confirme seu e-mail antes de entrar.");
   }

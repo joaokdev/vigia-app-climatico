@@ -29,13 +29,12 @@ export async function AIInsight({
           <>
             <p className="text-sm text-[color:var(--color-text)]">{insight.text}</p>
             <p className="text-[11px] text-[color:var(--color-text-subtle)]">
-              Interpretação gerada por IA ({insight.model}) a partir dos dados medidos e previstos
-              acima — nunca uma medição em si.
+              Interpretação a partir dos dados medidos e previstos acima — nunca uma medição em si.
             </p>
           </>
         ) : (
           <p className="text-sm text-[color:var(--color-text-muted)]">
-            Insight de IA indisponível no momento — não informado. Os dados meteorológicos acima
+            Insight de IA indisponível no momento. Os dados meteorológicos acima
             continuam completos e não dependem desta camada.
           </p>
         )}
