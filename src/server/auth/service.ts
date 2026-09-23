@@ -73,7 +73,7 @@ async function createSessionFor(userId: string, userAgent?: string | null) {
 
 /* ==================== REGISTER ==================== */
 
-export async function registerUser(input: { name: string; email: string; password: string }) {
+export async function registerUser(input: { name: string; email: string; password: string; userAgent?: string | null }) {
   const existing = await repo.findUserByEmail(input.email);
 
   if (existing && existing.emailVerifiedAt) {
@@ -86,9 +86,12 @@ export async function registerUser(input: { name: string; email: string; passwor
     ? await repo.updateUserCredentials(existing.id, { name: input.name, passwordHash })
     : await repo.insertUser({ name: input.name, email: input.email, passwordHash });
 
-  const { devCode } = await issueOtp(user!.id, input.email, "email_verification");
-  logger.info("cadastro iniciado, otp enviado", { email: input.email, userId: user!.id, resumed: !!existing });
-  return ok({ email: input.email, devCode });
+  // Verificação por OTP removida: a conta já nasce com o e-mail marcado
+  // como verificado e a sessão é aberta na hora, sem etapa intermediária.
+  const verified = await repo.markEmailVerified(user!.id);
+  const session = await createSessionFor(user!.id, input.userAgent);
+  logger.info("cadastro concluído sem otp", { email: input.email, userId: user!.id, resumed: !!existing });
+  return ok({ session, user: toPublicUser(verified!) });
 }
 
 /* ==================== VERIFY OTP ==================== */
@@ -195,10 +198,7 @@ export async function login(input: { email: string; password: string; userAgent?
   // ciclo de tentativas legítimas do mesmo usuário.
   await redis.del(attemptsKey);
 
-  if (!user.emailVerifiedAt) {
-    logger.warn("login recusado: e-mail não verificado", { email: input.email, userId: user.id });
-    return fail("email_not_verified", "Confirme seu e-mail antes de entrar.");
-  }
+  // Verificação de e-mail por OTP removida do fluxo — não bloqueia mais o login.
 
   const session = await createSessionFor(user.id, input.userAgent);
   logger.info("login bem-sucedido", { userId: user.id });

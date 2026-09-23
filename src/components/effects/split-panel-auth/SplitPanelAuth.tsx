@@ -124,7 +124,9 @@ export function SplitPanelAuth({
     setRegisterState("success");
     window.setTimeout(() => setRegisterState("idle"), SUCCESS_REVERT_MS);
     window.setTimeout(() => {
-      router.push(`/verificar-otp?email=${encodeURIComponent(email)}`);
+      // OTP removido: cadastro já abre sessão, vai direto pro app.
+      router.push("/");
+      router.refresh();
     }, 700); // mesmo delay que a tela de cadastro anterior já usava
   }
 
