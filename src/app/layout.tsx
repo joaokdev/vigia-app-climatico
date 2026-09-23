@@ -6,14 +6,14 @@ import { Footer } from "@/components/layout/Footer";
 
 export const metadata: Metadata = {
   title: {
-    default: "VIGIA — Clima sempre à frente",
+    default: "VIGIA — Clima sempre a frente",
     template: "%s · VIGIA",
   },
   description:
     "Central regional de monitoramento ambiental para União da Vitória, Cruz Machado, Bituruna e Inácio Martins: clima, chuva, rios e alertas em tempo real.",
   metadataBase: new URL("https://vigia.example.com"),
   openGraph: {
-    title: "VIGIA — Clima sempre à frente",
+    title: "VIGIA — Clima sempre a frente",
     description:
       "Monitoramento ambiental regional: clima, hidrologia e alertas para a região de União da Vitória.",
     locale: "pt_BR",
@@ -42,10 +42,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </a>
           <Header />
           {/* Transição global de página ("Glob Wipe") removida por
-              pedido explícito da ATUALIZACAO_DO_VIGIA.md — o
-              componente PageTransition.tsx foi mantido no repositório
-              como referência histórica, mas não é mais importado
-              aqui. */}
+              pedido explícito da ATUALIZACAO_DO_VIGIA.md §17 —
+              PageTransition.tsx foi removido do repositório por não
+              ter mais nenhum uso (nenhuma outra transição global foi
+              colocada no lugar). */}
           <main id="conteudo-principal" className="flex-1">
             {children}
           </main>

@@ -1,14 +1,6 @@
 import type { Metadata } from "next";
 import { DataSourceBadge } from "@/components/ui/DataSourceBadge";
 
-/**
- * Página de referência interna sobre fontes de dados candidatas —
- * conteúdo técnico (nomes de API, status de integração) que não deve
- * aparecer para o usuário final. Por isso não está mais linkada no
- * Header nem no Footer; o arquivo continua existindo para consulta
- * interna da equipe, não como parte da navegação do produto.
- */
-
 export const metadata: Metadata = {
   title: "Fontes de dados",
   description:

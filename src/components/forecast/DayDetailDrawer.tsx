@@ -188,7 +188,7 @@ export function DayDetailDrawer({
         </section>
 
         <p className="text-[11px] text-[color:var(--color-text-subtle)]">
-          Previsto · válido até {new Date(day.provenance.validUntil ?? day.provenance.fetchedAt).toLocaleDateString("pt-BR")}
+          Previsto · Open-Meteo · válido até {new Date(day.provenance.validUntil ?? day.provenance.fetchedAt).toLocaleDateString("pt-BR")}
         </p>
       </div>
     </Drawer>

@@ -37,7 +37,7 @@ export default async function HomePage() {
         </div>
         <div className="flex items-center gap-1">
           <IconRefresh size={13} />
-          <span>4 regiões monitoradas em tempo real</span>
+          <span>4 regiões monitoradas · dados de demonstração (FASE 1)</span>
         </div>
       </div>
 
@@ -79,9 +79,14 @@ export default async function HomePage() {
 
       {/* Quatro cards regionais */}
       <section aria-labelledby="regioes-heading" className="flex flex-col gap-4">
-        <h2 id="regioes-heading" className="text-heading text-[color:var(--color-text)]">
-          Panorama regional
-        </h2>
+        <div className="flex items-baseline justify-between">
+          <h2 id="regioes-heading" className="text-heading text-[color:var(--color-text)]">
+            Panorama regional
+          </h2>
+          <span className="text-xs text-[color:var(--color-text-subtle)]">
+            Nível 1 — o que está acontecendo agora
+          </span>
+        </div>
         <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
           {snapshots.map(({ region, snapshot }) => (
             <RegionCard key={region.slug} region={region} snapshot={snapshot} />
@@ -89,20 +94,40 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Ponte para o Sobre — a explicação completa de como o VIGIA
-          classifica os dados (observado/previsto/simulado/oficial) já
-          vive em /sobre; aqui basta um convite curto, sem duplicar. */}
-      <Link
-        href="/sobre"
-        className="flex items-center justify-between gap-3 rounded-[var(--radius-lg)] border border-[color:var(--color-border)] bg-[color:var(--color-surface)] p-4 transition-colors hover:bg-[color:var(--color-surface-elevated)]"
-      >
+      {/* Explicação do VIGIA */}
+      <section className="grid gap-6 rounded-[var(--radius-lg)] border border-[color:var(--color-border)] bg-[color:var(--color-surface)] p-6 md:grid-cols-3">
         <div>
-          <p className="text-base font-semibold text-[color:var(--color-text)]">Como o VIGIA funciona</p>
+          <h2 className="mb-2 text-base font-semibold text-[color:var(--color-text)]">
+            O que é o VIGIA
+          </h2>
           <p className="text-sm text-[color:var(--color-text-muted)]">
-            Entenda a diferença entre dado observado, previsto, simulado e alerta oficial.
+            Uma central regional de inteligência ambiental — não um clone de
+            aplicativo de clima genérico. Cada dado carrega sua origem,
+            horário de observação e status de atualização.
           </p>
         </div>
-      </Link>
+        <div>
+          <h2 className="mb-2 text-base font-semibold text-[color:var(--color-text)]">
+            Observado, previsto e simulado
+          </h2>
+          <p className="text-sm text-[color:var(--color-text-muted)]">
+            O VIGIA sempre distingue o que foi medido do que é modelado ou
+            simulado, e nunca chama uma análise própria de &ldquo;alerta oficial&rdquo;.
+          </p>
+        </div>
+        <div>
+          <h2 className="mb-2 text-base font-semibold text-[color:var(--color-text)]">
+            Fontes verificadas
+          </h2>
+          <p className="text-sm text-[color:var(--color-text-muted)]">
+            Consulte a proveniência completa de cada fonte em{" "}
+            <Link href="/fontes" className="text-[color:var(--color-interactive)] hover:underline">
+              /fontes
+            </Link>
+            .
+          </p>
+        </div>
+      </section>
     </div>
   );
 }

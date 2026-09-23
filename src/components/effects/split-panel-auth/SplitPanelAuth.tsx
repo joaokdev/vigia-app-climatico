@@ -124,13 +124,7 @@ export function SplitPanelAuth({
     setRegisterState("success");
     window.setTimeout(() => setRegisterState("idle"), SUCCESS_REVERT_MS);
     window.setTimeout(() => {
-      // Sem verificação por código no fluxo atual: a conta já vem com
-      // sessão criada (ver /api/auth/register) e o usuário entra direto.
-      // Se a verificação por OTP for reativada no futuro (ver
-      // EMAIL_VERIFICATION_REQUIRED em server/auth/service.ts), volte a
-      // levar para /verificar-otp quando kind === "otp_sent".
-      router.push("/");
-      router.refresh();
+      router.push(`/verificar-otp?email=${encodeURIComponent(email)}`);
     }, 700); // mesmo delay que a tela de cadastro anterior já usava
   }
 
@@ -266,7 +260,7 @@ export function SplitPanelAuth({
               <p className="form-eyebrow">Criar conta</p>
               <h1 className="form-title">Criar conta no VIGIA</h1>
               <p className="form-sub">
-                Leva menos de um minuto.
+                Receba um código de verificação por e-mail para continuar.
               </p>
             </header>
 
@@ -344,6 +338,10 @@ export function SplitPanelAuth({
                 {registerError}
               </p>
             )}
+            <p className="split-auth-note">
+              Enviaremos um código de verificação de 4 dígitos para o
+              seu e-mail antes de ativar a conta.
+            </p>
           </form>
         </section>
 

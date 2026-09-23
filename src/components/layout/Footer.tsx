@@ -43,6 +43,7 @@ export function Footer() {
           <ul className="flex flex-col gap-2 text-sm text-[color:var(--color-text-muted)]">
             <li><Link href="/mapa" className="hover:text-[color:var(--color-text)]">Mapa regional</Link></li>
             <li><Link href="/sobre" className="hover:text-[color:var(--color-text)]">Sobre o VIGIA</Link></li>
+            <li><Link href="/fontes" className="hover:text-[color:var(--color-text)]">Fontes de dados</Link></li>
           </ul>
         </div>
 
@@ -56,7 +57,8 @@ export function Footer() {
       </div>
       <div className="border-t border-[color:var(--color-border)] py-4">
         <p className="vigia-container text-xs text-[color:var(--color-text-subtle)]">
-          VIGIA — Clima sempre à frente.
+          VIGIA — Clima sempre a frente. Dados de demonstração na FASE 1; nenhuma
+          fonte externa real está integrada nesta etapa.
         </p>
       </div>
     </footer>

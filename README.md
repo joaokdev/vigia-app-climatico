@@ -64,8 +64,10 @@ região vs. ação por cidade).
 
 ### Outras mudanças
 - Transição global de página ("Glob Wipe") removida do `layout.tsx`
-  por pedido explícito — `PageTransition.tsx` ficou no repositório como
-  referência histórica, sem uso ativo.
+  por pedido explícito — `PageTransition.tsx` foi removido do
+  repositório por ficar sem nenhum uso (nenhuma outra transição
+  global colocada no lugar, conforme item 17 do
+  `ATUALIZACAO_DO_VIGIA.md`).
 - `.env.example`/`env.ts` reorganizados por domínio (DATABASE, REDIS,
   SESSÃO, EMAIL, WEATHER, MAP, HYDROLOGY, OFFICIAL ALERTS, STATIONS,
   NVIDIA AI), documentando explicitamente o que já tem fonte real e o

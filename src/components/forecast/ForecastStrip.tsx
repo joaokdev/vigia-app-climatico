@@ -36,7 +36,7 @@ export function ForecastStrip({
   if (forecast.length === 0) {
     return (
       <p className="text-sm text-[color:var(--color-text-subtle)]">
-        Previsão indisponível no momento.
+        Previsão de vários dias indisponível no momento — não informado.
       </p>
     );
   }
@@ -85,7 +85,7 @@ export function ForecastStrip({
         />
       ) : null}
       <p className="text-[11px] text-[color:var(--color-text-subtle)]">
-        Previsto · {conditionLabel(forecast[0]?.condition)} hoje em {regionLabel}.
+        Previsto · fonte Open-Meteo. {conditionLabel(forecast[0]?.condition)} hoje em {regionLabel}.
       </p>
     </>
   );

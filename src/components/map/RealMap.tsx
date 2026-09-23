@@ -66,15 +66,6 @@ export function RealMap({
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const rainLoadedRef = useRef(false);
-  // Ref (não estado) porque `markers` chega como um array novo a cada
-  // render do componente pai — colocá-lo nas deps do efeito de foco
-  // abaixo faria o mapa "voar" de novo a cada re-render não relacionado
-  // (ex.: alternar a camada de chuva). O efeito de foco só precisa do
-  // valor mais recente no momento em que `focusSlug` muda.
-  const markersRef = useRef(markers);
-  useEffect(() => {
-    markersRef.current = markers;
-  }, [markers]);
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
@@ -174,29 +165,6 @@ export function RealMap({
       map.once("load", () => syncRainLayer(map));
     }
   }, [showRain]);
-
-  useEffect(() => {
-    const map = mapRef.current;
-    if (!map || !focusSlug) return;
-
-    function fly(map: maplibregl.Map) {
-      const focus = markersRef.current.find((m) => m.slug === focusSlug);
-      if (!focus) return;
-      map.flyTo({ center: [focus.lng, focus.lat], zoom: 10.5, duration: 900 });
-    }
-
-    // Troca de foco anima a câmera para a nova região em vez de recriar
-    // o mapa (o componente que usa RealMap não precisa mais forçar
-    // remount com `key` a cada seleção — isso descartava e recarregava
-    // o WebGL/tiles inteiros a cada clique).
-    if (map.isStyleLoaded()) {
-      fly(map);
-    } else {
-      map.once("load", () => fly(map));
-    }
-    // markersRef é intencionalmente lido via ref (ver comentário acima) —
-    // só a mudança de foco deve reacionar este efeito.
-  }, [focusSlug]);
 
   return <div ref={containerRef} className={className ?? "h-full w-full"} />;
 }
