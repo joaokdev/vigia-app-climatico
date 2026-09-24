@@ -246,3 +246,32 @@ body {
   scrollbar-color: var(--color-border-strong) transparent;
   scrollbar-width: thin;
 }
+
+/* ---------------------------------------------------------------- */
+/* WeatherBackground — atmosfera de página inteira (ver skill        */
+/* apple-design §14: ciclos longos, baixa opacidade, nada chamativo) */
+/* ---------------------------------------------------------------- */
+@keyframes sky-drift {
+  0%, 100% { filter: saturate(1) brightness(1); }
+  50% { filter: saturate(1.06) brightness(1.02); }
+}
+
+@keyframes stars-twinkle {
+  0%, 100% { opacity: 0.65; }
+  50% { opacity: 0.95; }
+}
+
+@keyframes rain-fall {
+  0% { background-position: 0 0; }
+  100% { background-position: -20px 40px; }
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(16px, -20px); }
+}
+
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}

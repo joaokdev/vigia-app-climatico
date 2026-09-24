@@ -1,8 +1,11 @@
+"use client";
+
 import Link from "next/link";
 import type { RegionSlug } from "@/lib/data/regions";
 import { getWeatherVisual, STARS_BACKGROUND } from "@/lib/weather-visual";
 import type { WeatherSnapshot } from "@/lib/providers/types";
 import { cn } from "@/lib/cn";
+import { CITY_COOKIE } from "./CityWelcome";
 
 export type CityCardData = {
   slug: RegionSlug;
@@ -18,6 +21,8 @@ export type CityCardData = {
  * e o horário (dia/noite) daquela cidade agora, não só o nome dela
  * numa lista neutra. A decoração vem de weather-visual.ts; o dado em
  * si (temperatura/condição) continua vindo do snapshot real.
+ * Trocar de cidade aqui também atualiza o cookie de preferência, para
+ * a próxima visita já abrir direto na cidade escolhida por último.
  */
 export function CityCards({ cities, activeSlug }: { cities: CityCardData[]; activeSlug: RegionSlug }) {
   return (
@@ -31,11 +36,14 @@ export function CityCards({ cities, activeSlug }: { cities: CityCardData[]; acti
           <Link
             key={city.slug}
             href={`/?cidade=${city.slug}`}
+            onClick={() => {
+              document.cookie = `${CITY_COOKIE}=${city.slug}; path=/; max-age=31536000; samesite=lax`;
+            }}
             aria-current={isActive ? "page" : undefined}
             className={cn(
-              "relative flex h-28 w-32 shrink-0 flex-col justify-between overflow-hidden rounded-[var(--radius-lg)] p-3 text-left transition-transform",
-              "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--color-interactive)]",
-              isActive ? "ring-2 ring-[color:var(--color-interactive)] ring-offset-2 ring-offset-[color:var(--color-background)]" : "hover:-translate-y-0.5"
+              "relative flex h-28 w-32 shrink-0 flex-col justify-between overflow-hidden rounded-[var(--radius-lg)] p-3 text-left shadow-[0_8px_24px_rgba(0,0,0,0.18)] transition-transform duration-200 ease-out",
+              "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white active:scale-[0.97] active:duration-100",
+              isActive ? "ring-2 ring-white/80 ring-offset-2 ring-offset-transparent" : "hover:-translate-y-0.5"
             )}
             style={{ backgroundImage: visual.gradient }}
           >

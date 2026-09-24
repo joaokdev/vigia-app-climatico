@@ -34,7 +34,7 @@ export function HourlyTimeline({ today }: { today: ForecastDay }) {
 
   if (today.hourly.length === 0) {
     return (
-      <p className="text-sm text-[color:var(--color-text-subtle)]">
+      <p className="text-sm text-white/70">
         Previsão hora a hora indisponível no momento — não informado.
       </p>
     );
@@ -60,25 +60,25 @@ export function HourlyTimeline({ today }: { today: ForecastDay }) {
               className={cn(
                 "flex shrink-0 flex-col items-center gap-1.5 rounded-[var(--radius-md)] border px-3 py-2.5 text-center transition-colors",
                 isNow
-                  ? "border-[color:var(--color-interactive)] bg-[color:var(--color-accent-soft)]"
-                  : "border-[color:var(--color-border)] bg-[color:var(--color-surface)] hover:border-[color:var(--color-border-strong)]",
-                isOpen && !isNow && "border-[color:var(--color-border-strong)]"
+                  ? "border-white/40 bg-white/20 backdrop-blur-xl"
+                  : "border-white/10 bg-white/10 backdrop-blur-xl hover:border-white/25",
+                isOpen && !isNow && "border-white/25"
               )}
             >
               <span
                 className={cn(
                   "text-[11px] font-medium",
-                  isNow ? "text-[color:var(--color-interactive)]" : "text-[color:var(--color-text-subtle)]"
+                  isNow ? "text-white" : "text-white/70"
                 )}
               >
                 {isNow ? "Agora" : hourLabel(h.t)}
               </span>
-              <Icon size={18} className="text-[color:var(--color-accent)]" />
-              <span className="font-data text-sm text-[color:var(--color-text)]">
+              <Icon size={18} className="text-white" />
+              <span className="font-data text-sm text-white">
                 {h.temperatureC ?? "—"}°
               </span>
               {(h.precipitationProbabilityPct ?? 0) > 0 ? (
-                <span className="flex items-center gap-0.5 text-[10px] text-[color:var(--color-accent)]">
+                <span className="flex items-center gap-0.5 text-[10px] text-sky-200">
                   <IconRain size={10} />
                   {h.precipitationProbabilityPct}%
                 </span>
@@ -89,16 +89,16 @@ export function HourlyTimeline({ today }: { today: ForecastDay }) {
       </div>
 
       {active ? (
-        <div className="flex flex-col gap-2 rounded-[var(--radius-md)] border border-[color:var(--color-border)] bg-[color:var(--color-surface-elevated)] p-4">
+        <div className="flex flex-col gap-2 rounded-[var(--radius-md)] border border-white/15 bg-white/10 p-4 backdrop-blur-xl">
           <div className="flex items-center justify-between">
-            <span className="font-data text-lg text-[color:var(--color-text)]">
+            <span className="font-data text-lg text-white">
               {hourLabel(active.t)} · {active.temperatureC ?? "—"}°
             </span>
-            <span className="text-xs text-[color:var(--color-text-subtle)]">
+            <span className="text-xs text-white/70">
               {conditionLabel(active.condition)}
             </span>
           </div>
-          <div className="grid grid-cols-3 gap-3 text-xs text-[color:var(--color-text-muted)]">
+          <div className="grid grid-cols-3 gap-3 text-xs text-white/80">
             <span className="flex items-center gap-1">
               <IconHumidity size={14} /> {active.humidityPct ?? "—"}%
             </span>
@@ -110,7 +110,7 @@ export function HourlyTimeline({ today }: { today: ForecastDay }) {
             </span>
           </div>
           {recommendationFor(active) ? (
-            <p className="border-t border-[color:var(--color-border)] pt-2 text-sm text-[color:var(--color-text)]">
+            <p className="border-t border-white/15 pt-2 text-sm text-white">
               {recommendationFor(active)}
             </p>
           ) : null}
