@@ -13,7 +13,8 @@ import { isPublicRoute } from "@/lib/auth/session";
 import { cn } from "@/lib/cn";
 
 const NAV_LINKS = [
-  { href: "/", label: "Painel" },
+  { href: "/", label: "Hoje" },
+  { href: "/regioes", label: "Regiões" },
   { href: "/mapa", label: "Mapa" },
   { href: "/agro", label: "Agro" },
   { href: "/sobre", label: "Sobre" },
